@@ -1,0 +1,46 @@
+<header class="h-12 flex items-center justify-between px-6 bg-white border-b border-prussian-blue-100">
+
+  <!-- Logo + titre -->
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-prussian-blue-800 flex items-center justify-center">
+      <i class="pi pi-file text-white text-lg"></i>
+    </div>
+    <div class="leading-tight">
+      <div class="font-semibold text-prussian-blue-900 text-xs">DocuFlow</div>
+      <div class="text-xs text-prussian-blue-400 tracking-wide">ENTERPRISE DMS</div>
+    </div>
+  </div>
+  <!-- Barre de recherche -->
+  <div class="flex-1 max-w-xl mx-8 relative">
+    <p-iconfield class="w-full ">
+      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-almond-silk-400 text-xs"></i>
+
+      <input
+      pInputText
+      type="text"
+      placeholder="Search documents, metadata, owners, OCR content..."
+      class="w-full pl-9 pr-14 !bg-prussian-blue-50 !border-prussian-blue-100 !text-xs"
+    />
+    </p-iconfield>
+
+
+    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-shadow-white border border-almond-silk-200 rounded px-1.5 py-0.5">
+      ⌘ K
+    </span>
+  </div>
+
+  <!-- Profil utilisateur -->
+  <div class="flex items-center gap-2 cursor-pointer">
+    <p-avatar
+      [label]="userInitials"
+      shape="circle"
+      styleClass="!bg-prussian-blue-700 !text-white !font-semibold"
+    />
+    <div class="leading-tight">
+      <div class="text-xs font-medium text-prussian-blue-900">{{ userName }}</div>
+      <div class="text-xs text-prussian-blue-400">{{ userRole }}</div>
+    </div>
+    <i class="pi pi-chevron-down text-xs text-prussian-blue-300 ml-1"></i>
+  </div>
+
+</header>

@@ -1,0 +1,87 @@
+<div class="flex flex-col h-full">
+
+  <!-- Barre du haut : breadcrumb + actions -->
+  <div class="flex items-center justify-between pb-3 border-b border-prussian-blue-100">
+    <p-breadcrumb [model]="breadcrumbItems" styleClass="border-0 p-0 bg-transparent" />
+
+    <div class="flex items-center gap-2">
+      <button pButton icon="pi pi-th-large" class="p-button-text p-button-rounded p-button-sm text-prussian-blue-400"></button>
+      <button pButton icon="pi pi-bars" class="p-button-text p-button-rounded p-button-sm text-prussian-blue-600"></button>
+      <button pButton icon="pi pi-sort-alt" class="p-button-text p-button-rounded p-button-sm text-prussian-blue-400"></button>
+      <button pButton label="New" icon="pi pi-plus" class="p-button-sm"></button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="flex-1 overflow-y-auto">
+    <p-table
+      [value]="documents()"
+      [(selection)]="selectedDocs"
+      dataKey="id"
+      styleClass="p-datatable-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 3rem">
+            <p-checkbox [binary]="true" />
+          </th>
+          <th>Name</th>
+          <th>Category / Tags</th>
+          <th>Modified</th>
+          <th>Size</th>
+          <th style="width: 5rem">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-doc>
+        <tr>
+          <td>
+            <p-checkbox [binary]="true" [(ngModel)]="doc.selected" />
+          </td>
+          <td>
+            <div class="flex items-center gap-2">
+              <i class="pi {{ doc.icon }} {{ doc.iconColor }}"></i>
+              <span class="text-prussian-blue-800">{{ doc.name }}</span>
+              <i *ngIf="doc.restricted" class="pi pi-lock text-prussian-blue-300 text-xs"></i>
+            </div>
+          </td>
+          <td>
+            <div class="flex flex-wrap gap-1">
+              <span
+                *ngFor="let tag of doc.tags"
+                class="px-2 py-0.5 rounded text-xs font-medium {{ tagClass(tag.severity) }}"
+              >
+                {{ tag.label }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="flex items-center gap-1.5 text-prussian-blue-500 text-sm">
+              <span class="w-1.5 h-1.5 rounded-full bg-prussian-blue-300"></span>
+              {{ doc.modifiedLabel }}
+            </span>
+          </td>
+          <td class="text-prussian-blue-500 text-sm">{{ doc.sizeLabel }}</td>
+          <td>
+            <button pButton icon="pi pi-ellipsis-v" class="p-button-text p-button-rounded p-button-sm"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Footer de stats -->
+  <div class="flex items-center justify-between pt-2 border-t border-prussian-blue-100 text-sm text-prussian-blue-400">
+    <div class="flex items-center gap-4">
+      <span>{{ documents().length }} items</span>
+      <span class="flex items-center gap-1 text-emerald-600">
+        <i class="pi pi-check-circle"></i> {{ verifiedCount }} verified
+      </span>
+      <span *ngIf="restrictedCount > 0" class="flex items-center gap-1 text-orange-500">
+        <i class="pi pi-lock"></i> {{ restrictedCount }} restricted
+      </span>
+    </div>
+    <span>Synced <span class="text-emerald-500">●</span> 2s ago</span>
+  </div>
+
+</div>

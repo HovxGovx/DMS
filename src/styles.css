@@ -1,1 +1,113 @@
 /* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@import "tailwindcss";
+
+@layer tailwind-base, primeng, tailwind-utilities;
+
+@import "tailwindcss/theme.css" layer(tailwind-base);
+@import "tailwindcss/utilities.css" layer(tailwind-utilities);
+
+* {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@theme {
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-prussian-blue-50: #e7f2fe;
+  --color-prussian-blue-100: #cee5fd;
+  --color-prussian-blue-200: #9dccfb;
+  --color-prussian-blue-300: #6cb2f9;
+  --color-prussian-blue-400: #3b99f7;
+  --color-prussian-blue-500: #0a7ff5;
+  --color-prussian-blue-600: #0866c4;
+  --color-prussian-blue-700: #064c93;
+  --color-prussian-blue-800: #043362;
+  --color-prussian-blue-900: #021931;
+  --color-prussian-blue-950: #011222;
+
+  --color-regal-navy-50: #e8f2fd;
+  --color-regal-navy-100: #d0e5fb;
+  --color-regal-navy-200: #a2ccf6;
+  --color-regal-navy-300: #73b2f2;
+  --color-regal-navy-400: #4499ee;
+  --color-regal-navy-500: #167fe9;
+  --color-regal-navy-600: #1166bb;
+  --color-regal-navy-700: #0d4c8c;
+  --color-regal-navy-800: #09335d;
+  --color-regal-navy-900: #04192f;
+  --color-regal-navy-950: #031221;
+
+  --color-brilliant-azure-50: #e9f2fb;
+  --color-brilliant-azure-100: #d3e5f8;
+  --color-brilliant-azure-200: #a8ccf0;
+  --color-brilliant-azure-300: #7cb2e9;
+  --color-brilliant-azure-400: #5199e1;
+  --color-brilliant-azure-500: #257fda;
+  --color-brilliant-azure-600: #1e66ae;
+  --color-brilliant-azure-700: #164c83;
+  --color-brilliant-azure-800: #0f3357;
+  --color-brilliant-azure-900: #07192c;
+  --color-brilliant-azure-950: #05121f;
+
+  --color-cool-horizon-50: #e9f2fc;
+  --color-cool-horizon-100: #d3e5f8;
+  --color-cool-horizon-200: #a6ccf2;
+  --color-cool-horizon-300: #7ab2eb;
+  --color-cool-horizon-400: #4e99e4;
+  --color-cool-horizon-500: #217fde;
+  --color-cool-horizon-600: #1b66b1;
+  --color-cool-horizon-700: #144c85;
+  --color-cool-horizon-800: #0d3359;
+  --color-cool-horizon-900: #07192c;
+  --color-cool-horizon-950: #05121f;
+
+  --color-sky-blue-50: #e9f3fb;
+  --color-sky-blue-100: #d3e6f8;
+  --color-sky-blue-200: #a7cdf1;
+  --color-sky-blue-300: #7bb4ea;
+  --color-sky-blue-400: #509be2;
+  --color-sky-blue-500: #2483db;
+  --color-sky-blue-600: #1d68af;
+  --color-sky-blue-700: #154e84;
+  --color-sky-blue-800: #0e3458;
+  --color-sky-blue-900: #071a2c;
+  --color-sky-blue-950: #05121f;
+
+  --color-almond-silk-50: #fcede8;
+  --color-almond-silk-100: #f9dcd2;
+  --color-almond-silk-200: #f3b8a5;
+  --color-almond-silk-300: #ed9578;
+  --color-almond-silk-400: #e8724a;
+  --color-almond-silk-500: #e24e1d;
+  --color-almond-silk-600: #b53f17;
+  --color-almond-silk-700: #872f12;
+  --color-almond-silk-800: #5a1f0c;
+  --color-almond-silk-900: #2d1006;
+  --color-almond-silk-950: #200b04;
+
+  --color-burnt-peach-50: #fbeee9;
+  --color-burnt-peach-100: #f7ddd4;
+  --color-burnt-peach-200: #f0baa8;
+  --color-burnt-peach-300: #e8987d;
+  --color-burnt-peach-400: #e07552;
+  --color-burnt-peach-500: #d95326;
+  --color-burnt-peach-600: #ad421f;
+  --color-burnt-peach-700: #823217;
+  --color-burnt-peach-800: #57210f;
+  --color-burnt-peach-900: #2b1108;
+  --color-burnt-peach-950: #1e0c05;
+
+  --color-rusty-spice-50: #fbeeea;
+  --color-rusty-spice-100: #f7ddd4;
+  --color-rusty-spice-200: #efbba9;
+  --color-rusty-spice-300: #e7987e;
+  --color-rusty-spice-400: #de7654;
+  --color-rusty-spice-500: #d65429;
+  --color-rusty-spice-600: #ab4321;
+  --color-rusty-spice-700: #813218;
+  --color-rusty-spice-800: #562210;
+  --color-rusty-spice-900: #2b1108;
+  --color-rusty-spice-950: #1e0c06;
+}
+

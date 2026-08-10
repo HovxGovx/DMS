@@ -1,0 +1,53 @@
+<div
+  class=" w-5/8  group flex items-center justify-between gap-3 p-2  rounded-xl border-2 border-dashed transition-colors  duration-150 cursor-pointer "
+  [class.border-prussian-blue-200]="!isDragOver()"
+  [class.bg-white]="!isDragOver()"
+  [class.hover:border-prussian-blue-400]="!isDragOver()"
+  [class.hover:bg-prussian-blue-50]="!isDragOver()"
+  [class.border-prussian-blue-500]="isDragOver()"
+  [class.bg-prussian-blue-50]="isDragOver()"
+  (dragover)="onDragOver($event)"
+  (dragleave)="onDragLeave($event)"
+  (drop)="onDrop($event)"
+  (click)="fileInput.click()"
+>
+  <input
+    #fileInput
+    type="file"
+    multiple
+    accept=".pdf,.docx,.xlsx,.tiff,.eml"
+    class="hidden"
+    (change)="onFileSelect($event)"
+  />
+
+  <div class="flex items-center gap-4">
+    <div class="w-11 h-11 rounded-lg bg-prussian-blue-100 flex items-center justify-center shrink-0 transition-colors duration-200 group-hover:bg-prussian-blue-100">
+      <i class="pi pi-cloud-upload text-prussian-blue-600 text-xl"></i>
+    </div>
+
+    <div>
+      <div class="text-[10px] text-prussian-blue-900">
+        <span class="font-semibold text-xs">Drop files to ingest</span>
+        <span class="text-gray-400 ml-1">or click to browse — PDF, DOCX, XLSX, TIFF, EML · Max 250MB</span>
+      </div>
+      <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-400">
+        <span class="flex items-center gap-1">
+          <i class="pi pi-eye text-[10px]"></i> OCR enabled
+        </span>
+        <span class="flex items-center gap-1">
+          <i class="pi pi-sparkles text-[10px]"></i> Auto-classification
+        </span>
+        <span class="flex items-center gap-1">
+          <i class="pi pi-lock text-[10px]"></i> AES-256 at rest
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <p-button
+    label="Ingest"
+    icon="pi pi-plus"
+    styleClass="!text-xs !bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
+    (click)="$event.stopPropagation(); fileInput.click()"
+  />
+</div>
