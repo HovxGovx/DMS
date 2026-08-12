@@ -14,13 +14,15 @@
       </aside>
 
       <!-- Zone de contenu principale -->
-      <main class="flex-1 bg-white rounded-xl border border-prussian-blue-100 p-4 overflow-y-auto">
+      <main class="flex-1 bg-white rounded-xl border border-prussian-blue-100 p-0 overflow-y-auto">
         <router-outlet />
       </main>
 
       <!-- Panel droit : Filters -->
-      <aside class="w-65 shrink-0 bg-white rounded-xl border border-prussian-blue-100 p-4 overflow-y-auto">
-        <p class="text-sm text-prussian-blue-300">Filters (à venir)</p>
+
+      <!-- shell.component.html, remplace l'aside droit -->
+      <aside class="w-90 shrink-0 bg-white rounded-xl border border-prussian-blue-100 p-4 flex flex-col min-h-0">
+        <app-document-detail-panel [document]="selectedDocument" />
       </aside>
 
     </div>

@@ -1,0 +1,17 @@
+<div class="flex flex-col gap-3">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-lg bg-prussian-blue-50 flex items-center justify-center shrink-0">
+      <i class="{{ icon() }} {{ iconColor() }} text-lg"></i>
+    </div>
+    <div>
+      <div class="text-sm font-semibold text-prussian-blue-900 leading-tight">{{ name() }}</div>
+      <div class="text-xs text-prussian-blue-300 font-mono mt-0.5">{{ docId() }}</div>
+    </div>
+  </div>
+
+  <div class="flex gap-1.5 flex-wrap">
+    @for (tag of tags(); track tag.label) {
+      <p-tag [value]="tag.label" [severity]="tag.severity" styleClass="!text-xs !font-medium" />
+    }
+  </div>
+</div>

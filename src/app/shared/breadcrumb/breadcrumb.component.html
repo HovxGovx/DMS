@@ -1,0 +1,14 @@
+<div class="flex items-center gap-2 text-xs">
+  @for (crumb of segments(); track crumb; let last = $last) {
+    <span
+      class="cursor-pointer hover:text-prussian-blue-700 transition-colors"
+      [class.font-semibold]="last"
+      [class.text-gray-900]="last"
+      [class.text-gray-400]="!last"
+      (click)="segmentClick.emit(crumb)"
+    >{{ crumb }}</span>
+    @if (!last) {
+      <i class="pi pi-angle-right text-xs text-prussian-blue-300"></i>
+    }
+  }
+</div>

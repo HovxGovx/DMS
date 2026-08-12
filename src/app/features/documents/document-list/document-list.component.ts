@@ -1,114 +1,83 @@
 import { Component, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { MenuItem } from 'primeng/api';
-import { DocumentItem } from '../models/document-item.model';
+import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb.component';
+import { DocumentToolbarComponent } from '../document-toolbar/document-toolbar.component';
+import { DocumentFiltersComponent } from '../document-filters/document-filters.component';
+import { DocumentTableComponent } from '../document-table/document-table.component';
+import { DocumentRow, TagFilterOption } from '../document.model';
 
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [CommonModule, TableModule, TagModule, ButtonModule, CheckboxModule, BreadcrumbModule, FormsModule],
-  templateUrl: './document-list.component.html',
+  imports: [BreadcrumbComponent, DocumentToolbarComponent, DocumentTableComponent, DocumentFiltersComponent],
+  templateUrl: './document-list.component.html'
 })
 export class DocumentListComponent {
-  breadcrumbItems: MenuItem[] = [
-    { label: 'Corporate' },
-    { label: 'Departments' },
-    { label: 'Finance' },
-    { label: 'Invoices' },
+  breadcrumb = ['Corporate', 'Departments', 'Finance', 'Reports'];
+  viewMode = signal<'list' | 'grid'>('list');
+  activeTagFilters = signal<string[]>([]);
+
+  tagFilterOptions: TagFilterOption[] = [
+    { label: 'Verified', dotColor: 'bg-emerald-500', textColor: 'text-emerald-600', borderColor: 'border-emerald-300', bgActive: 'bg-emerald-50' },
+    { label: 'Pending', dotColor: 'bg-orange-500', textColor: 'text-orange-600', borderColor: 'border-orange-300', bgActive: 'bg-orange-50' },
+    { label: 'Contract', dotColor: 'bg-prussian-blue-500', textColor: 'text-prussian-blue-600', borderColor: 'border-prussian-blue-300', bgActive: 'bg-prussian-blue-50' }
   ];
-
-  selectedDocs = signal<DocumentItem[]>([]);
-
-  documents = signal<DocumentItem[]>([
+  documents = signal<DocumentRow[]>([
     {
       id: '1',
-      name: 'INV-2026-0042_Acme_Corp.pdf',
-      icon: 'pi-file-pdf',
+      name: 'FY2025_Annual_Report.pdf',
+      icon: 'pi pi-file-pdf',
       iconColor: 'text-red-500',
+      locked: true,
       tags: [
-        { label: 'Invoice', severity: 'invoice' },
-        { label: 'Verified', severity: 'verified' },
+        { label: 'Report', severity: 'secondary' },
+        { label: 'Verified', severity: 'success' },
+        { label: 'Confidential', severity: 'info' }
       ],
-      modifiedLabel: '2h ago',
-      sizeLabel: '184 KB',
+      modified: '6h ago',
+      modifiedDotColor: 'bg-prussian-blue-500',
+      size: '4.8 MB'
     },
     {
       id: '2',
-      name: 'Q4_Supplier_Invoices.xlsx',
-      icon: 'pi-file-excel',
-      iconColor: 'text-emerald-600',
+      name: 'Q4_Cashflow_Analysis.xlsx',
+      icon: 'pi pi-file-excel',
+      iconColor: 'text-green-600',
       tags: [
-        { label: 'Spreadsheet', severity: 'spreadsheet' },
-        { label: 'Verified', severity: 'verified' },
-        { label: 'Contract', severity: 'contract' },
+        { label: 'Report', severity: 'secondary' },
+        { label: 'Verified', severity: 'success' }
       ],
-      modifiedLabel: 'Yesterday',
-      sizeLabel: '1.4 MB',
+      modified: 'Yesterday',
+      modifiedDotColor: 'bg-prussian-blue-500',
+      size: '892 KB'
     },
     {
       id: '3',
-      name: 'Tax_Computation_Support.xlsx',
-      icon: 'pi-file-excel',
-      iconColor: 'text-emerald-600',
+      name: 'Board_Summary_Jan2026.docx',
+      icon: 'pi pi-file-word',
+      iconColor: 'text-blue-600',
       tags: [
-        { label: 'Spreadsheet', severity: 'spreadsheet' },
-        { label: 'Verified', severity: 'verified' },
-        { label: 'Confidential', severity: 'confidential' },
+        { label: 'Memo', severity: 'secondary' },
+        { label: 'Pending', severity: 'warn' }
       ],
-      modifiedLabel: '3 days ago',
-      sizeLabel: '482 KB',
-      restricted: true,
-    },
-    {
-      id: '4',
-      name: 'Payment_Receipt_1042.pdf',
-      icon: 'pi-file-pdf',
-      iconColor: 'text-red-500',
-      tags: [
-        { label: 'Receipt', severity: 'receipt' },
-        { label: 'Verified', severity: 'verified' },
-      ],
-      modifiedLabel: '4 days ago',
-      sizeLabel: '58 KB',
-    },
-    {
-      id: '5',
-      name: 'Vendor_Master_List.xlsx',
-      icon: 'pi-file-excel',
-      iconColor: 'text-emerald-600',
-      tags: [
-        { label: 'Master Data', severity: 'master-data' },
-        { label: 'Verified', severity: 'verified' },
-      ],
-      modifiedLabel: '1 wk ago',
-      sizeLabel: '2.1 MB',
-    },
+      modified: '2 days ago',
+      modifiedDotColor: 'bg-prussian-blue-200',
+      size: '142 KB'
+    }
   ]);
 
-  get verifiedCount(): number {
-    return this.documents().filter(d => d.tags.some(t => t.severity === 'verified')).length;
+  onBreadcrumbClick(segment: string) {
+    console.log('Navigate to:', segment);
   }
 
-  get restrictedCount(): number {
-    return this.documents().filter(d => d.restricted).length;
+  onSort() {
+    console.log('Sort clicked');
   }
 
-  tagClass(severity: string): string {
-    const map: Record<string, string> = {
-      invoice: 'bg-orange-50 text-orange-600',
-      spreadsheet: 'bg-blue-50 text-blue-600',
-      contract: 'bg-blue-50 text-blue-600',
-      confidential: 'bg-blue-50 text-blue-700',
-      receipt: 'bg-purple-50 text-purple-600',
-      'master-data': 'bg-blue-50 text-blue-700',
-      verified: 'bg-emerald-50 text-emerald-600',
-    };
-    return map[severity] ?? 'bg-prussian-blue-50 text-prussian-blue-500';
+  onNew() {
+    console.log('New clicked');
+  }
+
+  onDateClick() {
+    console.log('Date picker à ouvrir');
   }
 }

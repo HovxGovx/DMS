@@ -22,33 +22,32 @@ export class SidebarComponent {
     {
       key: 'corporate',
       label: 'Corporate',
-      icon: 'pi pi-folder',
+
       data: { count: 13 },
       expanded: true,
       children: [
         {
           key: 'departments',
           label: 'Departments',
-          icon: 'pi pi-folder',
+
           data: { count: 8 },
           expanded: true,
           children: [
             {
               key: 'finance',
               label: 'Finance',
-              icon: 'pi pi-folder',
+
               data: { count: 3 },
               expanded: true,
               children: [
-                { key: 'invoices', label: 'Invoices', icon: 'pi pi-folder', data: { count: 8 } },
-                { key: 'reports', label: 'Reports', icon: 'pi pi-folder', data: { count: 3, active: true } },
-                { key: 'budgets', label: 'Budgets', icon: 'pi pi-folder', data: { count: 2 } }
+                { key: 'invoices', label: 'Invoices', data: { count: 8 } },
+                { key: 'reports', label: 'Reports', data: { count: 3, active: true } },
+                { key: 'budgets', label: 'Budgets', data: { count: 2 } }
               ]
             },
             {
               key: 'legal',
               label: 'Legal',
-              icon: 'pi pi-folder',
               data: { count: 2 },
               leaf: false,
               children: []
@@ -56,7 +55,6 @@ export class SidebarComponent {
             {
               key: 'hr',
               label: 'HR',
-              icon: 'pi pi-folder',
               data: { count: 2 },
               leaf: false,
               children: []
@@ -64,7 +62,6 @@ export class SidebarComponent {
             {
               key: 'operations',
               label: 'Operations',
-              icon: 'pi pi-folder',
               data: { count: 1 },
               leaf: true
             }
@@ -73,7 +70,6 @@ export class SidebarComponent {
         {
           key: 'clients',
           label: 'Clients',
-          icon: 'pi pi-folder',
           data: { count: 3 },
           leaf: false,
           children: []
@@ -81,12 +77,11 @@ export class SidebarComponent {
         {
           key: 'projects',
           label: 'Projects',
-          icon: 'pi pi-folder',
           data: { count: 2 },
           expanded: true,
           children: [
-            { key: 'atlas', label: 'Atlas Migration', icon: 'pi pi-folder', data: { count: 2 } },
-            { key: 'phoenix', label: 'Phoenix Launch', icon: 'pi pi-folder', data: { count: 1 } }
+            { key: 'atlas', label: 'Atlas Migration', data: { count: 2 } },
+            { key: 'phoenix', label: 'Phoenix Launch', data: { count: 1 } }
           ]
         }
       ]
