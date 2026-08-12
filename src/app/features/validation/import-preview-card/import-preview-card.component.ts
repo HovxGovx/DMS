@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { PendingImport } from '../validation.model';
 
 @Component({
   selector: 'app-import-preview-card',
-  imports: [],
-  templateUrl: './import-preview-card.component.html',
-  styleUrl: './import-preview-card.component.css'
+  standalone: true,
+  templateUrl: './import-preview-card.component.html'
 })
 export class ImportPreviewCardComponent {
-
+  document = input.required<PendingImport>();
 }

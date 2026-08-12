@@ -1,0 +1,19 @@
+<div class="flex items-center justify-between pt-4 mt-4 border-t border-prussian-blue-100">
+  <button
+    class="flex items-center gap-1.5 text-sm text-prussian-blue-400 hover:text-prussian-blue-700 transition-colors"
+    (click)="cancelClick.emit()"
+  >
+    <i class="pi pi-times-circle text-sm"></i>
+    Annuler
+  </button>
+
+  <div class="flex items-center gap-4">
+    <span class="text-xs text-prussian-blue-300">{{ remainingCount() }} fichiers restants en file</span>
+    <p-button
+      label="Valider"
+      icon="pi pi-check-circle"
+      styleClass="!bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
+      (click)="validateClick.emit()"
+    />
+  </div>
+</div>

@@ -1,17 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { IngestPanelComponent } from '../../features/upload/ingest-panel/ingest-panel.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { DocumentDetailPanelComponent } from '../../features/documents/document-detail/document-detail-panel/document-detail-panel.component';
 import { DocumentDetail } from '../../features/documents/document.model';
+import { ValidationViewComponent } from '../../features/validation/validation-view/validation-view.component';
+
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, TopbarComponent, IngestPanelComponent, SidebarComponent, DocumentDetailPanelComponent],
+  imports: [
+    RouterOutlet, TopbarComponent, IngestPanelComponent,
+    SidebarComponent, DocumentDetailPanelComponent, ValidationViewComponent
+  ],
   templateUrl: './shell.component.html'
 })
 export class ShellComponent {
+  currentView = signal<'documents' | 'validation'>('documents');
   selectedDocument: DocumentDetail = {
     name: 'Q4_Supplier_Invoices.xlsx',
     docId: 'DOC-2025-0987',

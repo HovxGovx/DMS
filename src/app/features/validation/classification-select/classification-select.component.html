@@ -1,0 +1,17 @@
+<div>
+  <label class="text-xs font-semibold text-prussian-blue-400 tracking-wide mb-2 block">
+    {{ label() | uppercase }}
+  </label>
+
+  <div class="relative">
+    <p-dropdown
+      [options]="options()"
+      [(ngModel)]="value"
+      styleClass="!w-full !border-prussian-blue-200"
+      panelStyleClass="!text-sm"
+    />
+    <div class="absolute right-9 top-1/2 -translate-y-1/2 pointer-events-none">
+      <app-confidence-badge [value]="confidence()" />
+    </div>
+  </div>
+</div>
