@@ -1,0 +1,24 @@
+<div class=" p-1 h-screen flex items-center justify-center bg-prussian-blue-50/40 ">
+  <div
+    class="p-1 auth-container relative w-full max-w-5xl h-screen rounded-2xl overflow-hidden shadow-xl bg-white"
+    [class.right-panel-active]="mode() === 'signup'"
+  >
+
+    <div class="form-panel sign-in-panel">
+      <app-login-form />
+    </div>
+
+    <div class="form-panel sign-up-panel">
+      <app-signup-form />
+    </div>
+
+    <div class="overlay-container">
+      <app-auth-overlay
+        [mode]="mode()"
+        (switchToSignup)="switchToSignup()"
+        (switchToSignin)="switchToSignin()"
+      />
+    </div>
+
+  </div>
+</div>

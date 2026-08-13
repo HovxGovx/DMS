@@ -18,6 +18,10 @@ import { ValidationViewComponent } from '../../features/validation/validation-vi
 })
 export class ShellComponent {
   currentView = signal<'documents' | 'validation'>('documents');
+
+  toggleView() {
+    this.currentView.update(v => v === 'documents' ? 'validation' : 'documents');
+  }
   selectedDocument: DocumentDetail = {
     name: 'Q4_Supplier_Invoices.xlsx',
     docId: 'DOC-2025-0987',
