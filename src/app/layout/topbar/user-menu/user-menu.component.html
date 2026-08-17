@@ -1,0 +1,45 @@
+<div class="relative">
+
+  <div class="flex items-center gap-2 cursor-pointer select-none" (click)="toggle()">
+    <div class="w-8 h-8 rounded-full bg-prussian-blue-700 text-white flex items-center justify-center text-xs font-semibold shrink-0">
+      {{ userInitials }}
+    </div>
+    <div class="leading-tight">
+      <div class="text-sm font-medium text-prussian-blue-900">{{ userName }}</div>
+      <div class="text-xs text-prussian-blue-400">{{ userRole }}</div>
+    </div>
+    <i
+      class="pi pi-chevron-down text-xs text-prussian-blue-300 ml-1 transition-transform duration-200"
+      [class.rotate-180]="isOpen()"
+    ></i>
+  </div>
+
+  <div
+    class="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl border border-prussian-blue-100 shadow-lg py-1.5 origin-top-right transition-all duration-150 z-50"
+    [class.opacity-0]="!isOpen()"
+    [class.scale-95]="!isOpen()"
+    [class.pointer-events-none]="!isOpen()"
+    [class.opacity-100]="isOpen()"
+    [class.scale-100]="isOpen()"
+  >
+    <!-- <button class="w-full text-left px-3.5 py-2 text-sm text-prussian-blue-700 hover:bg-prussian-blue-50 flex items-center gap-2.5 transition-colors">
+      <i class="pi pi-user text-xs text-prussian-blue-400"></i>
+      Mon profil
+    </button>
+    <button class="w-full text-left px-3.5 py-2 text-sm text-prussian-blue-700 hover:bg-prussian-blue-50 flex items-center gap-2.5 transition-colors">
+      <i class="pi pi-cog text-xs text-prussian-blue-400"></i>
+      Paramètres
+    </button> -->
+
+    <hr class="my-1.5 border-prussian-blue-100" />
+
+    <button
+      class="w-full text-left px-3.5 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2.5 transition-colors"
+      (click)="logout()"
+    >
+      <i class="pi pi-sign-out text-xs"></i>
+      Déconnexion
+    </button>
+  </div>
+
+</div>

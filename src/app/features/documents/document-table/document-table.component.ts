@@ -1,7 +1,7 @@
-import { Component, input, model } from '@angular/core';
+import { Component, input, model, output } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { DocumentRow } from '../document.model';
+import { DocumentItem } from '../document.model';
 
 @Component({
   selector: 'app-document-table',
@@ -10,6 +10,7 @@ import { DocumentRow } from '../document.model';
   templateUrl: './document-table.component.html'
 })
 export class DocumentTableComponent {
-  documents = input.required<DocumentRow[]>();
-  selectedDocs = model<DocumentRow[]>([]);
+  documents = input.required<DocumentItem[]>();
+  selectedDocs = model<DocumentItem[]>([]);
+  rowClick = output<string>();
 }

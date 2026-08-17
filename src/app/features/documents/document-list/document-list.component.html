@@ -1,15 +1,14 @@
 <div class="flex flex-col h-full min-h-0">
-  <div
-    class="w-full flex justify-center shrink-0 pl-2 mt-1 pt-0.5 pb-3  border-b border-prussian-blue-100">
+  <div class=" flex  shrink-0 p-1.5 border-b border-prussian-blue-100">
     <app-document-filters
       [tagOptions]="tagFilterOptions"
       [(activeTags)]="activeTagFilters"
       (dateClick)="onDateClick()" />
   </div>
+
   <div
-    class="w-full shrink-0 flex items-center justify-between pl-2  p-2.5  border-b border-prussian-blue-100">
-    <app-breadcrumb [segments]="breadcrumb"
-      (segmentClick)="onBreadcrumbClick($event)" />
+    class="shrink-0 flex items-center justify-between p-3.5 border-b border-prussian-blue-100">
+    <app-breadcrumb [segments]="state.currentPath()" />
     <app-document-toolbar
       [viewMode]="viewMode()"
       (viewModeChange)="viewMode.set($event)"
@@ -18,12 +17,14 @@
   </div>
 
   <div class="flex-1 min-h-0">
-    <app-document-table [documents]="documents()" />
+    <app-document-table
+      [documents]="state.currentDocuments()"
+      (rowClick)="onDocClick($event)" />
   </div>
-  <!-- Footer fixe -->
   <div
-    class="shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-300">
-    <span> C'est quoi?</span>
-    <span class="font-mono">Ceci n'est qu'un test de footer</span>
-  </div>
+  class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
+  <span>Ceci est le footer</span>
+  <span class="font-mono">Fooooteeer</span>
+</div>
+
 </div>

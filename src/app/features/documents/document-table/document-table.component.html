@@ -1,16 +1,19 @@
 <div class="h-full !w-full overflow-y-auto sidebar-tree-scroll">
-  <p-table [value]="documents()" [(selection)]="selectedDocs" dataKey="id" styleClass="!text-sm">
+  <p-table [value]="documents()" [(selection)]="selectedDocs" dataKey="id" styleClass="!text-xs">
     <ng-template pTemplate="header" class="!pb-1">
-      <tr class="pb-1 bg-transparent">
-        <th class="!text-xs !text-gray-400 !font-semibold !tracking-wide ">NAME</th>
-        <th class="!text-xs !text-gray-400 !font-semibold !tracking-wide">CATEGORY / TAGS</th>
-        <th class="!text-xs !text-gray-400 !font-semibold !tracking-wide">MODIFIED</th>
-        <th class="!text-xs !text-gray-400 !font-semibold !tracking-wide">ACTIONS</th>
+      <tr class="p-0">
+        <th class="!text-xs   !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom Fichier</th>
+        <th class="!text-xs  !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Tags</th>
+        <th class="!text-xs  !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Modification</th>
+        <th class="!text-xs  !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Action</th>
       </tr>
     </ng-template>
 
     <ng-template pTemplate="body" let-doc>
-      <tr class="hover:bg-prussian-blue-50/50 transition-colors duration-150">
+      <tr
+        class="hover:bg-prussian-blue-50/50 transition-colors duration-150 cursor-pointer"
+        (click)="rowClick.emit(doc.id)"
+      >
 
         <td>
           <div class="flex items-center gap-2">
@@ -23,19 +26,19 @@
         </td>
         <td>
           <div class="flex gap-1.5 flex-wrap">
+            <p-tag [value]="doc.category" [severity]="doc.categorySeverity" styleClass="!text-xs !font-medium" />
             @for (tag of doc.tags; track tag.label) {
               <p-tag [value]="tag.label" [severity]="tag.severity" styleClass="!text-xs !font-medium" />
             }
           </div>
         </td>
         <td>
-          <div class="flex items-center gap-1.5 text-prussian-blue-400">
+          <div class="flex items-center gap-1.5 text-gray-400">
             <span class="w-1.5 h-1.5 rounded-full {{ doc.modifiedDotColor }}"></span>
             {{ doc.modified }}
           </div>
         </td>
-
-        <td>
+        <td (click)="$event.stopPropagation()">
           <button class="w-7 h-7 rounded-md flex items-center justify-center text-prussian-blue-300 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95">
             <i class="pi pi-ellipsis-v text-xs"></i>
           </button>

@@ -27,26 +27,26 @@
 
     <div>
       <div class="text-[10px] text-prussian-blue-900">
-        <span class="font-semibold text-xs">Drop files to ingest</span>
-        <span class="text-gray-400 ml-1">or click to browse — PDF, DOCX, XLSX, TIFF, EML · Max 250MB</span>
+        <span class="font-semibold text-xs">Deposez les fichiers</span>
+        <span class="text-gray-400 ml-1">ou clickez pour parcourrir — PDF, DOCX, XLSX, TIFF, EML </span>
       </div>
       <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-400">
-        <span class="flex items-center gap-1">
+        <!-- <span class="flex items-center gap-1">
           <i class="pi pi-eye text-[10px]"></i> OCR enabled
+        </span> -->
+        <!-- <span class="flex items-center gap-1">
+          <i class="pi pi-sparkles text-[10px]"></i> Classification
         </span>
         <span class="flex items-center gap-1">
-          <i class="pi pi-sparkles text-[10px]"></i> Auto-classification
-        </span>
-        <span class="flex items-center gap-1">
-          <i class="pi pi-lock text-[10px]"></i> AES-256 at rest
-        </span>
+          <i class="pi pi-lock text-[10px]"></i> Securiser
+        </span> -->
       </div>
     </div>
   </div>
 
   <p-button
-    label="Ingest"
-    icon="pi pi-plus"
+    label="Parcourrir"
+    icon="pi pi-folder-open"
     styleClass="!text-xs !bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
     (click)="$event.stopPropagation(); fileInput.click()"
   />

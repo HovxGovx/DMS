@@ -1,90 +1,24 @@
-import { Component, signal } from '@angular/core';
-import { TreeModule } from 'primeng/tree';
-import { TreeNode } from 'primeng/api';
+import { Component, inject } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
+import { TreeNodeComponent } from './tree-node/tree-node.component';
+import { HIERARCHY_TREE } from '../../features/documents/hierarchy.model';
+import { DocumentStateService } from '../../features/documents/document-state.service';
 import { IconField } from "primeng/iconfield";
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [TreeModule, InputTextModule, IconField],
+  imports: [InputTextModule, TreeNodeComponent, IconField],
   templateUrl: './sidebar.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0 h-full'
   }
 })
 export class SidebarComponent {
+  state = inject(DocumentStateService);
+  hierarchyTree = HIERARCHY_TREE;
+
   totalDocs = '2,847 docs';
   totalSize = '14.2 GB';
   version = 'v3.2.1';
-
-  nodes = signal<TreeNode[]>([
-    {
-      key: 'corporate',
-      label: 'Corporate',
-
-      data: { count: 13 },
-      expanded: true,
-      children: [
-        {
-          key: 'departments',
-          label: 'Departments',
-
-          data: { count: 8 },
-          expanded: true,
-          children: [
-            {
-              key: 'finance',
-              label: 'Finance',
-
-              data: { count: 3 },
-              expanded: true,
-              children: [
-                { key: 'invoices', label: 'Invoices', data: { count: 8 } },
-                { key: 'reports', label: 'Reports', data: { count: 3, active: true } },
-                { key: 'budgets', label: 'Budgets', data: { count: 2 } }
-              ]
-            },
-            {
-              key: 'legal',
-              label: 'Legal',
-              data: { count: 2 },
-              leaf: false,
-              children: []
-            },
-            {
-              key: 'hr',
-              label: 'HR',
-              data: { count: 2 },
-              leaf: false,
-              children: []
-            },
-            {
-              key: 'operations',
-              label: 'Operations',
-              data: { count: 1 },
-              leaf: true
-            }
-          ]
-        },
-        {
-          key: 'clients',
-          label: 'Clients',
-          data: { count: 3 },
-          leaf: false,
-          children: []
-        },
-        {
-          key: 'projects',
-          label: 'Projects',
-          data: { count: 2 },
-          expanded: true,
-          children: [
-            { key: 'atlas', label: 'Atlas Migration', data: { count: 2 } },
-            { key: 'phoenix', label: 'Phoenix Launch', data: { count: 1 } }
-          ]
-        }
-      ]
-    }
-  ]);
 }

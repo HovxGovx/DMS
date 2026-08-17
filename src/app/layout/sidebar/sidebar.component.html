@@ -1,18 +1,14 @@
-<!-- Header fixe -->
-<div class="shrink-0 p-3  border-b border-prussian-blue-100">
+<div class="w-full shrink-0 p-3  border-b border-prussian-blue-100">
   <div class="flex items-center justify-between mb-3">
-    <span class="text-xs  text-gray-500 tracking-wide font-bold">HIERARCHY
-      EXPLORER</span>
+    <span
+      class="text-xs font-semibold text-gray-400 tracking-wide">EXPLORATEUR</span>
     <div class="flex items-center gap-2 text-gray-300">
       <i
-        class="pi pi-plus-circle text-xs cursor-pointer hover:text-prussian-blue-500"></i>
-      <i
-        class="pi pi-folder-plus text-xs cursor-pointer hover:text-prussian-blue-500"></i>
+        class="pi pi-folder-plus text-xs  hover:text-prussian-blue-600"></i>
     </div>
   </div>
   <p-iconfield>
-    <i
-      class="pi pi-block-quote absolute left-3 top-1/2 -translate-y-1/2 text-prussian-blue-300 text-sm"></i>
+    <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-black text-xs text-bold"></i>
     <input
       pInputText
       type="text"
@@ -22,46 +18,15 @@
 
 </div>
 
-<!-- Tree : seule zone qui scroll -->
 <div
-  class="hierarchy-tree flex-1 h-full min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll pr-1 !w-full bg-prussian-blue-50/30">
-  <p-tree [value]="nodes()" styleClass="!border-none !p-0 !bg-transparent">
-    <ng-template let-node pTemplate="default">
-      <div
-        class="flex items-center justify-between w-full pr-2 rounded-md transition-colors duration-150 cursor-pointer"
-        [class.bg-prussian-blue-100]="node.data?.active"
-        [class.border-l-[3px]]="node.data?.active"
-        [class.border-prussian-blue-600]="node.data?.active"
-        [class.pl-1]="node.data?.active"
-        [class.hover:bg-prussian-blue-50]="!node.data?.active">
-        <div class="flex items-center gap-2 py-1.5">
-          <i class="pi pi-folder text-gray-500"
-            [class.font-bold]="node.data?.active"
-            [class.text-prussian-blue-900]="!node.data?.active"></i>
-          <span
-            class="text-sm font-bold text-gray-500"
-            [class.font-bold]="node.data?.active"
-            [class.text-gray-900]="node.data?.active"
-            [class.text-gray-700]="!node.data?.active">
-            {{ node.label }}
-          </span>
-        </div>
-        <!-- <span
-          class="text-[10px] leading-none -ml-0.5 mb-2.5 px-1 py-0.5 rounded-2xl font-semibold"
-          [class.bg-prussian-blue-600]="node.data?.active"
-          [class.text-white]="node.data?.active"
-          [class.bg-prussian-blue-100]="!node.data?.active"
-          [class.text-prussian-blue-600]="!node.data?.active">
-          {{ node.data?.count }}
-        </span> -->
-      </div>
-    </ng-template>
-  </p-tree>
+  class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll pr-1">
+  @for (node of hierarchyTree; track node.key) {
+  <app-tree-node [node]="node" />
+  }
 </div>
 
-<!-- Footer fixe -->
 <div
-  class="shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-300">
+  class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
   <span>{{ totalDocs }} · {{ totalSize }}</span>
   <span class="font-mono">{{ version }}</span>
 </div>
