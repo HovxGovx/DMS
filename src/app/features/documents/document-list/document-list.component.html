@@ -22,9 +22,11 @@
     <app-document-table
       [documents]="filteredDocuments()"
       (rowClick)="onDocClick($event)"
+      (openFile)="onOpenFile($event)"
+      (editMetadata)="onEditMetadata($event)"
     />
   </div>
-  
+
   <div
   class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
   <span>Ceci est le footer</span>

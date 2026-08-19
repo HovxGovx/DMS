@@ -3,16 +3,7 @@
   <app-topbar />
 
   <div class="p-2.5 pb-0.5 flex flex-col gap-3 flex-1 min-h-0">
-    <div class="flex items-center gap-3">
-      <div class="flex-1">
-        <IngestPanel />
-      </div>
-      <!-- BOUTON TEMPORAIRE DE TEST — à retirer une fois les routes en place -->
-      <button
-        class="shrink-0 flex items-center gap-2 px-4 py-3 rounded-xl bg-prussian-blue-900 text-white text-xs font-medium hover:bg-prussian-blue-800 transition-all duration-150 hover:scale-105 active:scale-95"
-        (click)="toggleView()">{{ currentView() }}
-      </button>
-    </div>
+
 
     @switch (viewState.currentView()) {
     @case ('documents') {
@@ -22,6 +13,8 @@
       <!-- Sidebar gauche -->
       <aside
         class="w-65 shrink-0 bg-white rounded-xl border border-prussian-blue-100 flex flex-col min-h-0">
+<IngestPanel />
+
         <app-sidebar />
       </aside>
 
@@ -33,6 +26,7 @@
       <!-- shell.component.html, aside droit -->
       <aside
         class="w-70 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
+        <IngestPanel />
         @if (selectedDetail(); as detail) {
         <app-document-detail-panel [document]="detail" />
         } @else {

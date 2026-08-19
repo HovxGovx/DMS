@@ -1,5 +1,5 @@
 <div
-  class=" w-5/8  group flex items-center justify-between gap-3 p-2  rounded-xl border-2 border-dashed transition-colors  duration-150 cursor-pointer "
+  class=" w-full  group flex items-center justify-between gap-3 p-2  rounded-xl border-2 border-dashed transition-colors  duration-150 cursor-pointer "
   [class.border-prussian-blue-200]="!isDragOver()"
   [class.bg-white]="!isDragOver()"
   [class.hover:border-prussian-blue-400]="!isDragOver()"
@@ -44,10 +44,10 @@
     </div>
   </div>
 
-  <p-button
+  <!-- <p-button
     label="Parcourrir"
     icon="pi pi-folder-open"
     styleClass="!text-xs !bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
     (click)="$event.stopPropagation(); fileInput.click()"
-  />
+  /> -->
 </div>

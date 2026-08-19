@@ -14,7 +14,11 @@ import { DocumentItem } from '../document.model';
 
 })
 export class DocumentTableComponent {
+
   documents = input.required<DocumentItem[]>();
   selectedDocs = model<DocumentItem[]>([]);
+
   rowClick = output<string>();
+  openFile = output<string>();
+  editMetadata = output<string>();
 }

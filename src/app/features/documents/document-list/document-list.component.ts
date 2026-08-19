@@ -54,4 +54,13 @@ export class DocumentListComponent {
   onDateClick() {
     console.log('Date picker à ouvrir');
   }
+  onOpenFile(id: string) {
+    console.log('Ouvrir le fichier :', id);
+    // À brancher plus tard sur un viewer de document (pas encore développé)
+  }
+
+  onEditMetadata(id: string) {
+    console.log('Modifier les métadonnées :', id);
+    // À brancher plus tard sur un formulaire d'édition (pas encore développé)
+  }
 }

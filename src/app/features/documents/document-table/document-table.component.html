@@ -46,9 +46,22 @@
           </div>
         </td>
         <td (click)="$event.stopPropagation()">
-          <button class="w-7 h-7 rounded-md flex items-center justify-center text-prussian-blue-300 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95">
-            <i class="pi pi-ellipsis-v text-xs"></i>
-          </button>
+          <div class="flex items-center gap-1">
+            <button
+              class="w-7 h-7 rounded-md flex items-center justify-center text-prussian-blue-300 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+              title="Ouvrir le fichier"
+              (click)="openFile.emit(doc.id)"
+            >
+              <i class="pi pi-eye text-xs"></i>
+            </button>
+            <button
+              class="w-7 h-7 rounded-md flex items-center justify-center text-prussian-blue-300 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+              title="Modifier les métadonnées"
+              (click)="editMetadata.emit(doc.id)"
+            >
+              <i class="pi pi-pencil text-xs"></i>
+            </button>
+          </div>
         </td>
       </tr>
     </ng-template>

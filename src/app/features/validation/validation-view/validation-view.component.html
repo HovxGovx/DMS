@@ -3,6 +3,8 @@
   <app-import-queue-list />
 </aside>
 
+
+
 <!-- Colonne droite : formulaire de validation -->
 <main class="flex-1 bg-white rounded-xl border border-prussian-blue-100 p-6 flex flex-col min-h-0">
 
@@ -41,17 +43,16 @@
       <app-metadata-form [(fields)]="doc.metadataFields" />
 
     </div>
-
     <app-validation-footer
-      [remainingCount]="state.remainingCount()"
-      (cancelClick)="onCancel()"
-      (validateClick)="onValidate()"
-    />
+[remainingCount]="state.remainingCount()"
+(cancelClick)="onCancel()"
+(validateClick)="onValidate()"
+/>
+
 
   } @else {
     <div class="flex-1 flex items-center justify-center text-prussian-blue-300 text-sm">
-      Tous les imports ont été traités 
+      Tous les imports ont été traités
     </div>
   }
-
 </main>
