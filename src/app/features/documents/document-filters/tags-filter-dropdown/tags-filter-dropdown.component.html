@@ -1,0 +1,62 @@
+<div class="relative">
+
+  <button
+    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 hover:scale-105 active:scale-95"
+    [class.border-prussian-blue-200]="activeTags().length === 0"
+    [class.text-prussian-blue-700]="activeTags().length === 0"
+    [class.hover:bg-prussian-blue-50]="activeTags().length === 0"
+    [class.border-prussian-blue-500]="activeTags().length > 0"
+    [class.bg-prussian-blue-50]="activeTags().length > 0"
+    [class.text-prussian-blue-700]="activeTags().length > 0"
+    (click)="toggle()"
+  >
+    <i class="pi pi-tag text-[11px] text-prussian-blue-400"></i>
+    {{ displayLabel() }}
+    <i class="pi pi-angle-down text-[10px] text-prussian-blue-400"></i>
+  </button>
+
+  <div
+    class="absolute left-0 top-full mt-2 w-56 bg-white rounded-xl border border-prussian-blue-100 shadow-lg py-2 origin-top-left transition-all duration-150 z-50"
+    [class.opacity-0]="!isOpen()"
+    [class.scale-95]="!isOpen()"
+    [class.pointer-events-none]="!isOpen()"
+    [class.opacity-100]="isOpen()"
+    [class.scale-100]="isOpen()"
+  >
+    <div class="flex items-center justify-between px-3 pb-2 mb-1 border-b border-prussian-blue-100">
+      <span class="text-[10px] font-semibold text-prussian-blue-300 tracking-wide">FILTRER PAR TAG</span>
+      @if (activeTags().length > 0) {
+        <button
+          class="text-[10px] text-prussian-blue-400 hover:text-prussian-blue-700 transition-colors"
+          (click)="clearAll()"
+        >
+          Effacer
+        </button>
+      }
+    </div>
+
+    @for (tag of tagOptions(); track tag.label) {
+      <button
+        class="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-prussian-blue-700 hover:bg-prussian-blue-50 transition-colors"
+        (click)="toggleTag(tag.label)"
+      >
+        <div
+          class="w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors"
+          [class.bg-prussian-blue-700]="isActive(tag.label)"
+          [class.border-prussian-blue-700]="isActive(tag.label)"
+          [class.border-prussian-blue-200]="!isActive(tag.label)"
+        >
+          @if (isActive(tag.label)) {
+            <i class="pi pi-check text-white text-[9px]"></i>
+          }
+        </div>
+        <span class="w-1.5 h-1.5 rounded-full {{ tag.dotColor }}"></span>
+        {{ tag.label }}
+      </button>
+    } @empty {
+      <p class="px-3 py-2 text-xs text-prussian-blue-300">Aucun tag disponible</p>
+    }
+
+  </div>
+
+</div>

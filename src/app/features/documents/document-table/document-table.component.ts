@@ -7,7 +7,11 @@ import { DocumentItem } from '../document.model';
   selector: 'app-document-table',
   standalone: true,
   imports: [TableModule, TagModule],
-  templateUrl: './document-table.component.html'
+  templateUrl: './document-table.component.html',
+  host: {
+    class: 'flex flex-col h-full min-h-0'
+  }
+
 })
 export class DocumentTableComponent {
   documents = input.required<DocumentItem[]>();

@@ -1,5 +1,12 @@
-<div class="h-full !w-full overflow-y-auto sidebar-tree-scroll">
-  <p-table [value]="documents()" [(selection)]="selectedDocs" dataKey="id" styleClass="!text-xs">
+
+  <p-table
+  [value]="documents()"
+  [(selection)]="selectedDocs"
+  [scrollable]="true"
+  scrollHeight="flex"
+  dataKey="id"
+  class="flex-1 min-h-0 flex flex-col"
+  styleClass="!text-xs h-full doc-table-scroll">
     <ng-template pTemplate="header" class="!pb-1">
       <tr class="p-0">
         <th class="!text-xs   !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom Fichier</th>
@@ -46,4 +53,3 @@
       </tr>
     </ng-template>
   </p-table>
-</div>

@@ -7,6 +7,7 @@ import { DocumentDetailPanelComponent } from '../../features/documents/document-
 import { ValidationViewComponent } from '../../features/validation/validation-view/validation-view.component';
 import { DocumentStateService } from '../../features/documents/document-state.service';
 import { toDocumentDetail } from '../../features/documents/document.model';
+import { ViewStateService } from '../../core/view-state.service';
 
 @Component({
   selector: 'app-shell',
@@ -20,6 +21,7 @@ import { toDocumentDetail } from '../../features/documents/document.model';
 export class ShellComponent {
   currentView = signal<'documents' | 'validation'>('documents');
   documentState = inject(DocumentStateService);
+  viewState = inject(ViewStateService);
 
   selectedDetail = computed(() => {
     const doc = this.documentState.selectedDocument();

@@ -1,12 +1,16 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input, model, output, signal } from '@angular/core';
 import { TagFilterOption } from '../document.model';
+import { DateRangeFilterComponent } from './date-range-filter/date-range-filter.component';
+import { TagsFilterDropdownComponent } from './tags-filter-dropdown/tags-filter-dropdown.component';
 
 @Component({
   selector: 'app-document-filters',
+  imports: [DateRangeFilterComponent, TagsFilterDropdownComponent],
   standalone: true,
   templateUrl: './document-filters.component.html'
 })
 export class DocumentFiltersComponent {
+  dateRange = signal<Date[] | null>(null);
   dateLabel = input<string>('30 jours');
   tagOptions = input.required<TagFilterOption[]>();
 

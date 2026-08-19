@@ -65,8 +65,23 @@ export function toDocumentDetail(item: DocumentItem): DocumentDetail {
     businessMetadata: [
       { label: 'Département', value: item.department },
       { label: "Date d'expiration", value: item.expiry },
-      
+
     ],
     aiSummary: item.aiSummary
   };
 }
+export interface TagFilterOption {
+  label: string;
+  dotColor: string;
+  textColor: string;
+  borderColor: string;
+  bgActive: string;
+}
+
+export const SEVERITY_FILTER_COLORS: Record<DocTag['severity'], Omit<TagFilterOption, 'label'>> = {
+  success: { dotColor: 'bg-emerald-500', textColor: 'text-emerald-600', borderColor: 'border-emerald-300', bgActive: 'bg-emerald-50' },
+  warn: { dotColor: 'bg-orange-500', textColor: 'text-orange-600', borderColor: 'border-orange-300', bgActive: 'bg-orange-50' },
+  info: { dotColor: 'bg-blue-500', textColor: 'text-blue-600', borderColor: 'border-blue-300', bgActive: 'bg-blue-50' },
+  secondary: { dotColor: 'bg-prussian-blue-500', textColor: 'text-prussian-blue-600', borderColor: 'border-prussian-blue-300', bgActive: 'bg-prussian-blue-50' },
+  danger: { dotColor: 'bg-red-500', textColor: 'text-red-600', borderColor: 'border-red-300', bgActive: 'bg-red-50' }
+};

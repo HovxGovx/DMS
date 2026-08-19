@@ -1,0 +1,19 @@
+/* Scrollbar custom pour le tableau de documents (mode PrimeNG scrollable) */
+.doc-table-scroll .p-datatable-table-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-prussian-blue-200) transparent;
+}
+.doc-table-scroll .p-datatable-table-container::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.doc-table-scroll .p-datatable-table-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.doc-table-scroll .p-datatable-table-container::-webkit-scrollbar-thumb {
+  background-color: var(--color-prussian-blue-200);
+  border-radius: 999px;
+}
+.doc-table-scroll .p-datatable-table-container::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-prussian-blue-400);
+}

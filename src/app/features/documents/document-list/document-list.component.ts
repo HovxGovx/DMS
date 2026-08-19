@@ -1,16 +1,18 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed, effect } from '@angular/core';
 import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb.component';
 import { DocumentToolbarComponent } from '../document-toolbar/document-toolbar.component';
 import { DocumentFiltersComponent } from '../document-filters/document-filters.component';
 import { DocumentTableComponent } from '../document-table/document-table.component';
 import { DocumentStateService } from '../document-state.service';
-import { TagFilterOption } from '../document.model';
 
 @Component({
   selector: 'app-document-list',
   standalone: true,
   imports: [BreadcrumbComponent, DocumentToolbarComponent, DocumentFiltersComponent, DocumentTableComponent],
-  templateUrl: './document-list.component.html'
+  templateUrl: './document-list.component.html',
+  host: {
+    class: 'flex flex-col h-full min-h-0'
+  }
 })
 export class DocumentListComponent {
   state = inject(DocumentStateService);
@@ -18,11 +20,24 @@ export class DocumentListComponent {
   viewMode = signal<'list' | 'grid'>('list');
   activeTagFilters = signal<string[]>([]);
 
-  tagFilterOptions: TagFilterOption[] = [
-    { label: 'Verified', dotColor: 'bg-emerald-500', textColor: 'text-emerald-600', borderColor: 'border-emerald-300', bgActive: 'bg-emerald-50' },
-    { label: 'Pending', dotColor: 'bg-orange-500', textColor: 'text-orange-600', borderColor: 'border-orange-300', bgActive: 'bg-orange-50' },
-    { label: 'Contract', dotColor: 'bg-prussian-blue-500', textColor: 'text-prussian-blue-600', borderColor: 'border-prussian-blue-300', bgActive: 'bg-prussian-blue-50' }
-  ];
+  // Documents du dossier courant, filtrés par les tags actifs
+  filteredDocuments = computed(() => {
+    const active = this.activeTagFilters();
+    const docs = this.state.currentDocuments();
+
+    if (active.length === 0) return docs;
+
+    return docs.filter(doc => doc.tags.some(t => active.includes(t.label)));
+  });
+
+  constructor() {
+    // Réinitialise les tags actifs quand on change de dossier —
+    // évite de garder un filtre sur un tag qui n'existe plus dans le nouveau dossier
+    effect(() => {
+      this.state.currentFilesKey();
+      this.activeTagFilters.set([]);
+    });
+  }
 
   onDocClick(id: string) {
     this.state.selectDocument(id);
