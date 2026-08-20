@@ -9,6 +9,7 @@ import { TagsEditorComponent } from '../tags-editor/tags-editor.component';
 import { PathSelectorComponent } from '../path-selector/path-selector.component';
 import { MetadataFormComponent } from '../metadata-form/metadata-form.component';
 import { ValidationFooterComponent } from '../validation-footer/validation-footer.component';
+import { IngestPanelComponent } from '../../upload/ingest-panel/ingest-panel.component';
 
 @Component({
   selector: 'app-validation-view',
@@ -21,7 +22,8 @@ import { ValidationFooterComponent } from '../validation-footer/validation-foote
     TagsEditorComponent,
     PathSelectorComponent,
     MetadataFormComponent,
-    ValidationFooterComponent
+    ValidationFooterComponent,
+    IngestPanelComponent
   ],
   templateUrl: './validation-view.component.html',
   host: {
