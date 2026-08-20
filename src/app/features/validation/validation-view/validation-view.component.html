@@ -1,58 +1,55 @@
 <!-- Colonne gauche : file d'attente -->
-<aside class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100 p-4 flex flex-col min-h-0">
+<aside
+  class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100 p-2 flex flex-col min-h-0">
   <app-import-queue-list />
 </aside>
 
-
-
 <!-- Colonne droite : formulaire de validation -->
-<main class="flex-1 bg-white rounded-xl border border-prussian-blue-100 p-6 flex flex-col min-h-0">
+<main
+  class="flex-1 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
 
   @if (state.selectedImport(); as doc) {
 
-    <div class="shrink-0 pb-4 mb-4 border-b border-prussian-blue-100">
-      <app-import-preview-card [document]="doc" />
+  <div class="shrink-0 border-b border-prussian-blue-100">
+    <app-import-preview-card [document]="doc" />
+  </div>
+
+  <div
+    class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll p-1.5 flex flex-col gap-5">
+
+    <app-title-field
+      label="Titre suggéré"
+      [(value)]="doc.suggestedTitle" />
+
+    <div class="grid grid-cols-2 gap-4">
+      <app-classification-select
+        label="Type de document"
+        [options]="documentTypeOptions"
+        [confidence]="doc.documentTypeConfidence"
+        [(value)]="doc.documentType" />
+      <app-classification-select
+        label="Confidentialité"
+        [options]="confidentialityOptions"
+        [confidence]="doc.confidentialityConfidence"
+        [(value)]="doc.confidentiality" />
     </div>
+    <!-- Suggestion de metadata -->
+    <app-metadata-form [(fields)]="doc.metadataFields" />
+    <!-- Tags -->
+    <app-tags-editor [(tags)]="doc.tags" />
+    <!-- Explorateur -->
+    <app-path-selector [(path)]="doc.suggestedPath" />
 
-    <div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll pr-1 flex flex-col gap-5">
-
-      <app-title-field
-        label="Titre suggéré"
-        [(value)]="doc.suggestedTitle"
-      />
-
-      <div class="grid grid-cols-2 gap-4">
-        <app-classification-select
-          label="Type de document"
-          [options]="documentTypeOptions"
-          [confidence]="doc.documentTypeConfidence"
-          [(value)]="doc.documentType"
-        />
-        <app-classification-select
-          label="Confidentialité"
-          [options]="confidentialityOptions"
-          [confidence]="doc.confidentialityConfidence"
-          [(value)]="doc.confidentiality"
-        />
-      </div>
-
-      <app-tags-editor [(tags)]="doc.tags" />
-
-      <app-path-selector [(path)]="doc.suggestedPath" />
-
-      <app-metadata-form [(fields)]="doc.metadataFields" />
-
-    </div>
-    <app-validation-footer
-[remainingCount]="state.remainingCount()"
-(cancelClick)="onCancel()"
-(validateClick)="onValidate()"
-/>
-
+  </div>
+  <app-validation-footer
+    [remainingCount]="state.remainingCount()"
+    (cancelClick)="onCancel()"
+    (validateClick)="onValidate()" />
 
   } @else {
-    <div class="flex-1 flex items-center justify-center text-prussian-blue-300 text-sm">
-      Tous les imports ont été traités
-    </div>
+  <div
+    class="flex-1 flex items-center justify-center text-prussian-blue-300 text-sm">
+    Tous les imports ont été traités
+  </div>
   }
 </main>

@@ -1,21 +1,29 @@
 import { Component, model, signal } from '@angular/core';
-import { TreeModule } from 'primeng/tree';
-import { TreeNode } from 'primeng/api';
-import { HIERARCHY_TREE, HierarchyNode } from '../hierarchy-tree.data';
+import { TreeNodeComponent } from '../../../layout/sidebar/tree-node/tree-node.component';
+import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb.component';
+import { HIERARCHY_TREE, HierarchyNode } from '../../documents/hierarchy.model';
 
 @Component({
   selector: 'app-path-selector',
   standalone: true,
-  imports: [TreeModule],
+  imports: [TreeNodeComponent, BreadcrumbComponent],
   templateUrl: './path-selector.component.html'
 })
 export class PathSelectorComponent {
   path = model.required<string[]>();
 
   isEditing = signal(false);
-  treeNodes = signal<TreeNode[]>(this.buildTreeNodes(HIERARCHY_TREE));
+  tree = HIERARCHY_TREE;
 
-  toggleEdit() {
+  // État d'expansion local à ce composant — indépendant de celui du sidebar
+  private expandedKeys = signal<Set<string>>(new Set(['corporate', 'departments']));
+
+  isExpanded = (key: string) => this.expandedKeys().has(key);
+
+  isActive = (node: HierarchyNode) =>
+    JSON.stringify(node.path) === JSON.stringify(this.path());
+
+  toggle() {
     this.isEditing.update(v => !v);
   }
 
@@ -23,21 +31,15 @@ export class PathSelectorComponent {
     this.isEditing.set(false);
   }
 
-  selectNode(nodePath: string[]) {
-    this.path.set(nodePath);
+  onToggleExpand(key: string) {
+    this.expandedKeys.update(set => {
+      const next = new Set(set);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
   }
 
-  isSelected(nodePath: string[]): boolean {
-    return JSON.stringify(nodePath) === JSON.stringify(this.path());
-  }
-
-  private buildTreeNodes(nodes: HierarchyNode[]): TreeNode[] {
-    return nodes.map(n => ({
-      key: n.key,
-      label: n.label,
-      data: { path: n.path },
-      expanded: true,
-      children: n.children ? this.buildTreeNodes(n.children) : undefined
-    }));
+  onNodeSelect(node: HierarchyNode) {
+    this.path.set(node.path);
   }
 }

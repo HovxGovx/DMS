@@ -3,13 +3,14 @@
   [style.paddingLeft.px]="depth() * 14 + 8"
   [class.bg-prussian-blue-100]="isActive"
   [class.hover:bg-prussian-blue-50]="!isActive"
-  (click)="onClick()"
+  (click)="onRowClick()"
 >
   @if (node().children?.length) {
     <i
-      class="pi text-[10px] text-black-300 shrink-0"
+      class="pi text-[10px] text-prussian-blue-300 shrink-0"
       [class.pi-chevron-down]="isExpanded"
       [class.pi-chevron-right]="!isExpanded"
+      (click)="onChevronClick($event)"
     ></i>
   } @else {
     <span class="w-2.5 shrink-0"></span>
@@ -25,7 +26,7 @@
     class="text-sm flex-1 truncate"
     [class.font-semibold]="isActive"
     [class.text-prussian-blue-900]="isActive"
-    [class.text-black-200]="!isActive"
+    [class.text-prussian-blue-700]="!isActive"
   >{{ node().label }}</span>
 
   @if (count !== null) {
@@ -41,7 +42,16 @@
 @if (node().children?.length && isExpanded) {
   <div class="ml-3 pl-2 border-l border-prussian-blue-100">
     @for (child of node().children; track child.key) {
-      <app-tree-node [node]="child" [depth]="depth() + 1" />
+      <app-tree-node
+        [node]="child"
+        [depth]="depth() + 1"
+        [isExpandedFn]="isExpandedFn()"
+        [isActiveFn]="isActiveFn()"
+        [getCountFn]="getCountFn()"
+        [selectAnyNode]="selectAnyNode()"
+        (toggleExpand)="toggleExpand.emit($event)"
+        (nodeSelect)="nodeSelect.emit($event)"
+      />
     }
   </div>
 }
