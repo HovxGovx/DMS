@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { ViewStateService } from '../../../core/view-state.service';
-import { ValidationStateService } from '../../../features/validation/validation-state.service';
+import { ValidationStateService } from '../../../features/validation/validation-state-MOCK.service';
 
 @Component({
   selector: 'app-view-toggle',

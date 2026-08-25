@@ -12,12 +12,12 @@
 <!-- Colonnes -->
 <div class="shrink-0 flex items-center px-2 py-2 text-xs text-gray-400 font-semibold bg-prussian-blue-50 tracking-wide">
   <span class="flex-1 ">Nom du fichier</span>
-  <span class="w-28 ">Type suggéré </span>
+  <!-- <span class="w-28 ">Type suggéré </span> -->
   <span class="w-16 text-right ">date</span>
 </div>
 
 <!-- Liste scrollable -->
-<div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll">
+<!-- <div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll">
   @for (item of state.pendingImports(); track item.id) {
     <div
       class="flex items-center px-2 py-2.5 rounded-md cursor-pointer transition-colors duration-150 border-l-[3px]"
@@ -28,17 +28,45 @@
       (click)="state.selectImport(item.id)"
     >
       <div class="flex-1 flex items-center gap-2 min-w-0">
-        <i class="{{ item.fileIcon }} {{ item.fileIconColor }} shrink-0"></i>
+        <i class="  {{ item.fileIcon }} {{ item.fileIconColor }} shrink-0"></i>
+         <i class="pi pi-file "></i>
         <span class="text-sm text-prussian-blue-900 truncate">{{ item.fileName }}</span>
       </div>
       <div class="w-28 flex items-center gap-1.5">
-        <span class="text-xs text-prussian-blue-500">{{ item.suggestedType }}</span>
+         <span class="text-xs text-prussian-blue-500">{{ item.suggestedType }}</span>
         <app-confidence-badge [value]="item.typeConfidence" />
       </div>
-      <span class="w-16 text-right text-xs font-mono text-gray-300">{{ item.importedAt }}</span>
+      <span class="w-16 text-right text-xs font-mono text-gray-300">{{ formatDate(item.importDate) }}</span>
     </div>
   } @empty {
     <p class="text-sm text-gray-500 text-center py-8">Aucun import en attente</p>
+  }
+</div> -->
+
+<div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll">
+  @if (state.isLoading()) {
+    <p class="text-sm text-prussian-blue-300 text-center py-8">Chargement...</p>
+  } @else if (state.loadError()) {
+    <p class="text-sm text-red-500 text-center py-8">{{ state.loadError() }}</p>
+  } @else {
+    @for (item of state.pendingImports(); track item.id) {
+      <div
+        class="flex items-center px-2 py-2.5 rounded-md cursor-pointer transition-colors duration-150 border-l-[3px]"
+        [class.border-orange-500]="state.selectedImportId() === item.id"
+        [class.bg-orange-50]="state.selectedImportId() === item.id"
+        [class.border-transparent]="state.selectedImportId() !== item.id"
+        [class.hover:bg-prussian-blue-50]="state.selectedImportId() !== item.id"
+        (click)="state.selectImport(item.id)"
+      >
+        <div class="flex-1 flex items-center gap-2 min-w-0">
+          <i class="pi pi-file text-prussian-blue-400 shrink-0"></i>
+          <span class="text-sm text-prussian-blue-900 truncate">{{ item.fileName }}</span>
+        </div>
+        <span class="w-32 text-right text-xs font-mono text-prussian-blue-300">{{ formatDate(item.importDate) }}</span>
+      </div>
+    } @empty {
+      <p class="text-sm text-prussian-blue-300 text-center py-8">Aucun import en attente</p>
+    }
   }
 </div>
 

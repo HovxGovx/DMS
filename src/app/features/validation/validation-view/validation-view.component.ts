@@ -32,23 +32,32 @@ import { IngestPanelComponent } from '../../upload/ingest-panel/ingest-panel.com
 })
 export class ValidationViewComponent {
   state = inject(ValidationStateService);
+  ngOnInit() {
+    this.state.loadPendingImports();
+  }
 
-  documentTypeOptions = ['Contrat', 'Facture', 'Budget', 'Note de frais', 'Rapport'];
-  confidentialityOptions = ['Public', 'Interne', 'Confidentiel', 'Restreint'];
+  onPublish() {
+    const id = this.state.selectedImportId();
+    if (id) {
+      this.state.publish(id);
+    }
+  }
+  // documentTypeOptions = ['Contrat', 'Facture', 'Budget', 'Note de frais', 'Rapport'];
+  // confidentialityOptions = ['Public', 'Interne', 'Confidentiel', 'Restreint'];
 
   onCancel() {
     console.log('Annuler import:', this.state.selectedImportId());
   }
 
-  onValidate() {
-    const id = this.state.selectedImportId();
-    if (!id) return;
+  // onValidate() {
+  //   const id = this.state.selectedImportId();
+  //   if (!id) return;
 
-    // Retire l'import validé de la file
-    this.state.pendingImports.update(list => list.filter(i => i.id !== id));
+  //   // Retire l'import validé de la file
+  //   // this.state.pendingImports.update(list => list.filter(i => i.id !== id));
 
-    // Sélectionne automatiquement le suivant, s'il y en a un
-    const remaining = this.state.pendingImports();
-    this.state.selectedImportId.set(remaining.length ? remaining[0].id : null);
-  }
+  //   // Sélectionne automatiquement le suivant, s'il y en a un
+  //   const remaining = this.state.pendingImports();
+  //   this.state.selectedImportId.set(remaining.length ? remaining[0].id : null);
+  // }
 }
