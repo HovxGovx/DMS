@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ValidationStateService } from './validation-state-MOCK.service';
+import { ValidationStateService } from './validation-state.service';
 
 describe('ValidationService', () => {
   let service: ValidationStateService;

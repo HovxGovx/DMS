@@ -13,6 +13,10 @@ export class LifecycleDocumentService {
     return this.http.get<LifecycleDocument[]>(this.baseUrl);
   }
 
+  getPending(): Observable<LifecycleDocument[]> {
+    return this.http.get<LifecycleDocument[]>(`${this.baseUrl}/pending`);
+  }
+
   publish(id: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${id}/publish`, {});
   }

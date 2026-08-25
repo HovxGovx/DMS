@@ -6,15 +6,11 @@ import { LifecycleDocument } from './lifecycle-document.model';
 export class ValidationStateService {
   private documentService = inject(LifecycleDocumentService);
 
-  private allDocuments = signal<LifecycleDocument[]>([]);
+  pendingImports = signal<LifecycleDocument[]>([]);
   isLoading = signal(false);
   loadError = signal<string | null>(null);
 
   selectedImportId = signal<string | null>(null);
-
-  pendingImports = computed(() =>
-    this.allDocuments().filter(d => d.status === 'PENDING_VALIDATION')
-  );
 
   selectedImport = computed(() =>
     this.pendingImports().find(d => d.id === this.selectedImportId()) ?? null
@@ -26,15 +22,13 @@ export class ValidationStateService {
     this.isLoading.set(true);
     this.loadError.set(null);
 
-    this.documentService.getAll().subscribe({
+    this.documentService.getPending().subscribe({
       next: (docs) => {
-        this.allDocuments.set(docs);
+        this.pendingImports.set(docs);
         this.isLoading.set(false);
 
-        // Sélectionne automatiquement le premier import en attente, s'il y en a un
-        const pending = docs.filter(d => d.status === 'PENDING_VALIDATION');
-        if (pending.length > 0 && !this.selectedImportId()) {
-          this.selectedImportId.set(pending[0].id);
+        if (docs.length > 0 && !this.selectedImportId()) {
+          this.selectedImportId.set(docs[0].id);
         }
       },
       error: (err) => {
@@ -52,8 +46,7 @@ export class ValidationStateService {
   publish(id: string) {
     this.documentService.publish(id).subscribe({
       next: () => {
-        // On enlève le document publié de la liste locale, sans refaire un fetch complet
-        this.allDocuments.update(docs => docs.filter(d => d.id !== id));
+        this.pendingImports.update(docs => docs.filter(d => d.id !== id));
 
         const remaining = this.pendingImports();
         this.selectedImportId.set(remaining.length ? remaining[0].id : null);

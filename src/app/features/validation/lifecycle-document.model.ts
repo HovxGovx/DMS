@@ -5,4 +5,5 @@ export interface LifecycleDocument {
   fileName: string;
   status: DocumentStatus;
   importDate: string; // ISO string
+  storageReference: string;
 }
