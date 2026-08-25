@@ -1,4 +1,4 @@
-import { Component, signal, inject, computed } from '@angular/core';
+import { Component, signal, inject, computed, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 import { IngestPanelComponent } from '../../features/upload/ingest-panel/ingest-panel.component';
@@ -8,6 +8,7 @@ import { ValidationViewComponent } from '../../features/validation/validation-vi
 import { DocumentStateService } from '../../features/documents/document-state.service';
 import { toDocumentDetail } from '../../features/documents/document.model';
 import { ViewStateService } from '../../core/view-state.service';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-shell',
@@ -22,6 +23,13 @@ export class ShellComponent {
   currentView = signal<'documents' | 'validation'>('documents');
   documentState = inject(DocumentStateService);
   viewState = inject(ViewStateService);
+  private authService = inject(AuthService);
+
+  ngOnInit() {
+    this.authService.fetchCurrentUser().subscribe({
+      error: (err) => console.error('Impossible de récupérer les infos utilisateur:', err)
+    });
+  }
 
   selectedDetail = computed(() => {
     const doc = this.documentState.selectedDocument();

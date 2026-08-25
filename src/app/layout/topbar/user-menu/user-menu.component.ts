@@ -1,7 +1,6 @@
-import { Component, signal, inject, ElementRef, HostListener } from '@angular/core';
+import { Component, signal, inject, computed, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
-
 @Component({
   selector: 'app-user-menu',
   standalone: true,
@@ -14,9 +13,18 @@ export class UserMenuComponent {
 
   isOpen = signal(false);
 
-  userName = 'Elena Marquez';
-  userRole = 'System Admin';
-  userInitials = 'EM';
+  userName = computed(() => this.authService.currentUser()?.fullName ?? '...');
+  userRole = computed(() => this.authService.currentUser()?.role ?? '');
+  userInitials = computed(() => {
+    const name = this.authService.currentUser()?.fullName;
+    if (!name) return '..';
+    return name
+      .split(' ')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  });
 
   toggle() {
     this.isOpen.update(v => !v);
