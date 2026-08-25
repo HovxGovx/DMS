@@ -13,7 +13,7 @@
       <label class="text-sm font-medium text-prussian-blue-900 mb-1.5 block">E-mail ou nom d'utilisateur</label>
       <p-iconfield class="w-full">
         <p-inputicon class="pi pi-envelope" />
-        <input pInputText type="text" [(ngModel)]="email" name="email"
+        <input pInputText type="text" [(ngModel)]="uid" name="uid"
                placeholder="nom@entreprise.com" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100 transition-all duration-150 active:scale-[1.02] active:scale-95" />
       </p-iconfield>
     </div>
@@ -23,7 +23,7 @@
       <p-iconfield class="w-full">
         <p-inputicon class="pi pi-lock" />
         <input pInputText type="password" [(ngModel)]="password" name="password"
-               placeholder="Entrez votre mot de passe" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100 transition-all duration-150 active:scale-[1.02] active:scale-95" />
+               placeholder="Entrez votre mot de passe" !required class="w-full !bg-prussian-blue-50 !border-prussian-blue-100 transition-all duration-150 active:scale-[1.02] active:scale-95" />
       </p-iconfield>
     </div>
 <!--
@@ -36,12 +36,20 @@
         Mot de passe oublié ?
       </a>
     </div> -->
-
+    @if (errorMessage()) {
+      <p class="text-xs text-red-500 flex items-center gap-1.5">
+        <i class="pi pi-exclamation-circle text-[10px]"></i>
+        {{ errorMessage() }}
+      </p>
+    }
     <button
       type="submit"
       class="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-rusty-spice-500 text-white text-sm font-semibold hover:bg-rusty-spice-600 transition-all duration-150 hover:scale-[1.02] active:scale-95 cursor-pointer"
     >
-      Se connecter
+      {{ isLoading() ? 'Connexion...' : 'Se connecter' }}
+      @if (!isLoading()) {
+        <i class="pi pi-arrow-right text-xs"></i>
+      }
     </button>
 
   </form>

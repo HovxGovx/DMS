@@ -1,5 +1,6 @@
 import { Component, signal, inject, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/auth.service';
 
 @Component({
   selector: 'app-user-menu',
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class UserMenuComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
   private elementRef = inject(ElementRef);
 
   isOpen = signal(false);
@@ -26,9 +28,14 @@ export class UserMenuComponent {
 
   logout() {
     this.close();
-    // Pas encore de vraie déconnexion côté serveur (invalidation de session/token) —
-    // à brancher une fois le service d'authentification prêt.
-    this.router.navigate(['/login']);
+    this.authService.logout().subscribe({
+      next: () => this.router.navigate(['/login']),
+      error: () => {
+        // Même si l'appel échoue, on force quand même la redirection —
+        // pas de raison de bloquer l'utilisateur sur une déconnexion ratée
+        this.router.navigate(['/login']);
+      }
+    });
   }
 
   // Ferme le menu si on clique n'importe où en dehors

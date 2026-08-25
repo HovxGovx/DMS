@@ -5,6 +5,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CheckboxModule } from 'primeng/checkbox';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
+import { AuthService } from '../../../core/auth.service';
 
 @Component({
   selector: 'app-login-form',
@@ -14,15 +15,29 @@ import { InputIconModule } from 'primeng/inputicon';
 })
 export class LoginFormComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
-  email = signal('');
+  uid = signal('');
   password = signal('');
   rememberMe = signal(false);
 
+  isLoading = signal(false);
+  errorMessage = signal<string | null>(null);
+
   onSubmit() {
-    console.log('Connexion :', this.email(), this.rememberMe());
-    // Pas encore de vraie vérification d'identifiants — on redirige direct pour tester le flux.
-    // À remplacer par un appel au service d'authentification une fois le backend branché.
-    this.router.navigate(['/']);
+    this.errorMessage.set(null);
+    this.isLoading.set(true);
+
+    this.authService.login(this.uid(), this.password()).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        this.errorMessage.set('Identifiants incorrects ou serveur inaccessible.');
+        console.error('Erreur login:', err);
+      }
+    });
   }
 }
