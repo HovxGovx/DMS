@@ -1,9 +1,15 @@
-export type DocumentStatus = 'PENDING_VALIDATION' | 'PUBLISHED';
+export type DocumentStatus = 'IMPORTED' | 'PENDING_VALIDATION' | 'EXTRACTION_FAILED' | 'PUBLISHED' | 'INDEXING_FAILED';
 
 export interface LifecycleDocument {
   id: string;
   fileName: string;
   status: DocumentStatus;
-  importDate: string; // ISO string
+  importDate: string;
   storageReference: string;
+}
+
+export interface BatchUploadResult {
+  successCount: number;
+  failureCount: number;
+  failedFiles: string[];
 }
