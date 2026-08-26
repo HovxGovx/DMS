@@ -141,3 +141,19 @@
   height: 1.25rem;
   color: var(--color-prussian-blue-300);
 }
+.p-toast .p-toast-message-success {
+  background: var(--color-emerald-50, #ecfdf5);
+  border-left-color: var(--color-emerald-500, #10b981);
+}
+.p-toast .p-toast-message-error {
+  background: #fef2f2;
+  border-left-color: #ef4444;
+}
+.p-toast .p-toast-message-warn {
+  background: #fffbeb;
+  border-left-color: #f59e0b;
+}
+.p-toast .p-toast-message-info {
+  background: var(--color-prussian-blue-50);
+  border-left-color: var(--color-prussian-blue-500);
+}

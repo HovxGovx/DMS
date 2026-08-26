@@ -4,6 +4,7 @@ import { LifecycleDocumentService } from '../../validation/lifecycle-document.se
 import { ValidationStateService } from '../../validation/validation-state.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { BatchUploadResult } from '../../validation/lifecycle-document.model';
+import { NotificationService } from '../../../core/notification.service';
 @Component({
   selector: 'IngestPanel',
   standalone: true,
@@ -14,6 +15,7 @@ export class IngestPanelComponent {
   private documentService = inject(LifecycleDocumentService);
   private validationState = inject(ValidationStateService);
   private viewState = inject(ViewStateService);
+  private notification = inject(NotificationService);
 
   isDragOver = signal(false);
   isUploading = signal(false);
@@ -55,12 +57,14 @@ export class IngestPanelComponent {
     this.documentService.uploadBatch(files).subscribe({
       next: (result: BatchUploadResult) => {
         this.isUploading.set(false);
-        this.uploadFeedback.set({
-          success: result.failureCount === 0,
-          message: `${result.successCount} fichier(s) importé(s)` +
-                   (result.failureCount > 0 ? `, ${result.failureCount} échec(s)` : ''),
-          failedFiles: result.failedFiles
-        });
+        if (result.failureCount === 0) {
+          this.notification.success(`${result.successCount} fichier(s) importé(s) avec succès.`);
+        } else {
+          this.notification.warn(
+            `${result.successCount} importé(s), ${result.failureCount} échec(s) : ${result.failedFiles.join(', ')}`
+          );
+        }
+
 
         // Rafraîchit la liste des imports en attente et bascule sur la vue validation
         this.validationState.loadPendingImports();
@@ -68,11 +72,7 @@ export class IngestPanelComponent {
       },
       error: (err) => {
         this.isUploading.set(false);
-        this.uploadFeedback.set({
-          success: false,
-          message: "Échec de l'import — vérifiez votre connexion ou réessayez.",
-          failedFiles: []
-        });
+        this.notification.error("Échec de l'import");
         console.error('Erreur upload:', err);
       }
     });

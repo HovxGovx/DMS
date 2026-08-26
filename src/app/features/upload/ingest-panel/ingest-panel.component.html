@@ -1,14 +1,12 @@
 <div
   class=" w-full  group flex items-center justify-between gap-3 p-2  rounded-xl border-2 border-dashed transition-colors  duration-150 cursor-pointer "
-  /*
-  class="group flex items-center justify-between gap-4 p-4 rounded-xl border-2 border-dashed transition-colors duration-200 cursor-pointer"
-  */
   [class.border-prussian-blue-200]="!isDragOver() && !isUploading()"
   [class.bg-white]="!isDragOver() && !isUploading()"
   [class.hover:border-prussian-blue-400]="!isDragOver() && !isUploading()"
   [class.hover:bg-prussian-blue-50]="!isDragOver() && !isUploading()"
   [class.border-prussian-blue-500]="isDragOver()"
-  [class.bg-prussian-blue-50]="isDragOver() || isUploading()"
+  [class.bg-prussian-blue-50]="isDragOver()"
+  [class.bg-prussian-blue-50]="isUploading()"
   [class.pointer-events-none]="isUploading()"
   [class.opacity-70]="isUploading()"
   (dragover)="onDragOver($event)"
@@ -63,24 +61,4 @@
     styleClass="!text-xs !bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
     (click)="$event.stopPropagation(); fileInput.click()"
   /> -->
-  @if (uploadFeedback(); as feedback) {
-  <div
-    class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg text-sm"
-    [class.bg-emerald-50]="feedback.success"
-    [class.text-emerald-700]="feedback.success"
-    [class.bg-amber-50]="!feedback.success"
-    [class.text-amber-700]="!feedback.success">
-    <div class="flex items-center gap-2">
-      <i class="pi" [class.pi-check-circle]="feedback.success"
-        [class.pi-exclamation-triangle]="!feedback.success"></i>
-      <span>{{ feedback.message }}</span>
-      @if (feedback.failedFiles.length > 0) {
-      <span class="text-xs opacity-75">({{ feedback.failedFiles.join(', ')
-        }})</span>
-      }
-    </div>
-    <i class="pi pi-times cursor-pointer hover:opacity-70"
-      (click)="dismissFeedback()"></i>
-  </div>
-  }
 </div>

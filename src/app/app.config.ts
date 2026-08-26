@@ -8,6 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 
 import { credentialsInterceptor } from './core/interceptors/credentials.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: true // on gère le dark mode nous-même si besoin, pas via PrimeNG
         }
       }
-    })
+    }),
+    MessageService
   ]
 };
