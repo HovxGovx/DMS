@@ -52,30 +52,33 @@ export class IngestPanelComponent {
   private handleFiles(fileList: FileList) {
     const files = Array.from(fileList);
     this.isUploading.set(true);
-    this.uploadFeedback.set(null);
 
     this.documentService.uploadBatch(files).subscribe({
       next: (result: BatchUploadResult) => {
         this.isUploading.set(false);
-        if (result.failureCount === 0) {
-          this.notification.success(`${result.successCount} fichier(s) importé(s) avec succès.`);
-        } else {
-          this.notification.warn(
-            `${result.successCount} importé(s), ${result.failureCount} échec(s) : ${result.failedFiles.join(', ')}`
-          );
-        }
+        this.showPerFileToasts(files, result.failedFiles);
 
-
-        // Rafraîchit la liste des imports en attente et bascule sur la vue validation
         this.validationState.loadPendingImports();
         this.viewState.setView('validation');
       },
       error: (err) => {
         this.isUploading.set(false);
-        this.notification.error("Échec de l'import");
+
+        const serverMessage = err.error?.message;
+        this.notification.error(serverMessage ?? "Échec de l'import — vérifiez votre connexion ou réessayez.");
         console.error('Erreur upload:', err);
       }
     });
+  }
+
+  private showPerFileToasts(files: File[], failedFiles: string[]) {
+    for (const file of files) {
+      if (failedFiles.includes(file.name)) {
+        this.notification.error(`${file.name} — échec de l'import`, 'Import');
+      } else {
+        this.notification.success(`${file.name} — importé avec succès`, 'Import');
+      }
+    }
   }
 
   dismissFeedback() {

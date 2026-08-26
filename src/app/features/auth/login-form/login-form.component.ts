@@ -6,6 +6,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { AuthService } from '../../../core/auth.service';
+import { NotificationService } from '../../../core/notification.service';
 
 @Component({
   selector: 'app-login-form',
@@ -16,6 +17,7 @@ import { AuthService } from '../../../core/auth.service';
 export class LoginFormComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private notification = inject(NotificationService)
 
   uid = signal('');
   password = signal('');
@@ -31,6 +33,7 @@ export class LoginFormComponent {
     this.authService.login(this.uid(), this.password()).subscribe({
       next: () => {
         this.isLoading.set(false);
+        this.notification.success('Connexion réussie.');
         this.router.navigate(['/']);
       },
       error: (err) => {
