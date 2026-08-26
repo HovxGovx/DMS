@@ -1,5 +1,5 @@
 <!-- Header fixe -->
-<div class="shrink-0 flex items-center justify-between p-2 border-b border-prussian-blue-100">
+<!-- <div class="shrink-0 flex items-center justify-between p-2 border-b border-prussian-blue-100">
   <div class="flex items-center gap-2">
     <i class="pi pi-inbox text-sm text-gray-400"></i>
     <span class="text-xs font-semibold text-gray-400 tracking-wide">IMPORTS EN ATTENTE DE VALIDATION</span>
@@ -7,14 +7,14 @@
   <span class="text-xs font-mono text-gray-300  px-2 py-0.5">
     {{ state.remainingCount() }} fichiers
   </span>
-</div>
+</div> -->
 
 <!-- Colonnes -->
-<div class="shrink-0 flex items-center px-2 py-2 text-xs text-gray-400 font-semibold bg-prussian-blue-50 tracking-wide">
+<!-- <div class="shrink-0 flex items-center px-2 py-2 text-xs text-gray-400 font-semibold bg-prussian-blue-50 tracking-wide">
   <span class="flex-1 ">Nom du fichier</span>
-  <!-- <span class="w-28 ">Type suggéré </span> -->
-  <span class="w-16 text-right ">date</span>
-</div>
+  <span class="w-28 ">Type suggéré </span>
+   <span class="w-16 text-right ">date</span>
+</div -->
 
 <!-- Liste scrollable -->
 <!-- <div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll">
@@ -42,31 +42,64 @@
     <p class="text-sm text-gray-500 text-center py-8">Aucun import en attente</p>
   }
 </div> -->
+<div class="shrink-0 flex items-center justify-between pb-3 mb-2 border-b border-prussian-blue-100">
+  <div class="flex items-center gap-2">
+    <i class="pi pi-inbox text-sm text-prussian-blue-400"></i>
+    <span class="text-xs font-semibold text-prussian-blue-400 tracking-wide">IMPORTS EN ATTENTE DE VALIDATION</span>
+  </div>
+  <span class="text-xs font-mono text-prussian-blue-300 border border-prussian-blue-200 rounded px-2 py-0.5">
+    {{ state.remainingCount() }} fichiers
+  </span>
+</div>
 
-<div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll">
+<div class="flex-1 min-h-0">
   @if (state.isLoading()) {
     <p class="text-sm text-prussian-blue-300 text-center py-8">Chargement...</p>
   } @else if (state.loadError()) {
     <p class="text-sm text-red-500 text-center py-8">{{ state.loadError() }}</p>
   } @else {
-    @for (item of state.pendingImports(); track item.id) {
-      <div
-        class="flex items-center px-2 py-2.5 rounded-md cursor-pointer transition-colors duration-150 border-l-[3px]"
-        [class.border-orange-500]="state.selectedImportId() === item.id"
-        [class.bg-orange-50]="state.selectedImportId() === item.id"
-        [class.border-transparent]="state.selectedImportId() !== item.id"
-        [class.hover:bg-prussian-blue-50]="state.selectedImportId() !== item.id"
-        (click)="state.selectImport(item.id)"
-      >
-        <div class="flex-1 flex items-center gap-2 min-w-0">
-          <i class="pi pi-file text-prussian-blue-400 shrink-0"></i>
-          <span class="text-sm text-prussian-blue-900 truncate">{{ item.fileName }}</span>
-        </div>
-        <span class="w-32 text-right text-xs font-mono text-prussian-blue-300">{{ formatDate(item.importDate) }}</span>
-      </div>
-    } @empty {
-      <p class="text-sm text-prussian-blue-300 text-center py-8">Aucun import en attente</p>
-    }
+    <p-table
+      [value]="state.pendingImports()"
+      dataKey="id"
+      [scrollable]="true"
+      scrollHeight="flex"
+      class="flex-1 min-h-0 flex flex-col h-full"
+      styleClass="!text-xs import-queue-scroll"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="!text-xs !text-prussian-blue-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom du fichier</th>
+          <th class="!text-xs !text-prussian-blue-400 !font-semibold !tracking-wide !bg-prussian-blue-50 !text-right">Importé le</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+        <tr
+          class="cursor-pointer transition-colors duration-150 border-l-[3px]"
+          [class.border-orange-500]="state.selectedImportId() === item.id"
+          [class.bg-orange-50]="state.selectedImportId() === item.id"
+          [class.border-transparent]="state.selectedImportId() !== item.id"
+          [class.hover:bg-prussian-blue-50]="state.selectedImportId() !== item.id"
+          (click)="state.selectImport(item.id)"
+        >
+          <td>
+            <div class="flex items-center gap-2">
+              <i class="pi pi-file text-prussian-blue-400 shrink-0"></i>
+              <span class="text-prussian-blue-900 truncate">{{ item.fileName }}</span>
+            </div>
+          </td>
+          <td class="text-right font-mono text-prussian-blue-300">{{ formatDate(item.importDate) }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="2" class="text-center py-8 text-sm text-prussian-blue-300">
+            Aucun import en attente
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
   }
 </div>
 

@@ -1,0 +1,35 @@
+@if (state.selectedImport(); as doc) {
+
+  <div class="flex-1 flex flex-col items-center justify-center gap-4 text-center">
+    <div class="w-16 h-16 rounded-xl bg-prussian-blue-50 flex items-center justify-center">
+      <i class="pi pi-file text-2xl text-prussian-blue-400"></i>
+    </div>
+    <div>
+      <h3 class="text-lg font-semibold text-prussian-blue-900">{{ doc.fileName }}</h3>
+      <p class="text-xs text-prussian-blue-400 mt-1 font-mono">{{ doc.id }}</p>
+    </div>
+    <p class="text-sm text-prussian-blue-400 max-w-sm">
+      Les détails de classification (type, tags, confiance IA) ne sont pas encore disponibles.
+      Vous pouvez publier ce document tel quel.
+    </p>
+  </div>
+
+  <div class="shrink-0 pt-4 mt-4 border-t border-prussian-blue-100 flex justify-end">
+    <button
+      class="flex items-center gap-2 px-4 py-2 rounded-lg bg-prussian-blue-700 text-white text-sm font-medium hover:bg-prussian-blue-800 transition-all duration-150 hover:scale-105 active:scale-95"
+      (click)="onPublish()"
+    >
+      <i class="pi pi-check-circle text-sm"></i>
+      Publier
+    </button>
+  </div>
+
+} @else if (state.isLoading()) {
+  <div class="flex-1 flex items-center justify-center text-sm text-prussian-blue-300">
+    Chargement...
+  </div>
+} @else {
+  <div class="flex-1 flex items-center justify-center text-sm text-prussian-blue-300 text-center px-4">
+    Sélectionnez un import dans la liste, ou tous les imports ont été traités 🎉
+  </div>
+}

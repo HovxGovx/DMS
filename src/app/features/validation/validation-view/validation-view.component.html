@@ -1,12 +1,23 @@
-<!-- Colonne gauche : file d'attente -->
-<aside
-  class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
-  <IngestPanel/>
+<aside class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100 p-4 flex flex-col min-h-0">
   <app-import-queue-list />
 </aside>
 
+<app-import-detail-panel />
+
+
+
+
+
+
+<!-- Colonne gauche : file d'attente -->
+<!-- <aside
+  class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
+  <IngestPanel/>
+  <app-import-queue-list />
+</aside> -->
+
 <!-- Colonne droite : formulaire de validation -->
-<main
+<!-- <main
   class="flex-1 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
 
   @if (state.selectedImport(); as doc) {
@@ -33,15 +44,15 @@
         [options]="confidentialityOptions"
         [confidence]="doc.confidentialityConfidence"
         [(value)]="doc.confidentiality" />
-    </div>
+    </div> -->
     <!-- Suggestion de metadata -->
-    <app-metadata-form [(fields)]="doc.metadataFields" />
+    <!-- <app-metadata-form [(fields)]="doc.metadataFields" /> -->
     <!-- Tags -->
-    <app-tags-editor [(tags)]="doc.tags" />
+    <!-- <app-tags-editor [(tags)]="doc.tags" /> -->
     <!-- Explorateur -->
-    <app-path-selector [(path)]="doc.suggestedPath" />
+    <!-- <app-path-selector [(path)]="doc.suggestedPath" /> -->
 
-  </div>
+  <!-- </div>
   <app-validation-footer
     [remainingCount]="state.remainingCount()"
     (cancelClick)="onCancel()"
@@ -53,4 +64,4 @@
     Tous les imports ont été traités
   </div>
   }
-</main>
+</main> -->
