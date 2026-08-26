@@ -1,34 +1,47 @@
 <div
   class=" w-full  group flex items-center justify-between gap-3 p-2  rounded-xl border-2 border-dashed transition-colors  duration-150 cursor-pointer "
-  [class.border-prussian-blue-200]="!isDragOver()"
-  [class.bg-white]="!isDragOver()"
-  [class.hover:border-prussian-blue-400]="!isDragOver()"
-  [class.hover:bg-prussian-blue-50]="!isDragOver()"
+  /*
+  class="group flex items-center justify-between gap-4 p-4 rounded-xl border-2 border-dashed transition-colors duration-200 cursor-pointer"
+  */
+  [class.border-prussian-blue-200]="!isDragOver() && !isUploading()"
+  [class.bg-white]="!isDragOver() && !isUploading()"
+  [class.hover:border-prussian-blue-400]="!isDragOver() && !isUploading()"
+  [class.hover:bg-prussian-blue-50]="!isDragOver() && !isUploading()"
   [class.border-prussian-blue-500]="isDragOver()"
-  [class.bg-prussian-blue-50]="isDragOver()"
+  [class.bg-prussian-blue-50]="isDragOver() || isUploading()"
+  [class.pointer-events-none]="isUploading()"
+  [class.opacity-70]="isUploading()"
   (dragover)="onDragOver($event)"
   (dragleave)="onDragLeave($event)"
   (drop)="onDrop($event)"
-  (click)="fileInput.click()"
->
+  (click)="fileInput.click()">
   <input
     #fileInput
     type="file"
     multiple
-    accept=".pdf,.docx,.xlsx,.tiff,.eml"
+    accept=".pdf,.docx,.xlsx,.docx,.eml,.tiff,.tif,.jpeg.jpg,.png,.ppt,.pptx"
     class="hidden"
-    (change)="onFileSelect($event)"
-  />
+    (change)="onFileSelect($event)" />
 
   <div class="flex items-center gap-4">
-    <div class="w-11 h-11 rounded-lg bg-prussian-blue-100 flex items-center justify-center shrink-0 transition-colors duration-200 group-hover:bg-prussian-blue-100">
+    <div
+      class="w-11 h-11 rounded-lg bg-prussian-blue-100 flex items-center justify-center shrink-0 transition-colors duration-200 group-hover:bg-prussian-blue-100">
+      @if (isUploading()) {
+      <i class="pi pi-spin pi-spinner text-prussian-blue-600 text-xl"></i>
+      } @else {
       <i class="pi pi-cloud-upload text-prussian-blue-600 text-xl"></i>
+      }
     </div>
 
     <div>
       <div class="text-[10px] text-prussian-blue-900">
+        @if (isUploading()) {
+        <span class="font-semibold text-xs">Import en cours...</span>
+        } @else {
         <span class="font-semibold text-xs">Deposez les fichiers</span>
-        <span class="text-gray-400 ml-1">ou clickez pour parcourrir — PDF, DOCX, XLSX, TIFF, EML </span>
+        <span class="text-gray-400 ml-1">ou clickez pour parcourrir — PDF, DOCX,
+          XLSX, PNG, EML </span>
+        }
       </div>
       <div class="flex items-center gap-3 mt-1 text-[10px] text-gray-400">
         <!-- <span class="flex items-center gap-1">
@@ -50,4 +63,24 @@
     styleClass="!text-xs !bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
     (click)="$event.stopPropagation(); fileInput.click()"
   /> -->
+  @if (uploadFeedback(); as feedback) {
+  <div
+    class="flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg text-sm"
+    [class.bg-emerald-50]="feedback.success"
+    [class.text-emerald-700]="feedback.success"
+    [class.bg-amber-50]="!feedback.success"
+    [class.text-amber-700]="!feedback.success">
+    <div class="flex items-center gap-2">
+      <i class="pi" [class.pi-check-circle]="feedback.success"
+        [class.pi-exclamation-triangle]="!feedback.success"></i>
+      <span>{{ feedback.message }}</span>
+      @if (feedback.failedFiles.length > 0) {
+      <span class="text-xs opacity-75">({{ feedback.failedFiles.join(', ')
+        }})</span>
+      }
+    </div>
+    <i class="pi pi-times cursor-pointer hover:opacity-70"
+      (click)="dismissFeedback()"></i>
+  </div>
+  }
 </div>
