@@ -27,4 +27,8 @@ export class LifecycleDocumentService {
 
     return this.http.post<BatchUploadResult>(`${this.baseUrl}/batch/upload`, formData);
   }
+  
+  getPublished(): Observable<LifecycleDocument[]> {
+    return this.http.get<LifecycleDocument[]>(`${this.baseUrl}/published`);
+  }
 }

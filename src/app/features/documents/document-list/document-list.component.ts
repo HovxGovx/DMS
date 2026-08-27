@@ -1,9 +1,10 @@
-import { Component, inject, signal, computed, effect } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb.component';
 import { DocumentToolbarComponent } from '../document-toolbar/document-toolbar.component';
 import { DocumentFiltersComponent } from '../document-filters/document-filters.component';
 import { DocumentTableComponent } from '../document-table/document-table.component';
 import { DocumentStateService } from '../document-state.service';
+import { TagFilterOption } from '../document.model';
 
 @Component({
   selector: 'app-document-list',
@@ -14,29 +15,28 @@ import { DocumentStateService } from '../document-state.service';
     class: 'flex flex-col h-full min-h-0'
   }
 })
-export class DocumentListComponent {
+export class DocumentListComponent implements OnInit {
   state = inject(DocumentStateService);
 
+  breadcrumbSegments = ['Documents publiés'];
   viewMode = signal<'list' | 'grid'>('list');
   activeTagFilters = signal<string[]>([]);
 
-  // Documents du dossier courant, filtrés par les tags actifs
+  tagFilterOptions: TagFilterOption[] = [
+    { label: 'Publié', dotColor: 'bg-emerald-500', textColor: 'text-emerald-600', borderColor: 'border-emerald-300', bgActive: 'bg-emerald-50' }
+  ];
+
   filteredDocuments = computed(() => {
     const active = this.activeTagFilters();
-    const docs = this.state.currentDocuments();
+    const docs = this.state.publishedDocuments();
 
     if (active.length === 0) return docs;
 
     return docs.filter(doc => doc.tags.some(t => active.includes(t.label)));
   });
 
-  constructor() {
-    // Réinitialise les tags actifs quand on change de dossier —
-    // évite de garder un filtre sur un tag qui n'existe plus dans le nouveau dossier
-    effect(() => {
-      this.state.currentFilesKey();
-      this.activeTagFilters.set([]);
-    });
+  ngOnInit() {
+    this.state.loadPublishedDocuments();
   }
 
   onDocClick(id: string) {

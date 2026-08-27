@@ -10,7 +10,7 @@ import { DocTag } from '../../document.model';
 })
 export class DocumentInfoCardComponent {
   name = input.required<string>();
-  docId = input.required<string>();
+  // docId = input.required<string>();
   icon = input.required<string>();
   iconColor = input.required<string>();
   tags = input.required<DocTag[]>();

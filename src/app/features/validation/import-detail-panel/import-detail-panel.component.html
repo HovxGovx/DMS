@@ -19,8 +19,13 @@
       class="flex items-center gap-2 px-4 py-2 rounded-lg bg-prussian-blue-700 text-white text-sm font-medium hover:bg-prussian-blue-800 transition-all duration-150 hover:scale-105 active:scale-95"
       (click)="onPublish()"
     >
-      <i class="pi pi-check-circle text-sm"></i>
-      Publier
+       @if (isPublishing()) {
+        <i class="pi pi-spin pi-spinner text-sm"></i>
+        Publication...
+      } @else {
+        <i class="pi pi-check-circle text-sm"></i>
+        Publier
+      }
     </button>
   </div>
 

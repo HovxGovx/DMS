@@ -4,11 +4,16 @@
     <app-document-filters
       [tagOptions]="state.availableTagFilters()"
       [(activeTags)]="activeTagFilters"
-      (dateClick)="onDateClick()"
-    />
+      (dateClick)="onDateClick()" />
+  </div>
+  <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
+    <app-document-filters
+      [tagOptions]="tagFilterOptions"
+      [(activeTags)]="activeTagFilters"
+      (dateClick)="onDateClick()" />
   </div>
 
-  <div
+  <!-- <div
     class="shrink-0 flex items-center justify-between p-3.5 border-b border-prussian-blue-100">
     <app-breadcrumb [segments]="state.currentPath()" />
     <app-document-toolbar
@@ -16,21 +21,51 @@
       (viewModeChange)="viewMode.set($event)"
       (sortClick)="onSort()"
       (newClick)="onNew()" />
+  </div> -->
+  <div
+    class="shrink-0 flex items-center justify-between p-3.5 border-b border-prussian-blue-100">
+    <app-breadcrumb [segments]="breadcrumbSegments" />
+    <app-document-toolbar
+      [viewMode]="viewMode()"
+      (viewModeChange)="viewMode.set($event)"
+      (sortClick)="onSort()"
+      (newClick)="onNew()" />
   </div>
 
-  <div class="flex-1 min-h-0">
+  <!-- <div class="flex-1 min-h-0">
     <app-document-table
       [documents]="filteredDocuments()"
       (rowClick)="onDocClick($event)"
       (openFile)="onOpenFile($event)"
       (editMetadata)="onEditMetadata($event)"
     />
+  </div> -->
+  <div class="flex-1 min-h-0">
+    @if (state.isLoadingPublished()) {
+    <div
+      class="flex items-center justify-center h-full text-sm text-prussian-blue-300">
+      Chargement...
+    </div>
+    } @else if (state.publishedLoadError()) {
+    <div class="flex items-center justify-center h-full text-sm text-red-500">
+      {{ state.publishedLoadError() }}
+    </div>
+    } @else {
+    <div class="flex-1 min-h-0">
+      <app-document-table
+        [documents]="filteredDocuments()"
+        (rowClick)="onDocClick($event)"
+        (openFile)="onOpenFile($event)"
+        (editMetadata)="onEditMetadata($event)" />
+    </div>
+
+    }
   </div>
 
   <div
-  class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
-  <span>Ceci est le footer</span>
-  <span class="font-mono">Footer</span>
-</div>
+    class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
+    <span>Ceci est le footer</span>
+    <span class="font-mono">Footer</span>
+  </div>
 
 </div>

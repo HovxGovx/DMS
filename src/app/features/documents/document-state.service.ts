@@ -1,10 +1,32 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { DOCUMENTS_BY_FOLDER } from './document-data';
-import { TagFilterOption, SEVERITY_FILTER_COLORS } from './document.model';
+import { TagFilterOption, SEVERITY_FILTER_COLORS, DocumentItem } from './document.model';
+import { fromLifecycleDocument } from './document.mapper';
+import { LifecycleDocumentService } from '../validation/lifecycle-document.service';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStateService {
   private documentsByFolder = DOCUMENTS_BY_FOLDER;
+  private lifecycleService = inject(LifecycleDocumentService);
+  publishedDocuments = signal<DocumentItem[]>([]);
+  isLoadingPublished = signal(false);
+  publishedLoadError = signal<string | null>(null);
+  loadPublishedDocuments() {
+    this.isLoadingPublished.set(true);
+    this.publishedLoadError.set(null);
+
+    this.lifecycleService.getPublished().subscribe({
+      next: (docs) => {
+        this.publishedDocuments.set(docs.map(fromLifecycleDocument));
+        this.isLoadingPublished.set(false);
+      },
+      error: (err) => {
+        this.isLoadingPublished.set(false);
+        this.publishedLoadError.set("Impossible de charger les documents.");
+        console.error('Erreur chargement documents publiés:', err);
+      }
+    });
+  }
 
   expandedKeys = signal<Set<string>>(new Set(['corporate', 'departments', 'finance']));
   currentPath = signal<string[]>(['Corporate', 'Departments', 'Finance', 'Invoices']);
@@ -27,7 +49,7 @@ export class DocumentStateService {
   });
 
   selectedDocument = computed(() =>
-    this.currentDocuments().find(d => d.id === this.selectedDocId()) ?? null
+    this.publishedDocuments().find(d => d.id === this.selectedDocId()) ?? null
   );
 
   getCount(filesKey: string): number {

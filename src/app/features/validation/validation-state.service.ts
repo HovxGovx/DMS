@@ -43,15 +43,14 @@ export class ValidationStateService {
     this.selectedImportId.set(id);
   }
 
-  publish(id: string) {
-    this.documentService.publish(id).subscribe({
-      next: () => {
-        this.pendingImports.update(docs => docs.filter(d => d.id !== id));
+  // Mutateur simple, appelé par les composants après une action réussie (ex: publication).
+  // Pas d'appel HTTP ici — juste la mise à jour de l'état partagé.
+  removeFromPending(id: string) {
+    this.pendingImports.update(docs => docs.filter(d => d.id !== id));
 
-        const remaining = this.pendingImports();
-        this.selectedImportId.set(remaining.length ? remaining[0].id : null);
-      },
-      error: (err) => console.error('Erreur publication:', err)
-    });
+    if (this.selectedImportId() === id) {
+      const remaining = this.pendingImports();
+      this.selectedImportId.set(remaining.length ? remaining[0].id : null);
+    }
   }
 }

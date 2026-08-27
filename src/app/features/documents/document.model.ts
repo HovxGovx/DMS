@@ -65,7 +65,11 @@ export function toDocumentDetail(item: DocumentItem): DocumentDetail {
     businessMetadata: [
       { label: 'Département', value: item.department },
       { label: "Date d'expiration", value: item.expiry },
-
+      {
+        label: 'Statut Workflow',
+        value: 'Approuvé',
+        dotColor: 'bg-emerald-500'
+      }
     ],
     aiSummary: item.aiSummary
   };
