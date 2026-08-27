@@ -7,7 +7,7 @@ import { LifecycleDocument, BatchUploadResult } from './lifecycle-document.model
 @Injectable({ providedIn: 'root' })
 export class LifecycleDocumentService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.apiUrl}/api/lifecycle/documents`;
+  private baseUrl = `${environment.apiUrl}/api/dms/lifecycle/documents`;
 
   getAll(): Observable<LifecycleDocument[]> {
     return this.http.get<LifecycleDocument[]>(this.baseUrl);
@@ -27,7 +27,7 @@ export class LifecycleDocumentService {
 
     return this.http.post<BatchUploadResult>(`${this.baseUrl}/batch/upload`, formData);
   }
-  
+
   getPublished(): Observable<LifecycleDocument[]> {
     return this.http.get<LifecycleDocument[]>(`${this.baseUrl}/published`);
   }
