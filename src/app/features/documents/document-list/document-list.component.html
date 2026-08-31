@@ -1,11 +1,11 @@
 <div class="flex flex-col h-full min-h-0">
 
-  <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
+  <!-- <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
     <app-document-filters
       [tagOptions]="state.availableTagFilters()"
       [(activeTags)]="activeTagFilters"
       (dateClick)="onDateClick()" />
-  </div>
+  </div> -->
   <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
     <app-document-filters
       [tagOptions]="tagFilterOptions"
@@ -51,13 +51,13 @@
       {{ state.publishedLoadError() }}
     </div>
     } @else {
-    <div class="flex-1 min-h-0">
+
       <app-document-table
         [documents]="filteredDocuments()"
         (rowClick)="onDocClick($event)"
         (openFile)="onOpenFile($event)"
         (editMetadata)="onEditMetadata($event)" />
-    </div>
+
 
     }
   </div>
