@@ -2,8 +2,10 @@ import { Component, inject } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { TreeNodeComponent } from './tree-node/tree-node.component';
 import { HIERARCHY_TREE, HierarchyNode } from '../../features/documents/hierarchy.model';
-import { DocumentStateService } from '../../features/documents/document-state.service';
+// import { DocumentStateService } from '../../features/documents/document-state.service';
 import { IconField } from "primeng/iconfield";
+import { HierarchyStateService } from '../../features/documents/hierarchy-state.service';
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -12,7 +14,7 @@ import { IconField } from "primeng/iconfield";
   host: { class: 'flex flex-col flex-1 min-h-0 h-full' }
 })
 export class SidebarComponent {
-  state = inject(DocumentStateService);
+  state = inject(HierarchyStateService);
   hierarchyTree = HIERARCHY_TREE;
 
   totalDocs = '2,847 docs';

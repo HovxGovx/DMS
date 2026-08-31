@@ -31,7 +31,7 @@ export class ShellComponent {
     });
   }
 
-  selectDetail = computed(() => {
+  selectedDetail = computed(() => {
     const doc = this.documentState.selectedDocument();
     if (!doc) return null;
 
