@@ -9,7 +9,7 @@ import { DocumentStateService } from '../../features/documents/document-state.se
 import { toDocumentDetail } from '../../features/documents/document.model';
 import { ViewStateService } from '../../core/view-state.service';
 import { AuthService } from '../../core/auth.service';
-
+import { mergeWithRealMetadata } from '../../features/documents/document.mapper';
 @Component({
   selector: 'app-shell',
   standalone: true,
@@ -31,9 +31,12 @@ export class ShellComponent {
     });
   }
 
-  selectedDetail = computed(() => {
+  selectDetail = computed(() => {
     const doc = this.documentState.selectedDocument();
-    return doc ? toDocumentDetail(doc) : null;
+    if (!doc) return null;
+
+    const base = toDocumentDetail(doc);
+    return mergeWithRealMetadata(base, this.documentState.documentMetadata());
   });
 
   toggleView() {

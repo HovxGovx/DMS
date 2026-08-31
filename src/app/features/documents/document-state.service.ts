@@ -2,15 +2,38 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { DOCUMENTS_BY_FOLDER } from './document-data';
 import { TagFilterOption, SEVERITY_FILTER_COLORS, DocumentItem } from './document.model';
 import { fromLifecycleDocument } from './document.mapper';
+
 import { LifecycleDocumentService } from '../validation/lifecycle-document.service';
+import { DocumentMetadataService, DocMetadata } from './document-metadata.service';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStateService {
   private documentsByFolder = DOCUMENTS_BY_FOLDER;
   private lifecycleService = inject(LifecycleDocumentService);
+  private metadataService = inject(DocumentMetadataService);
+  documentMetadata = signal<DocMetadata | null>(null);
+  isLoadingMetadata = signal(false);
+
   publishedDocuments = signal<DocumentItem[]>([]);
   isLoadingPublished = signal(false);
   publishedLoadError = signal<string | null>(null);
+
+  private loadMetadataFor(id: string) {
+    this.documentMetadata.set(null);
+    this.isLoadingMetadata.set(true);
+
+    this.metadataService.getMetadata(id).subscribe({
+      next: (metadata) => {
+        this.documentMetadata.set(metadata);
+        this.isLoadingMetadata.set(false);
+      },
+      error: () => {
+        // Pas de métadonnées disponibles pour ce document — pas grave, on garde les valeurs par défaut
+        this.documentMetadata.set(null);
+        this.isLoadingMetadata.set(false);
+      }
+    });
+  }
   loadPublishedDocuments() {
     this.isLoadingPublished.set(true);
     this.publishedLoadError.set(null);
@@ -76,5 +99,6 @@ export class DocumentStateService {
 
   selectDocument(id: string) {
     this.selectedDocId.set(id);
+    this.loadMetadataFor(id);
   }
 }
