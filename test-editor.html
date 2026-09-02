@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html style="width:100%; height:100%;">
+<head>
+    <script type="text/javascript" src="http://localhost:8085/web-apps/apps/api/documents/api.js"></script>
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; }
+        #placeholder { width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div id="placeholder" ></div>
+    <script type="text/javascript">
+        fetch("http://localhost:8080/document/01a06154-ad15-70cb-8fd5-2757464cbfe6/editor/config", {
+            credentials: "include"
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur HTTP " + response.status);
+                }
+                return response.json();
+            })
+            .then(config => {
+                new DocsAPI.DocEditor("placeholder", config);
+            })
+            .catch(error => console.error("Échec du chargement de la config :", error));
+    </script>
+</body>
+</html>
