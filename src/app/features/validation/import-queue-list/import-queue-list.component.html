@@ -30,7 +30,7 @@
       <div class="flex-1 flex items-center gap-2 min-w-0">
         <i class="  {{ item.fileIcon }} {{ item.fileIconColor }} shrink-0"></i>
          <i class="pi pi-file "></i>
-        <span class="text-sm text-prussian-blue-900 truncate">{{ item.fileName }}</span>
+        <span class="text-sm text-prussian-blue-900 truncate">{{ item.originalFileName }}</span>
       </div>
       <div class="w-28 flex items-center gap-1.5">
          <span class="text-xs text-prussian-blue-500">{{ item.suggestedType }}</span>
@@ -85,7 +85,7 @@
           <td>
             <div class="flex items-center gap-2">
               <i class="pi pi-file text-prussian-blue-400 shrink-0"></i>
-              <span class="text-prussian-blue-900 truncate">{{ item.fileName }}</span>
+              <span class="text-prussian-blue-900 truncate">{{ item.originalFileName }}</span>
             </div>
           </td>
           <td class="text-right font-mono text-prussian-blue-300">{{ formatDate(item.importDate) }}</td>

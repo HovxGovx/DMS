@@ -2,7 +2,7 @@ export type DocumentStatus = 'IMPORTED' | 'PENDING_VALIDATION' | 'EXTRACTION_FAI
 
 export interface LifecycleDocument {
   id: string;
-  fileName: string;
+  originalFileName: string;
   status: DocumentStatus;
   importDate: string;
   storageReference: string;

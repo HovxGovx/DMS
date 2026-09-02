@@ -42,11 +42,11 @@ function formatDateSafe(iso: string | null): string | null {
  * par défaut statique, en attendant que le backend les enrichisse.
  */
 export function fromLifecycleDocument(doc: LifecycleDocument): DocumentItem {
-  const { format, icon, iconColor } = detectFileType(doc.fileName);
+  const { format, icon, iconColor } = detectFileType(doc.originalFileName);
 
   return {
     id: doc.id,
-    name: doc.fileName,
+    name: doc.originalFileName,
     format: format as DocumentItem['format'],
     icon,
     iconColor,

@@ -29,14 +29,14 @@ export class ImportDetailPanelComponent {
     this.documentService.publish(doc.id).subscribe({
       next: () => {
         this.isPublishing.set(false);
-        this.notification.success(`${doc.fileName} a été publié.`, 'Publication');
+        this.notification.success(`${doc.originalFileName} a été publié.`, 'Publication');
         this.state.removeFromPending(doc.id);
         this.viewState.setView('documents');
       },
       error: (err) => {
         this.isPublishing.set(false);
         const serverMessage = err.error?.message;
-        this.notification.error(serverMessage ?? `Échec de la publication de ${doc.fileName}.`, 'Publication');
+        this.notification.error(serverMessage ?? `Échec de la publication de ${doc.originalFileName}.`, 'Publication');
         console.error('Erreur publication:', err);
       }
     });
