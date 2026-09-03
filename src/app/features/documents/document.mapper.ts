@@ -1,14 +1,15 @@
 import { LifecycleDocument } from '../validation/lifecycle-document.model';
 import { DocumentItem, DocumentDetail } from './document.model';
 import { DocMetadata } from './document-metadata.service';
+import { SearchResult } from '../search/search-result.model';
 
-interface FileTypeInfo {
+export interface FileTypeInfo {
   format: string;
   icon: string;
   iconColor: string;
 }
 
-function detectFileType(fileName: string): FileTypeInfo {
+export function detectFileType(fileName: string): FileTypeInfo {
   const ext = fileName.split('.').pop()?.toLowerCase() ?? '';
 
   switch (ext) {
@@ -90,5 +91,35 @@ export function mergeWithRealMetadata(base: DocumentDetail, metadata: DocMetadat
           return item;
       }
     })
+  };
+}
+/**
+ * Convertit un résultat de recherche (id, originalFileName, title, author, format MIME, score)
+ * en DocumentItem pour affichage dans le tableau. Comme pour fromLifecycleDocument, tout ce
+ * qui n'est pas fourni par le backend garde une valeur par défaut statique.
+ */
+export function fromSearchResult(result: SearchResult): DocumentItem {
+  const { format, icon, iconColor } = detectFileType(result.originalFileName);
+
+  const scorePercent = Math.round(result.score * 100);
+  const relevanceSeverity = scorePercent >= 70 ? 'success' : scorePercent >= 40 ? 'warn' : 'secondary';
+
+  return {
+    id: result.id,
+    name: result.originalFileName,
+    format: format as DocumentItem['format'],
+    icon,
+    iconColor,
+    category: 'Résultat',
+    categorySeverity: 'info',
+    tags: [{ label: `${scorePercent}% pertinent`, severity: relevanceSeverity }],
+    modified: '—',
+    modifiedDotColor: 'bg-prussian-blue-200',
+    size: '—',
+    owner: result.author ?? '—',
+    createdAt: '—',
+    department: '—',
+    expiry: 'N/A',
+    aiSummary: "Résumé automatique non disponible pour le moment."
   };
 }

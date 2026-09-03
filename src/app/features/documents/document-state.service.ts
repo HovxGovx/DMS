@@ -3,6 +3,8 @@ import { DocumentItem } from './document.model';
 import { fromLifecycleDocument } from './document.mapper';
 import { LifecycleDocumentService } from '../validation/lifecycle-document.service';
 import { DocumentMetadataService, DocMetadata } from './document-metadata.service';
+import { fromSearchResult } from './document.mapper';
+import { SearchResult } from '../search/search-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStateService {
@@ -12,14 +14,18 @@ export class DocumentStateService {
   publishedDocuments = signal<DocumentItem[]>([]);
   isLoadingPublished = signal(false);
   publishedLoadError = signal<string | null>(null);
+  searchResults = signal<DocumentItem[]>([]);
+  isSearchMode = signal(false);
+  searchResultCount = computed(() => this.searchResults().length);
 
   selectedDocId = signal<string | null>(null);
   documentMetadata = signal<DocMetadata | null>(null);
   isLoadingMetadata = signal(false);
 
-  selectedDocument = computed(() =>
-    this.publishedDocuments().find(d => d.id === this.selectedDocId()) ?? null
-  );
+  selectedDocument = computed(() => {
+    const list = this.isSearchMode() ? this.searchResults() : this.publishedDocuments();
+    return list.find(d => d.id === this.selectedDocId()) ?? null;
+  });
 
   loadPublishedDocuments() {
     this.isLoadingPublished.set(true);
@@ -57,5 +63,16 @@ export class DocumentStateService {
         this.isLoadingMetadata.set(false);
       }
     });
+  }
+  setSearchResults(results: SearchResult[]) {
+    this.searchResults.set(results.map(fromSearchResult));
+    this.isSearchMode.set(true);
+    this.selectedDocId.set(null);
+    this.documentMetadata.set(null);
+  }
+
+  clearSearch() {
+    this.isSearchMode.set(false);
+    this.searchResults.set([]);
   }
 }

@@ -18,13 +18,29 @@ import { TagFilterOption } from '../document.model';
 export class DocumentListComponent implements OnInit {
   state = inject(DocumentStateService);
 
-  breadcrumbSegments = ['Documents publiés'];
+  // breadcrumbSegments = ['Documents publiés'];
+
   viewMode = signal<'list' | 'grid'>('list');
   activeTagFilters = signal<string[]>([]);
 
   tagFilterOptions: TagFilterOption[] = [
     { label: 'Publié', dotColor: 'bg-emerald-500', textColor: 'text-emerald-600', borderColor: 'border-emerald-300', bgActive: 'bg-emerald-50' }
   ];
+  breadcrumbSegments = computed(() =>
+    this.state.isSearchMode()
+      ? [`Résultats de recherche (${this.state.searchResultCount()})`]
+      : ['Documents publiés']
+  );
+  displayedDocuments = computed(() => {
+    if (this.state.isSearchMode()) {
+      return this.state.searchResults();
+    }
+
+    const active = this.activeTagFilters();
+    const docs = this.state.publishedDocuments();
+    if (active.length === 0) return docs;
+    return docs.filter(doc => doc.tags.some(t => active.includes(t.label)));
+  });
 
   filteredDocuments = computed(() => {
     const active = this.activeTagFilters();
@@ -45,6 +61,9 @@ export class DocumentListComponent implements OnInit {
 
   onSort() {
     console.log('Sort clicked');
+  }
+  onClearSearch() {
+    this.state.clearSearch();
   }
 
   onNew() {

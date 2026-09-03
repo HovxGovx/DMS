@@ -1,0 +1,63 @@
+<div class="relative flex-1 max-w-xl mx-8">
+
+  <p-iconfield class="w-full">
+    <p-inputicon class="pi pi-search !text-prussian-blue-300" />
+    <input
+      pInputText
+      type="text"
+      [ngModel]="query()"
+      (ngModelChange)="onInput($event)"
+      (focus)="onFocus()"
+      placeholder="Rechercher documents, métadonnées, OCR..."
+      class="w-full !bg-prussian-blue-50 !border-prussian-blue-100"
+    />
+  </p-iconfield>
+
+  <!-- <div class="flex-1 max-w-xl mx-8 relative">
+    <p-iconfield class="w-full ">
+      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-almond-silk-400 text-xs"></i>
+
+      <input
+      pInputText
+      type="text"
+      placeholder="Recherche dans les documents, emmetteur,..."
+      class="w-full pl-9 pr-14 !bg-prussian-blue-50 !border-prussian-blue-100 !text-xs"
+    />
+
+    </p-iconfield>
+
+
+    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-shadow-white border border-almond-silk-200 rounded px-1.5 py-0.5">
+
+    </span>
+  </div> -->
+  <div
+    class="absolute left-0 top-full mt-2 w-full bg-white rounded-xl border border-prussian-blue-100 shadow-lg py-2 origin-top transition-all duration-150 z-50 max-h-80 overflow-y-auto"
+    [class.opacity-0]="!isOpen()"
+    [class.scale-95]="!isOpen()"
+    [class.pointer-events-none]="!isOpen()"
+    [class.opacity-100]="isOpen()"
+    [class.scale-100]="isOpen()"
+  >
+    @if (isLoading()) {
+      <p class="px-4 py-3 text-sm text-prussian-blue-300 text-center">Recherche...</p>
+    } @else if (results().length === 0 && hasSearched()) {
+      <p class="px-4 py-3 text-sm text-prussian-blue-300 text-center">Aucun résultat</p>
+    } @else {
+      @for (result of results(); track result.id) {
+        <button
+          class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-prussian-blue-50 transition-colors"
+          (click)="selectResult(result)"
+        >
+          <i class="{{ iconFor(result.originalFileName).icon }} {{ iconFor(result.originalFileName).iconColor }} text-sm shrink-0"></i>
+          <div class="min-w-0 flex-1">
+            <div class="text-sm text-prussian-blue-900 truncate">{{ result.title || result.originalFileName }}</div>
+            <div class="text-xs text-prussian-blue-400 truncate">{{ result.author || 'Auteur inconnu' }}</div>
+          </div>
+          <span class="text-xs font-mono text-prussian-blue-300 shrink-0">{{ scorePercent(result.score) }}%</span>
+        </button>
+      }
+    }
+  </div>
+
+</div>

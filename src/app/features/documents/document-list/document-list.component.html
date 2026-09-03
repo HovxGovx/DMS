@@ -1,19 +1,69 @@
-<div class="flex flex-col h-full min-h-0">
+<div class="shrink-0 flex items-center justify-between pb-3 mb-3 border-b border-prussian-blue-100">
+  <div class="flex items-center gap-2">
+    @if (state.isSearchMode()) {
+      <button
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors"
+        (click)="onClearSearch()"
+      >
+        <i class="pi pi-times text-[10px]"></i>
+        Effacer la recherche
+      </button>
+    }
+    <app-document-toolbar
+      [viewMode]="viewMode()"
+      (viewModeChange)="viewMode.set($event)"
+      (sortClick)="onSort()"
+      (newClick)="onNew()"
+    />
+  </div>
+  <app-breadcrumb [segments]="breadcrumbSegments()" />
 
-  <!-- <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
+</div>
+
+@if (!state.isSearchMode()) {
+  <div class="shrink-0 pb-3 mb-3 border-b border-prussian-blue-100">
+    <app-document-filters
+      [tagOptions]="tagFilterOptions"
+      [(activeTags)]="activeTagFilters"
+      (dateClick)="onDateClick()"
+    />
+  </div>
+}
+
+<div class="flex-1 min-h-0">
+  @if (state.isLoadingPublished() && !state.isSearchMode()) {
+    <div class="flex items-center justify-center h-full text-sm text-prussian-blue-300">
+      Chargement...
+    </div>
+  } @else if (state.publishedLoadError() && !state.isSearchMode()) {
+    <div class="flex items-center justify-center h-full text-sm text-red-500">
+      {{ state.publishedLoadError() }}
+    </div>
+  } @else {
+    <app-document-table
+      [documents]="displayedDocuments()"
+      (rowClick)="onDocClick($event)"
+    />
+  }
+</div>
+
+
+<!-- <div class="flex flex-col h-full min-h-0"> -->
+
+  <!-- ito tsy izy <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
     <app-document-filters
       [tagOptions]="state.availableTagFilters()"
       [(activeTags)]="activeTagFilters"
       (dateClick)="onDateClick()" />
   </div> -->
-  <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
+  <!-- <div class="flex shrink-0 p-1.5 border-b border-prussian-blue-100">
     <app-document-filters
       [tagOptions]="tagFilterOptions"
       [(activeTags)]="activeTagFilters"
       (dateClick)="onDateClick()" />
-  </div>
+  </div> -->
 
-  <!-- <div
+  <!-- ito tsy izy <div
     class="shrink-0 flex items-center justify-between p-3.5 border-b border-prussian-blue-100">
     <app-breadcrumb [segments]="state.currentPath()" />
     <app-document-toolbar
@@ -22,17 +72,17 @@
       (sortClick)="onSort()"
       (newClick)="onNew()" />
   </div> -->
-  <div
+  <!-- <div
     class="shrink-0 flex items-center justify-between p-3.5 border-b border-prussian-blue-100">
-    <app-breadcrumb [segments]="breadcrumbSegments" />
+    <app-breadcrumb [segments]="breadcrumbSegments()" />
     <app-document-toolbar
       [viewMode]="viewMode()"
       (viewModeChange)="viewMode.set($event)"
       (sortClick)="onSort()"
       (newClick)="onNew()" />
-  </div>
+  </div> -->
 
-  <!-- <div class="flex-1 min-h-0">
+  <!-- Ito tsy izy <div class="flex-1 min-h-0">
     <app-document-table
       [documents]="filteredDocuments()"
       (rowClick)="onDocClick($event)"
@@ -40,7 +90,7 @@
       (editMetadata)="onEditMetadata($event)"
     />
   </div> -->
-  <div class="flex-1 min-h-0">
+  <!-- <div class="flex-1 min-h-0">
     @if (state.isLoadingPublished()) {
     <div
       class="flex items-center justify-center h-full text-sm text-prussian-blue-300">
@@ -68,4 +118,4 @@
     <span class="font-mono">Footer</span>
   </div>
 
-</div>
+</div> -->
