@@ -22,16 +22,16 @@ import { mergeWithRealMetadata } from '../../features/documents/document.mapper'
 })
 export class ShellComponent implements OnInit {
   viewState = inject(ViewStateService);
-  
+
   // Largeurs des colonnes en pixels
   leftWidth = signal(260);
   rightWidth = signal(280);
-  
+
   private resizingLeft = false;
   private resizingRight = false;
 
   documentState = inject(DocumentStateService);
-  viewState = inject(ViewStateService);
+  // viewState = inject(ViewStateService);
   private authService = inject(AuthService);
 
   ngOnInit() {

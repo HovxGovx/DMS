@@ -64,7 +64,7 @@ export class AdvancedSearchPanelComponent {
         this.isSearching.set(false);
         this.close();
         this.documentState.setSearchResults(results);
-        this.viewState.setView('documents');
+        // this.viewState.setView('documents');
       },
       error: (err) => {
         this.isSearching.set(false);
