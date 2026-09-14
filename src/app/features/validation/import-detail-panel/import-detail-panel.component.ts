@@ -31,11 +31,7 @@ export class ImportDetailPanelComponent {
         this.isPublishing.set(false);
         this.notification.success(`${doc.originalFileName} a été publié.`, 'Publication');
         this.state.removeFromPending(doc.id);
-
-        // Si plus aucun document en attente, on ferme le drawer
-        if (this.state.remainingCount() === 0) {
-          this.viewState.closeValidationPanel();
-        }
+        this.viewState.setView('documents');
       },
       error: (err) => {
         this.isPublishing.set(false);

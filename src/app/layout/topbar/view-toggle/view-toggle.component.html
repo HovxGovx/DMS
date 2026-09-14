@@ -6,7 +6,7 @@
     [class.shadow-sm]="viewState.currentView() === 'documents'"
     [class.text-prussian-blue-900]="viewState.currentView() === 'documents'"
     [class.text-prussian-blue-400]="viewState.currentView() !== 'documents'"
-
+    (click)="viewState.setView('documents')"
   >
     <i class="pi pi-folder text-xs"></i>
 
@@ -18,7 +18,7 @@
     [class.shadow-sm]="viewState.currentView() === 'validation'"
     [class.text-prussian-blue-900]="viewState.currentView() === 'validation'"
     [class.text-prussian-blue-400]="viewState.currentView() !== 'validation'"
-
+    (click)="viewState.setView('validation')"
   >
     <i class="pi pi-inbox text-xs"></i>
 

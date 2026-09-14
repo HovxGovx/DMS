@@ -1,42 +1,32 @@
-<div class="h-screen bg-prussian-blue-50/30 flex flex-col overflow-hidden relative">
+<div class="h-screen bg-prussian-blue-50/30 flex flex-col overflow-hidden">
 
   <app-topbar />
 
-  <div class="p-2.5 pb-0.5 flex flex-col gap-3 flex-1 min-h-0 relative">
+  <div class="p-2.5 pb-0.5 flex flex-col gap-3 flex-1 min-h-0">
 
-    <!-- Vue principale Documents (Toujours active) -->
+
+    @switch (viewState.currentView()) {
+    @case ('documents') {
+
     <div class="flex gap-1 flex-1 min-h-0">
 
       <!-- Sidebar gauche -->
       <aside
-        [style.width.px]="leftWidth()"
-        class="shrink-0 bg-white rounded-xl border border-prussian-blue-100 flex flex-col min-h-0 overflow-hidden">
+        class="w-65 shrink-0 bg-white rounded-xl border border-prussian-blue-100 flex flex-col min-h-0">
         <IngestPanel />
 
         <app-sidebar />
       </aside>
-
-      <!-- Resizer Gauche -->
-      <div 
-        class="w-1 cursor-col-resize hover:bg-prussian-blue-200 transition-colors rounded-full"
-        (mousedown)="startResizingLeft()">
-      </div>
 
       <!-- Zone de contenu principale -->
       <main class="flex-1 bg-white rounded-xl border border-prussian-blue-100 p-0 min-h-0 overflow-hidden flex flex-col">
         <router-outlet />
       </main>
 
-      <!-- Resizer Droit -->
-      <div 
-        class="w-1 cursor-col-resize hover:bg-prussian-blue-200 transition-colors rounded-full"
-        (mousedown)="startResizingRight()">
-      </div>
-
-      <!-- aside droit -->
+      <!-- shell.component.html, aside droit -->
       <aside
-        [style.width.px]="rightWidth()"
-        class="shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0 overflow-hidden">
+        class="w-70 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
+        <IngestPanel />
         @if (selectedDetail(); as detail) {
         <app-document-detail-panel [document]="detail" />
         } @else {
@@ -48,31 +38,12 @@
       </aside>
 
     </div>
+    }
 
-    <!-- Panneau Latéral de Validation (Drawer) -->
-    <div
-      class="absolute top-0 right-0 h-full transition-all duration-300 ease-in-out z-50 shadow-2xl border-l border-prussian-blue-100 bg-white"
-      [class.translate-x-0]="viewState.isValidationOpen()"
-      [class.translate-x-full]="!viewState.isValidationOpen()"
-      [style.width.px]="800">
-      <!-- Header du Drawer -->
-      <div class="flex items-center justify-between p-4 border-b border-prussian-blue-100 bg-prussian-blue-50/50">
-        <div class="flex items-center gap-2">
-          <i class="pi pi-check-circle text-prussian-blue-800"></i>
-          <span class="font-semibold text-sm text-prussian-blue-900">Validation des Imports</span>
-        </div>
-        <button 
-          (click)="toggleView()" 
-          class="p-1 hover:bg-prussian-blue-100 rounded-full transition-colors">
-          <i class="pi pi-times text-gray-500"></i>
-        </button>
-      </div>
-
-      <!-- Contenu du Drawer -->
-      <div class="h-full overflow-hidden flex flex-col">
-        <app-validation-view />
-      </div>
-    </div>
+    @case ('validation') {
+    <app-validation-view />
+    }
+    }
 
   </div>
 

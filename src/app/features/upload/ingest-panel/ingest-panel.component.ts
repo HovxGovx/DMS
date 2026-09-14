@@ -59,7 +59,7 @@ export class IngestPanelComponent {
         this.showPerFileToasts(files, result.failedFiles);
 
         this.validationState.loadPendingImports();
-        // this.viewState.setView('validation');
+        this.viewState.setView('validation');
       },
       error: (err) => {
         this.isUploading.set(false);

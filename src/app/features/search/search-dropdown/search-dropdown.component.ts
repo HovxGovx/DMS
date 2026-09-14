@@ -84,7 +84,7 @@ export class SearchDropdownComponent {
     this.results.set([]);
     this.hasSearched.set(false);
 
-    //this.viewState.setView('documents');
+    this.viewState.setView('documents');
     this.documentState.selectDocument(result.id);
   }
 
