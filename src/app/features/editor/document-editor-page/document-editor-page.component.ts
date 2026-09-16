@@ -34,9 +34,11 @@ export class DocumentEditorPageComponent implements OnInit, OnDestroy {
       .then((config) => {
         this.isLoading.set(false);
         this.editorInstance = new window.DocsAPI.DocEditor(
-          this.editorContainer().nativeElement,
-          config
-        );
+          this.editorInstance = new window.DocsAPI.DocEditor(
+            'documentEditorPlaceholder',
+            config
+        )
+      );
       })
       .catch((err) => {
         this.isLoading.set(false);
