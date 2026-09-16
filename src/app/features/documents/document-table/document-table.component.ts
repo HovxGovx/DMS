@@ -1,7 +1,8 @@
-import { Component, input, model, output } from '@angular/core';
+import { Component, input, model, output, inject } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { DocumentItem } from '../document.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-document-table',
@@ -14,11 +15,13 @@ import { DocumentItem } from '../document.model';
 
 })
 export class DocumentTableComponent {
-
+  private router = inject(Router);
   documents = input.required<DocumentItem[]>();
   selectedDocs = model<DocumentItem[]>([]);
 
   rowClick = output<string>();
-  openFile = output<string>();
   editMetadata = output<string>();
+  openFile(id: string) {
+    this.router.navigate(['/documents', id, 'editor']);
+  }
 }
