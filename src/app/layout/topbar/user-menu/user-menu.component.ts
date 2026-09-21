@@ -1,10 +1,12 @@
 import { Component, signal, inject, computed, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
+import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
 @Component({
   selector: 'app-user-menu',
   standalone: true,
-  templateUrl: './user-menu.component.html'
+  templateUrl: './user-menu.component.html',
+  imports: [DropdownBackdropComponent]
 })
 export class UserMenuComponent {
   private router = inject(Router);

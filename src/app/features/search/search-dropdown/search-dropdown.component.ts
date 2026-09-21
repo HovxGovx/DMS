@@ -11,11 +11,12 @@ import { SearchResult } from '../search-result.model';
 import { detectFileType } from '../../documents/document.mapper';
 import { DocumentStateService } from '../../documents/document-state.service';
 import { ViewStateService } from '../../../core/view-state.service';
+import { AdvancedSearchPanelComponent } from '../advanced-search-panel/advanced-search-panel.component';
 
 @Component({
   selector: 'app-search-dropdown',
   standalone: true,
-  imports: [FormsModule, InputTextModule, IconFieldModule, InputIconModule],
+  imports: [FormsModule, InputTextModule, IconFieldModule, InputIconModule, AdvancedSearchPanelComponent],
   templateUrl: './search-dropdown.component.html'
 })
 export class SearchDropdownComponent {

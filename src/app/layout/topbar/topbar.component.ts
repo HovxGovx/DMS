@@ -12,7 +12,6 @@ import { AdvancedSearchPanelComponent } from '../../features/search/advanced-sea
   standalone: true,
   imports: [InputTextModule,
     SearchDropdownComponent,
-    AdvancedSearchPanelComponent,
     IconFieldModule,
     InputIconModule,
     UserMenuComponent,
