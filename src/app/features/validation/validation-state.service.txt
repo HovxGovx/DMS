@@ -1,23 +1,16 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { LifecycleDocumentService } from './lifecycle-document.service';
 import { LifecycleDocument } from './lifecycle-document.model';
-import { DocumentValidationService } from './document-validation.service';
-import { ValidationDetail } from './validation-detail.model';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationStateService {
   private documentService = inject(LifecycleDocumentService);
-  private validationService = inject(DocumentValidationService);
 
   pendingImports = signal<LifecycleDocument[]>([]);
   isLoading = signal(false);
   loadError = signal<string | null>(null);
 
   selectedImportId = signal<string | null>(null);
-
-  detail = signal<ValidationDetail | null>(null);
-  isDetailLoading = signal(false);
-  detailError = signal<string | null>(null);
 
   selectedImport = computed(() =>
     this.pendingImports().find(d => d.id === this.selectedImportId()) ?? null
@@ -35,7 +28,7 @@ export class ValidationStateService {
         this.isLoading.set(false);
 
         if (docs.length > 0 && !this.selectedImportId()) {
-          this.selectImport(docs[0].id);
+          this.selectedImportId.set(docs[0].id);
         }
       },
       error: (err) => {
@@ -48,7 +41,6 @@ export class ValidationStateService {
 
   selectImport(id: string) {
     this.selectedImportId.set(id);
-    this.loadDetail(id);
   }
 
   // Mutateur simple, appelé par les composants après une action réussie (ex: publication).
@@ -58,32 +50,7 @@ export class ValidationStateService {
 
     if (this.selectedImportId() === id) {
       const remaining = this.pendingImports();
-      if (remaining.length) {
-        this.selectImport(remaining[0].id);
-      } else {
-        this.selectedImportId.set(null);
-        this.detail.set(null);
-      }
+      this.selectedImportId.set(remaining.length ? remaining[0].id : null);
     }
-  }
-
-  private loadDetail(id: string) {
-    this.isDetailLoading.set(true);
-    this.detailError.set(null);
-    this.detail.set(null);
-
-    this.validationService.getDetail(id).subscribe({
-      next: (detail) => {
-        if (this.selectedImportId() !== id) return;
-        this.detail.set(detail);
-        this.isDetailLoading.set(false);
-      },
-      error: (err) => {
-        if (this.selectedImportId() !== id) return;
-        this.isDetailLoading.set(false);
-        this.detailError.set('Impossible de charger le détail du document.');
-        console.error('Erreur chargement détail:', err);
-      }
-    });
   }
 }

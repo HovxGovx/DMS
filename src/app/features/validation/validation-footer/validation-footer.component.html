@@ -13,6 +13,7 @@
       icon="pi pi-check-circle"
       styleClass="!bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
       (click)="validateClick.emit()"
+      [disabled]="validateDisabled()"
     />
   </div>
 </div>

@@ -1,8 +1,3 @@
-
-
-<!-- <app-import-detail-panel /> -->
-
-
 <!-- Colonne gauche : file d'attente -->
 <aside
   class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
@@ -14,7 +9,7 @@
 <main
   class="flex-1 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
 
-  @if (state.selectedImport(); as doc) {
+  @if (state.detail(); as doc) {
 
   <div class="shrink-0 border-b border-prussian-blue-100">
     <app-import-preview-card [document]="doc" />
@@ -24,34 +19,47 @@
     class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll p-1.5 flex flex-col gap-5">
 
     <app-title-field
-      label="Titre suggéré"
-      [(value)]="doc.suggestedTitle" />
+      label="Titre"
+      [(value)]="doc.title" />
 
     <div class="grid grid-cols-2 gap-4">
       <app-classification-select
+        label="Domaine"
+        placeholder="Choisir un domaine"
+        [options]="domainOptions()"
+        [value]="domainCode()"
+        (valueChange)="onDomainChange($event)" />
+      <app-classification-select
         label="Type de document"
-        [options]="documentTypeOptions"
-        [confidence]="doc.documentTypeConfidence"
-        [(value)]="doc.documentType" />
+        placeholder="Choisir un type"
+        [options]="typeOptions()"
+        [disabled]="!domainCode()"
+        [(value)]="typeCode" />
       <app-classification-select
         label="Confidentialité"
         [options]="confidentialityOptions"
-        [confidence]="doc.confidentialityConfidence"
-        [(value)]="doc.confidentiality" />
+        [(value)]="confidentiality" />
     </div>
-    <!-- Suggestion de metadata -->
-    <app-metadata-form [(fields)]="doc.metadataFields" />
     <!-- Tags -->
-    <app-tags-editor [(tags)]="doc.tags" />
-    <!-- Explorateur -->
-    <app-path-selector [(path)]="doc.suggestedPath" />
+    <app-tags-editor [documentId]="doc.id" [(tags)]="doc.tags" />
 
   </div>
   <app-validation-footer
     [remainingCount]="state.remainingCount()"
+    [validateDisabled]="!canValidate()"
     (cancelClick)="onCancel()"
     (validateClick)="onValidate()" />
 
+  } @else if (state.isDetailLoading()) {
+  <div
+    class="flex-1 flex items-center justify-center text-gray-500 text-sm">
+    Chargement...
+  </div>
+  } @else if (state.detailError()) {
+  <div
+    class="flex-1 flex items-center justify-center text-red-500 text-sm">
+    {{ state.detailError() }}
+  </div>
   } @else {
   <div
     class="flex-1 flex items-center justify-center text-gray-500 text-sm">

@@ -5,36 +5,36 @@
 
   <div class="flex items-center gap-2 flex-wrap">
 
-    @for (tag of tags(); track tag.label) {
+    @for (tag of tags(); track tag.id) {
       <div
         class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150"
-        [class.bg-emerald-50]="tag.status === 'accepted'"
-        [class.border-emerald-200]="tag.status === 'accepted'"
-        [class.text-emerald-700]="tag.status === 'accepted'"
-        [class.bg-red-50]="tag.status === 'rejected'"
-        [class.border-red-200]="tag.status === 'rejected'"
-        [class.text-red-600]="tag.status === 'rejected'"
-        [class.line-through]="tag.status === 'rejected'"
-        [class.bg-prussian-blue-50]="tag.status === 'pending'"
-        [class.border-prussian-blue-200]="tag.status === 'pending'"
-        [class.text-prussian-blue-700]="tag.status === 'pending'"
+        [class.bg-emerald-50]="tag.status === 'ACCEPTED'"
+        [class.border-emerald-200]="tag.status === 'ACCEPTED'"
+        [class.text-emerald-700]="tag.status === 'ACCEPTED'"
+        [class.bg-red-50]="tag.status === 'REJECTED'"
+        [class.border-red-200]="tag.status === 'REJECTED'"
+        [class.text-red-600]="tag.status === 'REJECTED'"
+        [class.line-through]="tag.status === 'REJECTED'"
+        [class.bg-prussian-blue-50]="tag.status === 'PENDING'"
+        [class.border-prussian-blue-200]="tag.status === 'PENDING'"
+        [class.text-prussian-blue-700]="tag.status === 'PENDING'"
       >
         {{ tag.label }}
 
-        @if (tag.status !== 'rejected') {
+        @if (tag.status !== 'REJECTED') {
           <i
             class="pi pi-check text-[10px] cursor-pointer transition-transform hover:scale-125"
-            [class.text-emerald-600]="tag.status === 'accepted'"
-            [class.text-prussian-blue-300]="tag.status === 'pending'"
-            (click)="accept(tag.label)"
+            [class.text-emerald-600]="tag.status === 'ACCEPTED'"
+            [class.text-prussian-blue-300]="tag.status === 'PENDING'"
+            (click)="accept(tag)"
           ></i>
         }
-        @if (tag.status !== 'accepted') {
+        @if (tag.status !== 'ACCEPTED') {
           <i
             class="pi pi-times text-[10px] cursor-pointer transition-transform hover:scale-125"
-            [class.text-red-500]="tag.status === 'rejected'"
-            [class.text-prussian-blue-300]="tag.status === 'pending'"
-            (click)="reject(tag.label)"
+            [class.text-red-500]="tag.status === 'REJECTED'"
+            [class.text-prussian-blue-300]="tag.status === 'PENDING'"
+            (click)="reject(tag)"
           ></i>
         }
       </div>

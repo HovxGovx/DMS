@@ -4,10 +4,10 @@
     <!-- Vignette fichier -->
     <div class="w-12 h-14 rounded-lg border border-prussian-blue-100 bg-white shrink-0 flex flex-col overflow-hidden">
       <div class="bg-prussian-blue-900 text-white text-[10px] font-semibold text-center py-1 tracking-wide">
-        {{ document().fileFormat }}
+        {{ fileType().label }}
       </div>
       <div class="flex-1 flex items-center justify-center">
-        <i class="{{ document().fileIcon }} {{ document().fileIconColor }} text-3xl opacity-60"></i>
+        <i class="{{ fileType().icon }} {{ fileType().color }} text-3xl opacity-60"></i>
       </div>
       <div class="px-2 pb-2 flex flex-col gap-1">
         <!-- <span class="h-0.5 bg-prussian-blue-100 rounded-full"></span> -->
@@ -22,7 +22,7 @@
         SUGGESTIONS IA PRÊTES
       </div> -->
       <h3 class="text-lg font-semibold text-prussian-blue-900 leading-tight">
-        {{ document().suggestedTitle }}
+        {{ document().title }}
       </h3>
       <div class="flex items-center gap-3 text-xs text-gray-400">
         <span class="flex items-center gap-1">
@@ -37,7 +37,7 @@
         }
         <span class="flex items-center gap-1">
           <i class="pi pi-clock text-[10px] text-almond-silk-400"></i>
-          Importé il y a 1 min
+          Importé le {{ importedAt() }}
         </span>
       </div>
     </div>

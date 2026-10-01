@@ -1,4 +1,4 @@
-<div>
+<!-- <div>
   <label class="text-xs font-semibold text-prussian-blue-600 tracking-wide mb-2 block">
     {{ label() | uppercase }}
   </label>
@@ -13,5 +13,28 @@
     <div class="absolute right-9 top-1/2 -translate-y-1/2 pointer-events-none">
       <app-confidence-badge [value]="confidence()" />
     </div>
+  </div>
+</div> -->
+<div>
+  <label class="text-xs font-semibold text-prussian-blue-600 tracking-wide mb-2 block">
+    {{ label() | uppercase }}
+  </label>
+
+  <div class="relative">
+    <p-dropdown
+      [options]="options()"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="placeholder()"
+      [disabled]="disabled()"
+      [(ngModel)]="value"
+      styleClass="!w-full !border-prussian-blue-200 !text-black"
+      panelStyleClass="!text-sm"
+    />
+    @if (confidence() !== null) {
+      <div class="absolute right-9 top-1/2 -translate-y-1/2 pointer-events-none">
+        <app-confidence-badge [value]="confidence() ?? 0" />
+      </div>
+    }
   </div>
 </div>

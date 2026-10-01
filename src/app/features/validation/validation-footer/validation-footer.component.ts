@@ -12,4 +12,5 @@ export class ValidationFooterComponent {
 
   cancelClick = output<void>();
   validateClick = output<void>();
+  validateDisabled = input<boolean>(false);
 }
