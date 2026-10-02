@@ -1,7 +1,10 @@
 <div class="relative flex-1 max-w-xl mx-8">
   <div class="flex columns-1">
-    <p-iconfield class="w-full">
-      <p-inputicon class="pi pi-search !text-prussian-blue-300" />
+    <p-inputgroup>
+      <p-inputgroup-addon class="bg-slate-50 border-purssian-blue-300">
+        <i class="pi pi-search text-slate-400"></i>
+      </p-inputgroup-addon>
+
       <input
         pInputText
         type="text"
@@ -9,15 +12,17 @@
         (ngModelChange)="onInput($event)"
         (focus)="onFocus()"
         placeholder="Rechercher documents, métadonnées, OCR..."
-        class="w-full !bg-prussian-blue-50 !border-prussian-blue-100"
+        class="w-full !bg-slate-50 !border-slate-200"
       />
-    </p-iconfield>
-    <app-advanced-search-panel />
+
+      <p-inputgroup-addon class="!p-0 !bg-slate-50 !border-slate-200">
+        <app-advanced-search-panel />
+      </p-inputgroup-addon>
+    </p-inputgroup>
   </div>
 
-
   <div
-    class="absolute left-0 top-full mt-2 w-full bg-white rounded-xl border border-prussian-blue-100 shadow-lg py-2 origin-top transition-all duration-150 z-50 max-h-80 overflow-y-auto"
+    class="absolute left-0 top-full mt-2 w-full bg-white rounded-xl border border-slate-200 shadow-lg py-2 origin-top transition-all duration-150 z-50 max-h-80 overflow-y-auto"
     [class.opacity-0]="!isOpen()"
     [class.scale-95]="!isOpen()"
     [class.pointer-events-none]="!isOpen()"
@@ -25,24 +30,36 @@
     [class.scale-100]="isOpen()"
   >
     @if (isLoading()) {
-      <p class="px-4 py-3 text-sm text-prussian-blue-300 text-center">Recherche...</p>
+      <p class="px-4 py-3 text-sm text-slate-400 text-center">
+        Recherche...
+      </p>
     } @else if (results().length === 0 && hasSearched()) {
-      <p class="px-4 py-3 text-sm text-prussian-blue-300 text-center">Aucun résultat</p>
+      <p class="px-4 py-3 text-sm text-slate-400 text-center">
+        Aucun résultat
+      </p>
     } @else {
       @for (result of results(); track result.id) {
         <button
-          class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-prussian-blue-50 transition-colors"
+          class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors"
           (click)="selectResult(result)"
         >
           <i class="{{ iconFor(result.originalFileName).icon }} {{ iconFor(result.originalFileName).iconColor }} text-sm shrink-0"></i>
+
           <div class="min-w-0 flex-1">
-            <div class="text-sm text-prussian-blue-900 truncate">{{ result.title || result.originalFileName }}</div>
-            <div class="text-xs text-prussian-blue-400 truncate">{{ result.author || 'Auteur inconnu' }}</div>
+            <div class="text-sm text-slate-800 truncate">
+              {{ result.title || result.originalFileName }}
+            </div>
+
+            <div class="text-xs text-slate-400 truncate">
+              {{ result.author || 'Auteur inconnu' }}
+            </div>
           </div>
-          <span class="text-xs font-mono text-prussian-blue-300 shrink-0">{{ scorePercent(result.score) }}%</span>
+
+          <span class="text-xs font-mono text-slate-400 shrink-0">
+            {{ scorePercent(result.score) }}%
+          </span>
         </button>
       }
     }
   </div>
-
 </div>
