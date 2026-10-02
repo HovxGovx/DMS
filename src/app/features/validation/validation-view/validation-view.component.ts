@@ -19,7 +19,6 @@ import { NotificationService } from '../../../core/notification.service';
   selector: 'app-validation-view',
   standalone: true,
   imports: [ImportQueueListComponent,
-    ImportDetailPanelComponent,
     IngestPanelComponent,
     ImportPreviewCardComponent,
     TitleFieldComponent,

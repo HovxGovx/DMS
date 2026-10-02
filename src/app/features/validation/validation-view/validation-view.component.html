@@ -18,9 +18,17 @@
   <div
     class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll p-1.5 flex flex-col gap-5">
 
-    <app-title-field
+
+    <div class="grid grid-cols-2 gap-4">
+      <app-title-field
       label="Titre"
       [(value)]="doc.title" />
+      <app-classification-select
+      label="Confidentialité"
+      [options]="confidentialityOptions"
+      [(value)]="confidentiality" />
+      
+    </div>
 
     <div class="grid grid-cols-2 gap-4">
       <app-classification-select
@@ -35,10 +43,7 @@
         [options]="typeOptions()"
         [disabled]="!domainCode()"
         [(value)]="typeCode" />
-      <app-classification-select
-        label="Confidentialité"
-        [options]="confidentialityOptions"
-        [(value)]="confidentiality" />
+
     </div>
     <!-- Tags -->
     <app-tags-editor [documentId]="doc.id" [(tags)]="doc.tags" />
