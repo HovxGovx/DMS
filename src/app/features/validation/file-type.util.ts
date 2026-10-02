@@ -21,3 +21,7 @@ export function getFileTypeInfo(fileName: string): FileTypeInfo {
     color: 'text-prussian-blue-400'
   };
 }
+export function getDisplayName(fileName: string): string {
+  const extensionIndex = fileName.lastIndexOf('.');
+  return extensionIndex > 0 ? fileName.substring(0, extensionIndex) : fileName;
+}

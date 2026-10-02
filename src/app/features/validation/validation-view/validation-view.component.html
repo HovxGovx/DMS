@@ -1,8 +1,11 @@
 <!-- Colonne gauche : file d'attente -->
 <aside
   class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
-  <IngestPanel/>
-  <app-import-queue-list />
+
+    <IngestPanel/>
+
+    <app-import-queue-list />
+
 </aside>
 
 <!-- Colonne droite : formulaire de validation -->
@@ -27,7 +30,7 @@
       label="Confidentialité"
       [options]="confidentialityOptions"
       [(value)]="confidentiality" />
-      
+
     </div>
 
     <div class="grid grid-cols-2 gap-4">
