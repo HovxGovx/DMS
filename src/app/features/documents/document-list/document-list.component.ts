@@ -52,7 +52,7 @@ export class DocumentListComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.state.loadPublishedDocuments();
+    //this.state.loadPublishedDocuments();
   }
 
   onDocClick(id: string) {

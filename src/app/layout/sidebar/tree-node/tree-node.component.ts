@@ -33,6 +33,7 @@ export class TreeNodeComponent {
 
   get count(): number | null {
     const n = this.node();
+    if (n.count !== undefined) return n.count;
     const fn = this.getCountFn();
     return n.type === 'leaf' && n.filesKey && fn ? fn(n.filesKey) : null;
   }

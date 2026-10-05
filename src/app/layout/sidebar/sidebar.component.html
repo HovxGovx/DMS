@@ -10,9 +10,13 @@
 </div>
 
 <div class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll pr-1">
-  @for (node of hierarchyTree; track node.key) {
-  <app-tree-node [node]="node" [isExpandedFn]="isExpanded" [isActiveFn]="isActive" [getCountFn]="getCount"
+  @if (state.treeError()) {
+  <p class="text-xs text-red-500 text-center py-4">{{ state.treeError() }}</p>
+  } @else {
+  @for (node of state.tree(); track node.key) {
+  <app-tree-node [node]="node" [isExpandedFn]="isExpanded" [isActiveFn]="isActive" [selectAnyNode]="true"
     (toggleExpand)="onToggleExpand($event)" (nodeSelect)="onNodeSelect($event)" />
+  }
   }
 </div>
 

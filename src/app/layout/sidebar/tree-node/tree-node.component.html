@@ -5,7 +5,7 @@
   [class.hover:bg-prussian-blue-50]="!isActive"
   (click)="onRowClick()"
 >
-  @if (node().children?.length) {
+  @if (node().hasChildren ?? !!node().children?.length) {
     <i
       class="pi text-[10px] text-prussian-blue-300 shrink-0"
       [class.pi-chevron-down]="isExpanded"

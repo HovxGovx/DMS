@@ -14,6 +14,7 @@ import { ValidationStateService } from '../validation-state.service';
 import { DocumentValidationService } from '../document-validation.service';
 import { TaxonomyDomain } from '../validation-detail.model';
 import { NotificationService } from '../../../core/notification.service';
+import { SmartFolderStateService } from '../../documents/smart-folder-state.service';
 
 @Component({
   selector: 'app-validation-view',
@@ -34,6 +35,7 @@ export class ValidationViewComponent implements OnInit {
   state = inject(ValidationStateService);
   private validationService = inject(DocumentValidationService);
   private notification = inject(NotificationService);
+  private folderState = inject(SmartFolderStateService);
 
   domains = signal<TaxonomyDomain[]>([]);
   domainCode = signal<string | null>(null);
@@ -97,6 +99,7 @@ export class ValidationViewComponent implements OnInit {
         this.isValidating.set(false);
         this.notification.success(`${doc.fileName} a été validé et publié.`, 'Validation');
         this.state.removeFromPending(doc.id);
+        this.folderState.refresh();
       },
       error: (err) => {
         this.isValidating.set(false);

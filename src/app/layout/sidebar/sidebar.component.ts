@@ -1,10 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { TreeNodeComponent } from './tree-node/tree-node.component';
-import { HIERARCHY_TREE, HierarchyNode } from '../../features/documents/hierarchy.model';
-// import { DocumentStateService } from '../../features/documents/document-state.service';
+import { HierarchyNode } from '../../features/documents/hierarchy.model';
 import { IconField } from "primeng/iconfield";
-import { HierarchyStateService } from '../../features/documents/hierarchy-state.service';
+import { SmartFolderStateService } from '../../features/documents/smart-folder-state.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,26 +12,28 @@ import { HierarchyStateService } from '../../features/documents/hierarchy-state.
   templateUrl: './sidebar.component.html',
   host: { class: 'flex flex-col flex-1 min-h-0 h-full' }
 })
-export class SidebarComponent {
-  state = inject(HierarchyStateService);
-  hierarchyTree = HIERARCHY_TREE;
+export class SidebarComponent implements OnInit {
+  state = inject(SmartFolderStateService);
 
   totalDocs = '2,847 docs';
   totalSize = '14.2 GB';
   version = 'v3.2.1';
 
-  isExpanded = (key: string) => this.state.isExpanded(key);
-  isActive = (node: HierarchyNode) =>
-    node.type === 'leaf' && this.state.currentFilesKey() === node.filesKey;
-  getCount = (filesKey: string) => this.state.getCount(filesKey);
+  ngOnInit() {
+    this.state.loadRoots();
+  }
+
+  isExpanded = (key: string) => this.state.expandedIds().has(key);
+  isActive = (node: HierarchyNode) => this.state.selectedFolderId() === node.key;
 
   onToggleExpand(key: string) {
     this.state.toggleExpand(key);
   }
 
   onNodeSelect(node: HierarchyNode) {
-    if (node.type === 'leaf' && node.filesKey) {
-      this.state.navigateTo(node.path, node.filesKey);
+    this.state.selectFolder(node.key);
+    if (node.hasChildren && !this.state.expandedIds().has(node.key)) {
+      this.state.toggleExpand(node.key);
     }
   }
 }

@@ -6,6 +6,8 @@ export interface HierarchyNode {
   path: string[];
   filesKey?: string; // uniquement pour les leaf
   children?: HierarchyNode[];
+  count?: number;
+  hasChildren?: boolean;
 }
 
 export const HIERARCHY_TREE: HierarchyNode[] = [

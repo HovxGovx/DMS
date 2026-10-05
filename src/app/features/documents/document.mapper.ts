@@ -2,7 +2,7 @@ import { LifecycleDocument } from '../validation/lifecycle-document.model';
 import { DocumentItem, DocumentDetail } from './document.model';
 import { DocMetadata } from './document-metadata.service';
 import { SearchResult } from '../search/search-result.model';
-
+import { FolderDocument } from './smart-folder.model';
 export interface FileTypeInfo {
   format: string;
   icon: string;
@@ -121,5 +121,15 @@ export function fromSearchResult(result: SearchResult): DocumentItem {
     department: '—',
     expiry: 'N/A',
     aiSummary: "Résumé automatique non disponible pour le moment."
+  };
+}
+
+export function fromFolderDocument(doc: FolderDocument): DocumentItem {
+  const base = fromLifecycleDocument(doc);
+  return {
+    ...base,
+    name: doc.title?.trim() ? doc.title : base.name,
+    category: doc.typeLabel ?? 'Non classé',
+    department: doc.domainLabel ?? '—'
   };
 }
