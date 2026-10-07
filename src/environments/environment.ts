@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
   apiUrl: '',
-  onlyOfficeUrl: 'http://localhost:8085'
+  onlyOfficeUrl: 'http://localhost:8089'
 };

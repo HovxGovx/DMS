@@ -13,7 +13,7 @@ export class DateRangeFilterComponent {
   range = model<Date[] | null>(null);
 
   isOpen = signal(false);
-  activePresetLabel = signal<string | null>('30 derniers jours');
+  activePresetLabel = signal<string | null>(null);
 
   startDate = signal<string>('');
   endDate = signal<string>('');

@@ -5,12 +5,12 @@ import { TagsFilterDropdownComponent } from './tags-filter-dropdown/tags-filter-
 
 @Component({
   selector: 'app-document-filters',
-  imports: [DateRangeFilterComponent, TagsFilterDropdownComponent],
+  imports: [ TagsFilterDropdownComponent],
   standalone: true,
   templateUrl: './document-filters.component.html'
 })
 export class DocumentFiltersComponent {
-  dateRange = signal<Date[] | null>(null);
+  dateRange = model<Date[] | null>(null);
   dateLabel = input<string>('30 jours');
   tagOptions = input.required<TagFilterOption[]>();
 

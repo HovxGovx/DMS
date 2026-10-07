@@ -1,5 +1,5 @@
 <div
-  class="flex items-center gap-2 py-1.5 pr-2 rounded-md cursor-pointer transition-colors duration-150"
+  class="group flex items-center gap-2 py-1.5 pr-2 rounded-md cursor-pointer transition-colors duration-150"
   [style.paddingLeft.px]="depth() * 14 + 8"
   [class.bg-prussian-blue-100]="isActive"
   [class.hover:bg-prussian-blue-50]="!isActive"
@@ -28,7 +28,27 @@
     [class.text-prussian-blue-900]="isActive"
     [class.text-prussian-blue-700]="!isActive"
   >{{ node().label }}</span>
-
+  @if (actionsEnabled()) {
+    <span class="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+      <i
+        class="pi pi-plus text-[10px] text-prussian-blue-300 hover:text-prussian-blue-700"
+        title="Nouveau sous-dossier"
+        (click)="onAction($event, 'create')"
+      ></i>
+      @if (node().editable) {
+        <i
+          class="pi pi-pencil text-[10px] text-prussian-blue-300 hover:text-prussian-blue-700"
+          title="Modifier"
+          (click)="onAction($event, 'edit')"
+        ></i>
+        <i
+          class="pi pi-trash text-[10px] text-prussian-blue-300 hover:text-red-500"
+          title="Supprimer"
+          (click)="onAction($event, 'delete')"
+        ></i>
+      }
+    </span>
+  }
   @if (count !== null) {
     <span
       class="text-xs px-1.5 py-0.5 rounded"
@@ -49,6 +69,8 @@
         [isActiveFn]="isActiveFn()"
         [getCountFn]="getCountFn()"
         [selectAnyNode]="selectAnyNode()"
+        [actionsEnabled]="actionsEnabled()"
+        (nodeAction)="nodeAction.emit($event)"
         (toggleExpand)="toggleExpand.emit($event)"
         (nodeSelect)="nodeSelect.emit($event)"
       />

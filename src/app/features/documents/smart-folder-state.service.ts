@@ -26,17 +26,19 @@ export class SmartFolderStateService {
     }
     return map;
   });
-
-  currentPath = computed<string[]>(() => {
+  currentPathNodes = computed<{ id: string; name: string }[]>(() => {
     const byId = this.nodesById();
-    const path: string[] = [];
+    const path: { id: string; name: string }[] = [];
     let node = byId.get(this.selectedFolderId() ?? '');
     while (node) {
-      path.unshift(node.name);
+      path.unshift({ id: node.id, name: node.name });
       node = node.parentId ? byId.get(node.parentId) : undefined;
     }
     return path;
   });
+
+  currentPath = computed<string[]>(() => this.currentPathNodes().map(node => node.name));
+
 
   tree = computed<HierarchyNode[]>(() => this.buildNodes(null, []));
 
@@ -82,18 +84,51 @@ export class SmartFolderStateService {
     }
   }
 
-  // À appeler après une action qui change le contenu des dossiers (ex : validation d'un document)
-  refresh() {
-    Array.from(this.childrenByParent().keys()).forEach(key => {
-      this.api.getChildren(key === ROOT_KEY ? null : key).subscribe({
-        next: nodes => this.setChildren(key, nodes)
+    // À appeler après une action qui change le contenu des dossiers (ex : validation d'un document)
+    refresh(reloadDocuments = true) {
+      Array.from(this.childrenByParent().keys()).forEach(key => {
+        this.api.getChildren(key === ROOT_KEY ? null : key).subscribe({
+          next: nodes => this.setChildren(key, nodes)
+        });
       });
-    });
-    const selected = this.selectedFolderId();
-    if (selected) {
-      this.loadDocuments(selected);
+      const selected = this.selectedFolderId();
+      if (reloadDocuments && selected) {
+        this.loadDocuments(selected);
+      }
     }
-  }
+
+    // Déplie un dossier pour que son contenu soit visible (ex : après y avoir créé un sous-dossier)
+    reveal(id: string) {
+      if (!this.expandedIds().has(id)) {
+        this.expand(id);
+      }
+    }
+
+    afterDelete(deletedId: string, parentId: string | null) {
+      const wasInPath = this.currentPathNodes().some(node => node.id === deletedId);
+      this.childrenByParent.update(map => {
+        const next = new Map(map);
+        next.delete(deletedId);
+        return next;
+      });
+      this.expandedIds.update(set => {
+        const next = new Set(set);
+        next.delete(deletedId);
+        return next;
+      });
+
+      if (wasInPath) {
+        const fallback = parentId ?? this.childrenByParent().get(ROOT_KEY)?.[0]?.id ?? null;
+        if (fallback) {
+          this.selectFolder(fallback);
+        } else {
+          this.selectedFolderId.set(null);
+        }
+        this.refresh(false);
+      } else {
+        this.refresh();
+      }
+    }
 
   private expand(id: string) {
     this.expandedIds.update(set => new Set(set).add(id));
@@ -141,6 +176,8 @@ export class SmartFolderStateService {
         path,
         count: node.documentCount,
         hasChildren: node.hasChildren,
+        editable: !node.system,
+        parentId: node.parentId,
         children: node.hasChildren && expanded ? this.buildNodes(node.id, path) : undefined
       } as HierarchyNode;
     });

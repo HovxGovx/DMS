@@ -1,5 +1,5 @@
 import { Component, input, output } from '@angular/core';
-import { HierarchyNode } from '../../../features/documents/hierarchy.model';
+import { HierarchyNode, NodeAction, NodeActionEvent } from '../../../features/documents/hierarchy.model';
 
 @Component({
   selector: 'app-tree-node',
@@ -20,8 +20,12 @@ export class TreeNodeComponent {
   // false = seules les feuilles sont sélectionnables, un dossier se déplie juste (cas sidebar)
   selectAnyNode = input<boolean>(false);
 
+  // true = affiche les icônes d'action au survol (nouveau sous-dossier, modifier, supprimer)
+  actionsEnabled = input<boolean>(false);
+
   toggleExpand = output<string>();
   nodeSelect = output<HierarchyNode>();
+  nodeAction = output<NodeActionEvent>();
 
   get isExpanded(): boolean {
     return this.isExpandedFn()(this.node().key);
@@ -50,5 +54,10 @@ export class TreeNodeComponent {
   onChevronClick(event: MouseEvent) {
     event.stopPropagation();
     this.toggleExpand.emit(this.node().key);
+  }
+
+  onAction(event: MouseEvent, action: NodeAction) {
+    event.stopPropagation();
+    this.nodeAction.emit({ node: this.node(), action });
   }
 }

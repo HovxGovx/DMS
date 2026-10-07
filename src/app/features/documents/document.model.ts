@@ -21,6 +21,7 @@ export interface DocumentItem {
   department: string;
   expiry: string;
   aiSummary: string;
+  importDate?: string;
 }
 
 export interface TagFilterOption {

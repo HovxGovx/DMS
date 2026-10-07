@@ -61,6 +61,7 @@ export function fromLifecycleDocument(doc: LifecycleDocument): DocumentItem {
     createdAt: formatDate(doc.importDate),
     department: '—',
     expiry: 'N/A',
+    importDate: doc.importDate,
     aiSummary: "Résumé automatique non disponible pour le moment."
   };
 }
@@ -130,6 +131,7 @@ export function fromFolderDocument(doc: FolderDocument): DocumentItem {
     ...base,
     name: doc.title?.trim() ? doc.title : base.name,
     category: doc.typeLabel ?? 'Non classé',
-    department: doc.domainLabel ?? '—'
+    department: doc.domainLabel ?? '—',
+    tags: doc.tags.map(label => ({ label, severity: 'info' as const }))
   };
 }

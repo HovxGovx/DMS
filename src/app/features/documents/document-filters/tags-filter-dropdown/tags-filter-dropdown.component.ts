@@ -1,10 +1,13 @@
 import { Component, input, model, signal, computed, ElementRef, HostListener } from '@angular/core';
 import { TagFilterOption } from '../../document.model';
+import { DropdownBackdropComponent } from '../../../../shared/dropdown-backdrop/dropdown-backdrop.component';
 
 @Component({
   selector: 'app-tags-filter-dropdown',
   standalone: true,
+  imports: [DropdownBackdropComponent],
   templateUrl: './tags-filter-dropdown.component.html'
+
 })
 export class TagsFilterDropdownComponent {
   tagOptions = input.required<TagFilterOption[]>();

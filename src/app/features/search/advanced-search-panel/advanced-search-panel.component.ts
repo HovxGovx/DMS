@@ -1,16 +1,18 @@
-import { Component, signal, inject, ElementRef, HostListener } from '@angular/core';
+import { Component, signal, inject, ElementRef, HostListener, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SearchService } from '../search.service';
 import { DocumentStateService } from '../../documents/document-state.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { AdvancedSearchRequest } from '../search-request.model';
+import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
+import { FloatLabel } from 'primeng/floatlabel';
 
 type TriState = 'any' | 'yes' | 'no';
 
 @Component({
   selector: 'app-advanced-search-panel',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, DropdownBackdropComponent, FloatLabel],
   templateUrl: './advanced-search-panel.component.html'
 })
 export class AdvancedSearchPanelComponent {
@@ -18,7 +20,7 @@ export class AdvancedSearchPanelComponent {
   private documentState = inject(DocumentStateService);
   private viewState = inject(ViewStateService);
   private elementRef = inject(ElementRef);
-
+  size = input<'small' | 'large' | undefined>(undefined);
   isOpen = signal(false);
   isSearching = signal(false);
 

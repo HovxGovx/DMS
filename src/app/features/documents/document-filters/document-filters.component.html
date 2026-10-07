@@ -1,8 +1,6 @@
 
   <div class="flex items-center gap-4 flex-wrap text-xs">
     <!-- Filtre date -->
-    <app-date-range-filter [(range)]="dateRange" />
-    <span class="w-px h-4 bg-prussian-blue-100"></span>
     <!-- Chips de tags -->
     <app-tags-filter-dropdown [tagOptions]="tagOptions()" [(activeTags)]="activeTags" />
   </div>

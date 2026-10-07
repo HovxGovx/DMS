@@ -8,6 +8,8 @@ export interface HierarchyNode {
   children?: HierarchyNode[];
   count?: number;
   hasChildren?: boolean;
+  editable?: boolean;
+  parentId?: string | null;
 }
 
 export const HIERARCHY_TREE: HierarchyNode[] = [
@@ -45,3 +47,9 @@ export const HIERARCHY_TREE: HierarchyNode[] = [
     ]
   }
 ];
+export type NodeAction = 'create' | 'edit' | 'delete';
+
+export interface NodeActionEvent {
+  node: HierarchyNode;
+  action: NodeAction;
+}
