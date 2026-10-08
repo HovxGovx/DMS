@@ -55,17 +55,13 @@
       </div>
 
       <div class="grid grid-cols-2 gap-2">
-
-        <p-floatlabel>
-          <p-datepicker
+        <div>
+          <label class="text-xs text-prussian-blue-500 mb-1 block">Duu</label>
+          <input
+            type="date"
             [(ngModel)]="startDate"
-            inputId="startDate"
-            showIcon
-            iconDisplay="input"
-            class="" />
-          <label for="startDate"
-            class="text-xs text-prussian-blue-500">Du</label>
-        </p-floatlabel>
+            class="w-full px-2.5 py-1.5 rounded-md border border-prussian-blue-200 text-sm focus:outline-none focus:border-prussian-blue-500" />
+        </div>
         <div>
           <label class="text-xs text-prussian-blue-500 mb-1 block">Au</label>
           <input
