@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between mb-3">
   <span
-    class="text-xs font-semibold text-gray-400 tracking-wide">EXPLORATEUR</span>
+    class="text-xs font-semibold text-gray-600 tracking-wide">EXPLORATEUR</span>
   <button
     class="flex items-center gap-1 text-xs font-medium text-prussian-blue-600 hover:text-prussian-blue-800 transition-colors"
     title="Nouveau dossier"
@@ -30,12 +30,52 @@
 </div>
 
 <div
-  class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
+  class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-500">
   <span>{{ totalDocs }} · {{ totalSize }}</span>
   <span class="font-mono">{{ version }}</span>
 </div>
 
-<p-confirmdialog />
+<!-- Même apparence que le menu utilisateur et l'éditeur de dossier -->
+<p-confirmdialog
+  [style]="{ width: '26rem' }"
+  [breakpoints]="{ '640px': '92vw' }"
+  styleClass="!bg-white !rounded-xl !border !border-prussian-blue-100 !shadow-lg"
+  maskStyleClass="!bg-white/10 backdrop-blur-[3px]">
+  <ng-template #headless let-message let-onAccept="onAccept" let-onReject="onReject">
+    <div class="flex items-center justify-between gap-2 px-5 pt-4 pb-1">
+      <span class="text-sm font-semibold text-gray-800">{{ message.header }}</span>
+      <button
+        class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+        title="Fermer"
+        (click)="onReject()">
+        <i class="pi pi-times text-xs"></i>
+      </button>
+    </div>
+
+    <hr class="my-1.5 border-prussian-blue-100" />
+
+    <div class="flex items-start gap-3 px-5 pt-2 pb-4">
+      <span class="w-8 h-8 shrink-0 rounded-full bg-red-50 text-red-600 flex items-center justify-center">
+        <i class="{{ message.icon }} text-sm"></i>
+      </span>
+      <p class="text-sm text-gray-600 leading-relaxed">{{ message.message }}</p>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 px-5 py-3 border-t border-prussian-blue-100">
+      <button
+        class="text-sm text-gray-500 hover:text-prussian-blue-700 transition-colors"
+        (click)="onReject()">
+        {{ message.rejectLabel }}
+      </button>
+      <button
+        class="flex items-center gap-2 px-3.5 py-2 rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition-colors"
+        (click)="onAccept()">
+        <i class="pi pi-trash text-xs"></i>
+        {{ message.acceptLabel }}
+      </button>
+    </div>
+  </ng-template>
+</p-confirmdialog>
 
 @if (editor(); as ed) {
   <app-folder-editor-dialog

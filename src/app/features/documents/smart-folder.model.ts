@@ -10,6 +10,12 @@ export interface SmartFolderNode {
 
 }
 
+/** Un dossier système du chemin menant à un document (racine en premier). */
+export interface FolderPathItem {
+  id: string;
+  name: string;
+}
+
 export interface FolderDocument {
   id: string;
   originalFileName: string;

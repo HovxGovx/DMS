@@ -2,7 +2,7 @@
   <div class="flex columns-1">
     <p-inputgroup>
       <p-inputgroup-addon class="bg-slate-50 border-purssian-blue-300">
-        <i class="pi pi-search text-slate-400"></i>
+        <i class="pi pi-search text-gray-400"></i>
       </p-inputgroup-addon>
 
       <input
@@ -11,6 +11,7 @@
         [ngModel]="query()"
         (ngModelChange)="onInput($event)"
         (focus)="onFocus()"
+        (keydown.enter)="showAllResults()"
         placeholder="Rechercher documents, métadonnées, OCR..."
         class="w-full !bg-slate-50 !border-slate-200"
       />
@@ -30,11 +31,11 @@
     [class.scale-100]="isOpen()"
   >
     @if (isLoading()) {
-      <p class="px-4 py-3 text-sm text-slate-400 text-center">
+      <p class="px-4 py-3 text-sm text-gray-400 text-center">
         Recherche...
       </p>
     } @else if (results().length === 0 && hasSearched()) {
-      <p class="px-4 py-3 text-sm text-slate-400 text-center">
+      <p class="px-4 py-3 text-sm text-gray-400 text-center">
         Aucun résultat
       </p>
     } @else {
@@ -46,18 +47,25 @@
           <i class="{{ iconFor(result.originalFileName).icon }} {{ iconFor(result.originalFileName).iconColor }} text-sm shrink-0"></i>
 
           <div class="min-w-0 flex-1">
-            <div class="text-sm text-slate-800 truncate">
+            <div class="text-sm text-gray-800 truncate">
               {{ result.title || result.originalFileName }}
             </div>
 
-            <div class="text-xs text-slate-400 truncate">
-              {{ result.author || 'Auteur inconnu' }}
+            <div class="text-xs text-gray-400 truncate">
+              {{ locationLabel(result) }}
             </div>
           </div>
 
-          <span class="text-xs font-mono text-slate-400 shrink-0">
-            {{ scorePercent(result.score) }}%
+          <span class="text-xs text-gray-400 shrink-0">
+            {{ relevanceLabel(result) }}
           </span>
+        </button>
+      }
+      @if (results().length) {
+        <button
+          class="w-full px-4 pt-2 mt-1 border-t border-slate-100 text-xs text-prussian-blue-600 hover:text-prussian-blue-800 text-left"
+          (click)="showAllResults()">
+          Voir tous les résultats ({{ results().length }}) — Entrée
         </button>
       }
     }

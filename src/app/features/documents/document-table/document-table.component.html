@@ -6,66 +6,107 @@
   scrollHeight="flex"
   dataKey="id"
   [paginator]="true"
-  [rows]="4"
+  [rows]="rows"
+  [first]="first()"
+  (firstChange)="first.set($event); closeTags()"
   [showCurrentPageReport]="true"
   currentPageReportTemplate="{first}–{last} sur {totalRecords}"
   class="flex-1 min-h-0 flex flex-col"
+  tableStyleClass="table-fixed w-full"
   styleClass="!text-xs h-full doc-table-scroll">
   <ng-template pTemplate="header" class="!pb-1">
     <tr class="p-0">
       <th
-        class="!text-xs   !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom
+        class="!text-xs   !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom
         Fichier</th>
       <th
-        class="!text-xs  !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Tags</th>
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-60">Tags</th>
+      @if (showLocation()) {
       <th
-        class="!text-xs  !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Publication</th>
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-56">Emplacement</th>
+      }
       <th
-        class="!text-xs  !text-gray-400 !font-semibold !tracking-wide !bg-prussian-blue-50">Action</th>
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-36">Publication</th>
+      <th
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-32">Action</th>
     </tr>
   </ng-template>
 
   <ng-template pTemplate="body" let-doc>
+    <!-- Hauteur fixe : chaque cellule tient sur une seule ligne -->
     <tr
-      class="hover:bg-prussian-blue-50/50 transition-colors duration-150 cursor-pointer"
+      class="h-12 hover:bg-prussian-blue-50/50 transition-colors duration-150 cursor-pointer"
+      [class.!bg-prussian-blue-100]="doc.id === highlightedId()"
       (click)="rowClick.emit(doc.id)">
 
       <td>
-        <div class="flex items-center gap-2">
-          <i class="{{ doc.icon }} {{ doc.iconColor }}"></i>
-          <span class="font-medium text-prussian-blue-900">{{ doc.name }}</span>
+        <div class="flex items-center gap-2 min-w-0">
+          <i class="{{ doc.icon }} {{ doc.iconColor }} shrink-0"></i>
+          <span class="font-medium text-gray-800 truncate"
+            [pTooltip]="doc.name" tooltipPosition="top" [showDelay]="300">{{ doc.name }}</span>
           @if (doc.locked) {
-          <i class="pi pi-lock text-xs text-amber-500"></i>
+          <i class="pi pi-lock text-xs text-amber-500 shrink-0"></i>
           }
         </div>
       </td>
-      <td>
-        <div class="flex gap-1.5 flex-wrap">
+      <td (click)="openTags(doc, $event)">
+        <!-- Catégorie + 1 tag, le reste est résumé par le badge « +N » -->
+        <div
+          class="group flex items-center gap-1.5 min-w-0 -mx-1.5 px-1.5 py-1 rounded-md cursor-pointer hover:bg-prussian-blue-100/60 transition-colors"
+          [class.bg-prussian-blue-100]="tagsDoc()?.id === doc.id"
+          pTooltip="Voir tous les tags" tooltipPosition="top" [showDelay]="400">
           <p-tag [value]="doc.category" [severity]="doc.categorySeverity"
-            styleClass="!text-xs !font-medium" />
-          @for (tag of doc.tags; track tag.label) {
-          <p-tag [value]="tag.label" [severity]="tag.severity"
-            styleClass="!text-xs !font-medium" />
+            styleClass="!text-xs !font-medium min-w-0 [&_.p-tag-label]:truncate [&_.p-tag-label]:min-w-0" />
+          @if (doc.tags.length) {
+          <p-tag [value]="doc.tags[0].label" [severity]="doc.tags[0].severity"
+            styleClass="!text-xs !font-medium min-w-0 [&_.p-tag-label]:truncate [&_.p-tag-label]:min-w-0" />
+          }
+          @if (doc.tags.length > 1) {
+          <span
+            class="shrink-0 px-1.5 py-0.5 rounded-full text-[11px] font-semibold border border-prussian-blue-100 bg-prussian-blue-50 text-prussian-blue-600 group-hover:bg-white group-hover:text-prussian-blue-700 transition-colors">
+            +{{ doc.tags.length - 1 }}
+          </span>
           }
         </div>
       </td>
+      @if (showLocation()) {
       <td>
-        <div class="flex items-center gap-1.5 text-gray-400">
+        <div class="flex items-center gap-1 min-w-0 overflow-hidden whitespace-nowrap text-gray-500"
+          [pTooltip]="doc.location.join(' › ')" tooltipPosition="top" [showDelay]="300">
+          @for (segment of doc.location; track $index; let last = $last) {
+          <span class="truncate" [class.text-gray-700]="last">{{ segment }}</span>
+          @if (!last) {
+          <i class="pi pi-angle-right text-[10px] text-gray-300 shrink-0"></i>
+          }
+          }
+        </div>
+      </td>
+      }
+      <td>
+        <div class="flex items-center gap-1.5 text-gray-500 whitespace-nowrap">
           <span
-            class="w-1.5 h-1.5 rounded-full {{ doc.modifiedDotColor }}"></span>
+            class="w-1.5 h-1.5 rounded-full shrink-0 {{ doc.modifiedDotColor }}"></span>
           {{ doc.modified }}
         </div>
       </td>
       <td (click)="$event.stopPropagation()">
         <div class="flex items-center gap-1">
+          @if (showLocation()) {
           <button
-            class="w-7 h-7 rounded-md flex items-center justify-center text-prussian-blue-300 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+            title="Afficher dans son dossier"
+            (click)="revealInFolder.emit(doc.id)">
+            <i class="pi pi-folder-open text-xs"></i>
+          </button>
+          }
+          <button
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
             title="Ouvrir le fichier"
             (click)="openFile(doc.id)">
             <i class="pi pi-external-link text-xs"></i>
           </button>
           <button
-            class="w-7 h-7 rounded-md flex items-center justify-center text-prussian-blue-300 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
             title="Modifier les métadonnées"
             (click)="editMetadata.emit(doc.id)">
             <i class="pi pi-pencil text-xs"></i>
@@ -75,3 +116,44 @@
     </tr>
   </ng-template>
 </p-table>
+
+<!-- Tous les tags du document : même panneau que le menu utilisateur (Déconnexion) -->
+<app-dropdown-backdrop [visible]="!!tagsDoc()" />
+
+<div
+  class="fixed w-64 bg-white rounded-xl border border-prussian-blue-100 shadow-lg py-1.5 transition-all duration-150 z-50"
+  [class.origin-top-left]="tagsPosition().top !== null"
+  [class.origin-bottom-left]="tagsPosition().top === null"
+  [style.top.px]="tagsPosition().top"
+  [style.bottom.px]="tagsPosition().bottom"
+  [style.left.px]="tagsPosition().left"
+  [class.opacity-0]="!tagsDoc()"
+  [class.scale-95]="!tagsDoc()"
+  [class.pointer-events-none]="!tagsDoc()"
+  [class.opacity-100]="!!tagsDoc()"
+  [class.scale-100]="!!tagsDoc()"
+  (click)="$event.stopPropagation()">
+  @if (lastTagsDoc(); as doc) {
+  <div class="flex items-center justify-between gap-2 px-3.5 py-1">
+    <div class="flex items-baseline gap-1 min-w-0 text-sm">
+      <span class="font-medium text-gray-800 truncate" [title]="doc.name">{{ doc.name }}</span>
+      <span class="shrink-0 text-gray-400">({{ doc.tags.length + 1 }})</span>
+    </div>
+    <button
+      class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+      title="Fermer"
+      (click)="closeTags()">
+      <i class="pi pi-times text-[10px]"></i>
+    </button>
+  </div>
+
+  <hr class="my-1.5 border-prussian-blue-100" />
+
+  <div class="flex flex-wrap gap-1.5 px-3.5 py-1.5 max-h-60 overflow-y-auto">
+    <p-tag [value]="doc.category" [severity]="doc.categorySeverity" styleClass="!text-xs !font-medium" />
+    @for (tag of doc.tags; track tag.label) {
+    <p-tag [value]="tag.label" [severity]="tag.severity" styleClass="!text-xs !font-medium" />
+    }
+  </div>
+  }
+</div>

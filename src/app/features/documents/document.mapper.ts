@@ -1,7 +1,7 @@
-import { LifecycleDocument } from '../validation/lifecycle-document.model';
-import { DocumentItem, DocumentDetail } from './document.model';
+import { DocumentStatus, LifecycleDocument } from '../validation/lifecycle-document.model';
+import { DocumentItem, DocumentDetail, locationOf } from './document.model';
 import { DocMetadata } from './document-metadata.service';
-import { SearchResult } from '../search/search-result.model';
+import { RELEVANCE_DISPLAY, SearchResult } from '../search/search-result.model';
 import { FolderDocument } from './smart-folder.model';
 export interface FileTypeInfo {
   format: string;
@@ -9,8 +9,32 @@ export interface FileTypeInfo {
   iconColor: string;
 }
 
+/** Type MIME renvoyé par l'extraction des métadonnées → libellé court affiché dans l'UI. */
+const MIME_FORMATS: Record<string, string> = {
+  'application/pdf': 'PDF',
+  'application/msword': 'DOC',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+  'application/vnd.ms-excel': 'XLS',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX',
+  'application/vnd.ms-powerpoint': 'PPT',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PPTX',
+  'application/vnd.oasis.opendocument.text': 'ODT',
+  'application/rtf': 'RTF',
+  'text/plain': 'TXT',
+  'text/csv': 'CSV'
+};
+
+/** Libellé court (PDF, DOCX, TXT…) d'un type MIME, ou null s'il est inconnu. */
+export function formatFromMime(mime: string | null): string | null {
+  if (!mime) return null;
+  // Ignore les paramètres éventuels, ex. "text/plain; charset=UTF-8"
+  const type = mime.split(';')[0].trim().toLowerCase();
+  return MIME_FORMATS[type] ?? null;
+}
+
 export function detectFileType(fileName: string): FileTypeInfo {
-  const ext = fileName.split('.').pop()?.toLowerCase() ?? '';
+  // Sans point, il n'y a pas d'extension : ne pas prendre le nom entier pour un format
+  const ext = fileName.includes('.') ? fileName.split('.').pop()!.toLowerCase() : '';
 
   switch (ext) {
     case 'pdf':
@@ -37,10 +61,17 @@ function formatDateSafe(iso: string | null): string | null {
   return formatDate(iso);
 }
 
+const STATUS_LABELS: Record<DocumentStatus, string> = {
+  IMPORTED: 'Importé',
+  PENDING_VALIDATION: 'En attente de validation',
+  EXTRACTION_FAILED: "Échec de l'extraction",
+  PUBLISHED: 'Publié',
+  INDEXING_FAILED: "Échec de l'indexation"
+};
+
 /**
- * Convertit un document du backend (minimal : id, fileName, status, importDate, storageReference)
- * en DocumentItem pour l'affichage. Les champs non fournis par le backend reçoivent une valeur
- * par défaut statique, en attendant que le backend les enrichisse.
+ * Convertit un document du backend (id, fileName, status, importDate, storageReference) en DocumentItem.
+ * Les informations non fournies restent vides et ne sont pas affichées.
  */
 export function fromLifecycleDocument(doc: LifecycleDocument): DocumentItem {
   const { format, icon, iconColor } = detectFileType(doc.originalFileName);
@@ -48,6 +79,7 @@ export function fromLifecycleDocument(doc: LifecycleDocument): DocumentItem {
   return {
     id: doc.id,
     name: doc.originalFileName,
+    originalFileName: doc.originalFileName,
     format: format as DocumentItem['format'],
     icon,
     iconColor,
@@ -56,20 +88,15 @@ export function fromLifecycleDocument(doc: LifecycleDocument): DocumentItem {
     tags: [{ label: 'Publié', severity: 'success' }],
     modified: formatDate(doc.importDate),
     modifiedDotColor: 'bg-prussian-blue-500',
-    size: '—',
-    owner: '—',
-    createdAt: formatDate(doc.importDate),
-    department: '—',
-    expiry: 'N/A',
     importDate: doc.importDate,
-    aiSummary: "Résumé automatique non disponible pour le moment."
+    location: [],
+    statusLabel: STATUS_LABELS[doc.status] ?? null
   };
 }
 
 /**
- * Fusionne un DocumentDetail (valeurs par défaut) avec les vraies métadonnées système
- * si elles sont disponibles. Ne remplace que les champs réellement fournis par le backend —
- * tout champ absent/null garde sa valeur par défaut existante.
+ * Complète le détail avec les vraies métadonnées système extraites du fichier, quand elles sont disponibles.
+ * Une valeur absente côté backend laisse la ligne vide (elle sera masquée).
  */
 export function mergeWithRealMetadata(base: DocumentDetail, metadata: DocMetadata | null): DocumentDetail {
   if (!metadata) return base;
@@ -87,41 +114,47 @@ export function mergeWithRealMetadata(base: DocumentDetail, metadata: DocMetadat
         case 'Taille':
           return { ...item, value: metadata.fileSize ?? item.value };
         case 'Format':
-          return { ...item, value: metadata.format ?? item.value };
+          // L'extension du fichier fait foi ; le type MIME ne sert que si elle est inconnue
+          return {
+            ...item,
+            value: item.value && item.value !== 'FICHIER'
+              ? item.value
+              : formatFromMime(metadata.format) ?? item.value
+          };
         default:
           return item;
       }
     })
   };
 }
+
 /**
- * Convertit un résultat de recherche (id, originalFileName, title, author, format MIME, score)
- * en DocumentItem pour affichage dans le tableau. Comme pour fromLifecycleDocument, tout ce
- * qui n'est pas fourni par le backend garde une valeur par défaut statique.
+ * Convertit un résultat de recherche en DocumentItem, avec le même affichage qu'un document de dossier
+ * (titre, type, domaine, tags, date d'ajout) plus l'étiquette de pertinence et l'emplacement par domaine et par type.
  */
 export function fromSearchResult(result: SearchResult): DocumentItem {
   const { format, icon, iconColor } = detectFileType(result.originalFileName);
-
-  const scorePercent = Math.round(result.score * 100);
-  const relevanceSeverity = scorePercent >= 70 ? 'success' : scorePercent >= 40 ? 'warn' : 'secondary';
+  const relevance = result.relevance ? RELEVANCE_DISPLAY[result.relevance] : null;
+  const relevanceTags = relevance ? [{ label: relevance.label, severity: relevance.severity }] : [];
 
   return {
     id: result.id,
-    name: result.originalFileName,
+    name: result.title?.trim() ? result.title : result.originalFileName,
+    originalFileName: result.originalFileName,
     format: format as DocumentItem['format'],
     icon,
     iconColor,
-    category: 'Résultat',
-    categorySeverity: 'info',
-    tags: [{ label: `${scorePercent}% pertinent`, severity: relevanceSeverity }],
-    modified: '—',
-    modifiedDotColor: 'bg-prussian-blue-200',
-    size: '—',
-    owner: result.author ?? '—',
-    createdAt: '—',
-    department: '—',
-    expiry: 'N/A',
-    aiSummary: "Résumé automatique non disponible pour le moment."
+    category: result.typeLabel ?? 'Non classé',
+    categorySeverity: 'secondary',
+    tags: [...relevanceTags, ...(result.tags ?? []).map(label => ({ label, severity: 'info' as const }))],
+    modified: formatDateSafe(result.uploadDate) ?? '',
+    modifiedDotColor: 'bg-prussian-blue-500',
+    importDate: result.uploadDate ?? undefined,
+    author: result.author,
+    typeLabel: result.typeLabel,
+    domainLabel: result.domainLabel,
+    location: locationOf(result.domainLabel, result.typeLabel),
+    statusLabel: STATUS_LABELS.PUBLISHED
   };
 }
 
@@ -131,7 +164,9 @@ export function fromFolderDocument(doc: FolderDocument): DocumentItem {
     ...base,
     name: doc.title?.trim() ? doc.title : base.name,
     category: doc.typeLabel ?? 'Non classé',
-    department: doc.domainLabel ?? '—',
+    typeLabel: doc.typeLabel,
+    domainLabel: doc.domainLabel,
+    location: locationOf(doc.domainLabel, doc.typeLabel),
     tags: doc.tags.map(label => ({ label, severity: 'info' as const }))
   };
 }

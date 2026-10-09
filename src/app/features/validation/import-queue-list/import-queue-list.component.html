@@ -14,7 +14,7 @@
 
 <div class="flex-1 min-h-0 min-w-0">
   @if (state.isLoading()) {
-    <p class="text-sm text-prussian-blue-300 text-center py-8">
+    <p class="text-sm text-gray-400 text-center py-8">
       Chargement...
     </p>
   } @else if (state.loadError()) {
@@ -37,12 +37,12 @@
       <ng-template pTemplate="header">
         <tr>
           <th
-            class="!text-xs !text-gray-600 !font-bold !tracking-wide !bg-prussian-blue-50 !w-full">
+            class="!text-xs !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 !w-full">
             Document
           </th>
 
           <th
-            class="!text-xs !text-gray-600 !font-bold !tracking-wide !bg-prussian-blue-50 !text-right !whitespace-nowrap">
+            class="!text-xs !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 !text-right !whitespace-nowrap">
             Date d'import
           </th>
         </tr>
@@ -61,7 +61,7 @@
             <div class="flex items-center gap-2 min-w-0">
               <i class="{{ fileIcon(item.originalFileName) }}  {{ fileColor(item.originalFileName) }} shrink-0"></i>
               <span
-                class="text-prussian-blue-900 truncate block min-w-0"
+                class="text-gray-800 truncate block min-w-0"
                 [title]="item.originalFileName">
                 {{ displayName(item.originalFileName) }}
               </span>
@@ -78,7 +78,7 @@
         <tr>
           <td
             colspan="2"
-            class="text-center py-8 text-sm text-prussian-blue-300">
+            class="text-center py-8 text-sm text-gray-400">
             Aucun import en attente
           </td>
         </tr>
@@ -91,7 +91,7 @@
 <!-- Footer -->
 <!--
 <div
-  class="w-full shrink-0 px-3 py-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-400">
+  class="w-full shrink-0 px-3 py-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-500">
 
   <span class="flex items-center gap-1 text-amber-600 min-w-0">
     <i class="pi pi-exclamation-triangle text-[10px] shrink-0"></i>

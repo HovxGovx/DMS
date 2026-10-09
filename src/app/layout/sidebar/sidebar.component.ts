@@ -9,6 +9,7 @@ import { SmartFolderStateService } from '../../features/documents/smart-folder-s
 import { SmartFolderApiService } from '../../features/documents/smart-folder-api.service';
 import { FolderEditorDialogComponent } from '../../features/documents/folder-editor/folder-editor-dialog/folder-editor-dialog.component';
 import { NotificationService } from '../../core/notification.service';
+import { DocumentStateService } from '../../features/documents/document-state.service';
 
 interface EditorState {
   mode: 'create' | 'edit';
@@ -32,6 +33,7 @@ export class SidebarComponent implements OnInit {
   private api = inject(SmartFolderApiService);
   private confirmation = inject(ConfirmationService);
   private notification = inject(NotificationService);
+  private documentState = inject(DocumentStateService);
 
   editor = signal<EditorState | null>(null);
 
@@ -44,7 +46,9 @@ export class SidebarComponent implements OnInit {
   }
 
   isExpanded = (key: string) => this.state.expandedIds().has(key);
-  isActive = (node: HierarchyNode) => this.state.selectedFolderId() === node.key;
+  // Pendant une recherche, les résultats viennent de tout le fonds : aucun dossier n'est mis en surbrillance
+  isActive = (node: HierarchyNode) =>
+    !this.documentState.isSearchMode() && this.state.selectedFolderId() === node.key;
 
   onToggleExpand(key: string) {
     this.state.toggleExpand(key);

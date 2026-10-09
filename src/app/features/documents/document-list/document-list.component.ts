@@ -5,6 +5,7 @@ import { DocumentFiltersComponent } from '../document-filters/document-filters.c
 import { DocumentTableComponent } from '../document-table/document-table.component';
 import { DocumentStateService } from '../document-state.service';
 import { SmartFolderStateService } from '../smart-folder-state.service';
+import { DocumentLocationService } from '../document-location.service';
 import { DocumentItem, SEVERITY_FILTER_COLORS, TagFilterOption } from '../document.model';
 
 @Component({
@@ -19,6 +20,7 @@ import { DocumentItem, SEVERITY_FILTER_COLORS, TagFilterOption } from '../docume
 export class DocumentListComponent {
   state = inject(DocumentStateService);
   folderState = inject(SmartFolderStateService);
+  private locationService = inject(DocumentLocationService);
 
   viewMode = signal<'list' | 'grid'>('list');
   activeTagFilters = signal<string[]>([]);
@@ -26,7 +28,10 @@ export class DocumentListComponent {
 
   breadcrumbSegments = computed(() => {
     if (this.state.isSearchMode()) {
-      return [`Résultats de recherche (${this.state.searchResultCount()})`];
+      const count = this.state.searchResultCount();
+      const label = this.state.searchLabel();
+      const what = label ? `Recherche « ${label} »` : 'Recherche avancée';
+      return [`${what} · ${count} résultat${count > 1 ? 's' : ''}`];
     }
     const path = this.folderState.currentPath();
     return path.length ? path : ['Documents publiés'];
@@ -75,6 +80,10 @@ export class DocumentListComponent {
 
   onDocClick(id: string) {
     this.state.selectDocument(id);
+  }
+
+  onRevealInFolder(id: string) {
+    this.locationService.revealInFolder(id);
   }
 
   onSort() {

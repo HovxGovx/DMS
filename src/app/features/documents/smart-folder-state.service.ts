@@ -104,6 +104,13 @@ export class SmartFolderStateService {
       }
     }
 
+    /** Déplie tous les dossiers du chemin (racine en premier) puis ouvre le dernier. */
+    revealPath(folderIds: string[]) {
+      if (!folderIds.length) return;
+      folderIds.slice(0, -1).forEach(id => this.reveal(id));
+      this.selectFolder(folderIds[folderIds.length - 1]);
+    }
+
     afterDelete(deletedId: string, parentId: string | null) {
       const wasInPath = this.currentPathNodes().some(node => node.id === deletedId);
       this.childrenByParent.update(map => {

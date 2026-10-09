@@ -6,7 +6,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { DocumentDetailPanelComponent } from '../../features/documents/document-detail/document-detail-panel/document-detail-panel.component';
 import { ValidationViewComponent } from '../../features/validation/validation-view/validation-view.component';
 import { DocumentStateService } from '../../features/documents/document-state.service';
-import { toDocumentDetail } from '../../features/documents/document.model';
+import { toDocumentDetail, withoutEmptyValues } from '../../features/documents/document.model';
 import { ViewStateService } from '../../core/view-state.service';
 import { AuthService } from '../../core/auth.service';
 import { mergeWithRealMetadata } from '../../features/documents/document.mapper';
@@ -36,7 +36,7 @@ export class ShellComponent {
     if (!doc) return null;
 
     const base = toDocumentDetail(doc);
-    return mergeWithRealMetadata(base, this.documentState.documentMetadata());
+    return withoutEmptyValues(mergeWithRealMetadata(base, this.documentState.documentMetadata()));
   });
 
   toggleView() {

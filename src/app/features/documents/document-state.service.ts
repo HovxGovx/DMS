@@ -16,6 +16,8 @@ export class DocumentStateService {
   publishedLoadError = signal<string | null>(null);
   searchResults = signal<DocumentItem[]>([]);
   isSearchMode = signal(false);
+  /** Ce qui a été recherché, affiché dans le breadcrumb (ex : « facture »). */
+  searchLabel = signal<string | null>(null);
   searchResultCount = computed(() => this.searchResults().length);
 
   selectedDocId = signal<string | null>(null);
@@ -64,8 +66,9 @@ export class DocumentStateService {
       }
     });
   }
-  setSearchResults(results: SearchResult[]) {
+  setSearchResults(results: SearchResult[], label: string | null = null) {
     this.searchResults.set(results.map(fromSearchResult));
+    this.searchLabel.set(label);
     this.isSearchMode.set(true);
     this.selectedDocId.set(null);
     this.documentMetadata.set(null);
@@ -74,5 +77,6 @@ export class DocumentStateService {
   clearSearch() {
     this.isSearchMode.set(false);
     this.searchResults.set([]);
+    this.searchLabel.set(null);
   }
 }

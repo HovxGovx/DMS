@@ -33,7 +33,7 @@
 <div class="flex-1 min-h-0">
   @if (state.isLoadingPublished() && !state.isSearchMode()) {
   <div
-    class="flex items-center justify-center h-full text-sm text-prussian-blue-300">
+    class="flex items-center justify-center h-full text-sm text-gray-400">
     Chargement...
   </div>
   } @else if (state.publishedLoadError() && !state.isSearchMode()) {
@@ -43,6 +43,9 @@
   } @else {
   <app-document-table
     [documents]="displayedDocuments()"
-    (rowClick)="onDocClick($event)" />
+    [showLocation]="state.isSearchMode()"
+    [highlightedId]="state.selectedDocId()"
+    (rowClick)="onDocClick($event)"
+    (revealInFolder)="onRevealInFolder($event)" />
   }
 </div>

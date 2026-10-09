@@ -47,6 +47,15 @@ export class AdvancedSearchPanelComponent {
     return null;
   }
 
+  // 'YYYY-MM-DD' -> début (00:00:00.000) ou fin (23:59:59.999) du jour en heure locale
+  private toLocalDayBound(value: string, endOfDay: boolean): string {
+    const [year, month, day] = value.split('-').map(Number);
+    const date = endOfDay
+      ? new Date(year, month - 1, day, 23, 59, 59, 999)
+      : new Date(year, month - 1, day, 0, 0, 0, 0);
+    return date.toISOString();
+  }
+
   onSearch() {
     const request: AdvancedSearchRequest = {
       keywords: this.keywords().trim() || null,
@@ -54,8 +63,8 @@ export class AdvancedSearchPanelComponent {
       language: this.language().trim() || null,
       encrypted: this.triStateToBoolean(this.encrypted()),
       signed: this.triStateToBoolean(this.signed()),
-      creationDateStart: this.startDate() ? new Date(this.startDate()).toISOString() : null,
-      creationDateEnd: this.endDate() ? new Date(this.endDate()).toISOString() : null,
+      creationDateStart: this.startDate() ? this.toLocalDayBound(this.startDate(), false) : null,
+      creationDateEnd: this.endDate() ? this.toLocalDayBound(this.endDate(), true) : null,
       fuzzy: this.fuzzy() || null
     };
 
@@ -65,7 +74,7 @@ export class AdvancedSearchPanelComponent {
       next: (results) => {
         this.isSearching.set(false);
         this.close();
-        this.documentState.setSearchResults(results);
+        this.documentState.setSearchResults(results, request.keywords);
         this.viewState.setView('documents');
       },
       error: (err) => {

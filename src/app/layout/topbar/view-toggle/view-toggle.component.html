@@ -1,11 +1,11 @@
 <div class="flex items-center p-0.5 rounded-lg bg-prussian-blue-50 border border-prussian-blue-100">
 
   <button
-    class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-[8px] font-medium transition-all duration-150"
+    class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150"
     [class.bg-white]="viewState.currentView() === 'documents'"
     [class.shadow-sm]="viewState.currentView() === 'documents'"
-    [class.text-prussian-blue-900]="viewState.currentView() === 'documents'"
-    [class.text-prussian-blue-400]="viewState.currentView() !== 'documents'"
+    [class.text-prussian-blue-700]="viewState.currentView() === 'documents'"
+    [class.text-gray-500]="viewState.currentView() !== 'documents'"
     (click)="viewState.setView('documents')"
   >
     <i class="pi pi-folder text-xs"></i>
@@ -16,8 +16,8 @@
     class="relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all duration-150"
     [class.bg-white]="viewState.currentView() === 'validation'"
     [class.shadow-sm]="viewState.currentView() === 'validation'"
-    [class.text-prussian-blue-900]="viewState.currentView() === 'validation'"
-    [class.text-prussian-blue-400]="viewState.currentView() !== 'validation'"
+    [class.text-prussian-blue-700]="viewState.currentView() === 'validation'"
+    [class.text-gray-500]="viewState.currentView() !== 'validation'"
     (click)="viewState.setView('validation')"
   >
     <i class="pi pi-inbox text-xs"></i>

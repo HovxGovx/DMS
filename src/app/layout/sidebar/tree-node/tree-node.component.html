@@ -7,7 +7,7 @@
 >
   @if (node().hasChildren ?? !!node().children?.length) {
     <i
-      class="pi text-[10px] text-prussian-blue-300 shrink-0"
+      class="pi text-[10px] text-gray-400 shrink-0"
       [class.pi-chevron-down]="isExpanded"
       [class.pi-chevron-right]="!isExpanded"
       (click)="onChevronClick($event)"
@@ -19,30 +19,30 @@
   <i
     class="{{ node().icon }} text-sm shrink-0"
     [class.text-prussian-blue-700]="isActive"
-    [class.text-prussian-blue-400]="!isActive"
+    [class.text-gray-400]="!isActive"
   ></i>
 
   <span
     class="text-sm flex-1 truncate"
     [class.font-semibold]="isActive"
-    [class.text-prussian-blue-900]="isActive"
-    [class.text-prussian-blue-700]="!isActive"
+    [class.text-prussian-blue-700]="isActive"
+    [class.text-gray-600]="!isActive"
   >{{ node().label }}</span>
   @if (actionsEnabled()) {
     <span class="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
       <i
-        class="pi pi-plus text-[10px] text-prussian-blue-300 hover:text-prussian-blue-700"
+        class="pi pi-plus text-[10px] text-gray-400 hover:text-prussian-blue-700"
         title="Nouveau sous-dossier"
         (click)="onAction($event, 'create')"
       ></i>
       @if (node().editable) {
         <i
-          class="pi pi-pencil text-[10px] text-prussian-blue-300 hover:text-prussian-blue-700"
+          class="pi pi-pencil text-[10px] text-gray-400 hover:text-prussian-blue-700"
           title="Modifier"
           (click)="onAction($event, 'edit')"
         ></i>
         <i
-          class="pi pi-trash text-[10px] text-prussian-blue-300 hover:text-red-500"
+          class="pi pi-trash text-[10px] text-gray-400 hover:text-red-500"
           title="Supprimer"
           (click)="onAction($event, 'delete')"
         ></i>
@@ -51,10 +51,10 @@
   }
   @if (count !== null) {
     <span
-      class="text-xs px-1.5 py-0.5 rounded"
+      class="text-[11px] px-1.5 py-0.5 rounded"
       [class.bg-prussian-blue-200]="isActive"
       [class.text-prussian-blue-700]="isActive"
-      [class.text-prussian-blue-300]="!isActive"
+      [class.text-gray-400]="!isActive"
     >{{ count }}</span>
   }
 </div>

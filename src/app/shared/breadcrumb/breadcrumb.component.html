@@ -3,12 +3,12 @@
     <span
       class="cursor-pointer hover:text-prussian-blue-700 transition-colors"
       [class.font-semibold]="last"
-      [class.text-gray-900]="last"
-      [class.text-gray-400]="!last"
+      [class.text-gray-800]="last"
+      [class.text-gray-500]="!last"
       (click)="segmentClick.emit(crumb)"
     >{{ crumb }}</span>
     @if (!last) {
-      <i class="pi pi-angle-right text-xs text-prussian-blue-300"></i>
+      <i class="pi pi-angle-right text-xs text-gray-300"></i>
     }
   }
 </div>

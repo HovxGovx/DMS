@@ -1,11 +1,11 @@
 <div class="relative">
 
   <button
-    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-prussian-blue-200 text-prussian-blue-700 hover:bg-prussian-blue-50 transition-all duration-150 hover:scale-105 active:scale-95"
+    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-prussian-blue-200 text-gray-600 hover:bg-prussian-blue-50 transition-all duration-150 hover:scale-105 active:scale-95"
     (click)="toggle()">
-    <i class="pi pi-calendar text-[11px] text-prussian-blue-400"></i>
+    <i class="pi pi-calendar text-[11px] text-gray-400"></i>
     {{ displayLabel() }}
-    <i class="pi pi-angle-down text-[10px] text-prussian-blue-400"></i>
+    <i class="pi pi-angle-down text-[10px] text-gray-400"></i>
   </button>
 
   <div
@@ -19,7 +19,7 @@
       class="flex flex-col gap-1 pb-2 mb-2 border-b border-prussian-blue-100">
       @for (preset of presets; track preset.label) {
       <button
-        class="text-left px-2.5 py-1.5 rounded-md text-xs text-prussian-blue-700 hover:bg-prussian-blue-50 transition-colors"
+        class="text-left px-2.5 py-1.5 rounded-md text-xs text-gray-600 hover:bg-prussian-blue-50 transition-colors"
         [class.bg-prussian-blue-50]="activePresetLabel() === preset.label"
         [class.font-semibold]="activePresetLabel() === preset.label"
         (click)="selectPreset(preset)">
@@ -29,27 +29,27 @@
     </div>
 
     <span
-      class="text-[10px] font-semibold text-gray-300 tracking-wide">PLAGE</span>
+      class="text-[11px] font-semibold text-gray-500 tracking-wide">PLAGE</span>
 
     <div class="flex flex-col gap-2 mt-2">
       <div>
-        <label class="text-[10px] text-gray-400 mb-1 block">Du</label>
+        <label class="text-[11px] text-gray-500 mb-1 block">Du</label>
         <input
           type="date"
           [(ngModel)]="startDate"
           [max]="maxStartDate()"
-          class="w-full px-2.5 py-1.5 rounded-md border text-xs text-prussian-blue-900 focus:outline-none transition-colors"
+          class="w-full px-2.5 py-1.5 rounded-md border text-xs text-gray-800 focus:outline-none transition-colors"
           [class.border-prussian-blue-200]="!showOrderError()"
           [class.focus:border-prussian-blue-500]="!showOrderError()"
           [class.border-red-300]="showOrderError()" />
       </div>
       <div>
-        <label class="text-[10px] text-gray-400 mb-1 block">Au</label>
+        <label class="text-[11px] text-gray-500 mb-1 block">Au</label>
         <input
           type="date"
           [(ngModel)]="endDate"
           [min]="minEndDate()"
-          class="w-full px-2.5 py-1.5 rounded-md border text-xs text-prussian-blue-900 focus:outline-none transition-colors"
+          class="w-full px-2.5 py-1.5 rounded-md border text-xs text-gray-800 focus:outline-none transition-colors"
           [class.border-prussian-blue-200]="!showOrderError()"
           [class.focus:border-prussian-blue-500]="!showOrderError()"
           [class.border-red-300]="showOrderError()" />
@@ -59,7 +59,7 @@
     <div
       class="flex items-center justify-between mt-3 pt-2 border-t border-prussian-blue-100">
       <button
-        class="text-xs text-prussian-blue-400 hover:text-prussian-blue-700 transition-colors"
+        class="text-xs text-gray-500 hover:text-prussian-blue-700 transition-colors"
         (click)="clear()">
         Réinitialiser
       </button>

@@ -1,7 +1,7 @@
 <div class="relative">
 
   <button
-    class="w-9 h-9 rounded-lg border border-prussian-blue-200 flex items-center justify-center text-prussian-blue-400 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+    class="w-9 h-9 rounded-lg border border-prussian-blue-200 flex items-center justify-center text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
     title="Recherche avancée"
     (click)="toggle()">
     <i class="pi pi-sliders-h text-sm"></i>
@@ -49,21 +49,21 @@
             variant="outlined"
             autocomplete="off"
             class="w-full px-2.5 py-1.5 rounded-md border border-prussian-blue-200 text-sm focus:outline-none focus:border-prussian-blue-500" />
-          <label for="language" class="text-xs text-gray-500"> Language</label>
+          <label for="language" class="text-xs text-gray-500"> Langue</label>
         </p-floatlabel>
 
       </div>
 
       <div class="grid grid-cols-2 gap-2">
         <div>
-          <label class="text-xs text-prussian-blue-500 mb-1 block">Duu</label>
+          <label class="text-xs text-gray-500 mb-1 block">Du</label>
           <input
             type="date"
             [(ngModel)]="startDate"
             class="w-full px-2.5 py-1.5 rounded-md border border-prussian-blue-200 text-sm focus:outline-none focus:border-prussian-blue-500" />
         </div>
         <div>
-          <label class="text-xs text-prussian-blue-500 mb-1 block">Au</label>
+          <label class="text-xs text-gray-500 mb-1 block">Au</label>
           <input
             type="date"
             [(ngModel)]="endDate"
@@ -75,7 +75,7 @@
       <label class="flex items-center gap-2 cursor-pointer display-none">
         <input type="checkbox" [defaultValue]="true" [(ngModel)]="fuzzy"
           class="rounded border-prussian-blue-300" />
-        <span class="text-sm text-prussian-blue-700">Tolére les fautes de
+        <span class="text-sm text-gray-600">Tolère les fautes de
           frappe</span>
       </label>
 
@@ -84,7 +84,7 @@
     <div
       class="flex items-center justify-between mt-4 pt-3 border-t border-prussian-blue-100">
       <button
-        class="text-xs text-prussian-blue-400 hover:text-prussian-blue-700 transition-colors"
+        class="text-xs text-gray-500 hover:text-prussian-blue-700 transition-colors"
         (click)="reset()">
         Réinitialiser
       </button>
