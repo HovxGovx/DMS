@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MultiSelect } from 'primeng/multiselect';
+import { Tag } from 'primeng/tag';
 import { UserAdminStateService, isWithoutDomain } from '../user-admin-state.service';
 import { UserAdminService } from '../user-admin.service';
 import { AdminUser, ROLE_LABELS } from '../admin-user.model';
@@ -13,7 +14,7 @@ import { AuthService } from '../../../core/auth.service';
 @Component({
   selector: 'app-user-domains-panel',
   standalone: true,
-  imports: [FormsModule, MultiSelect],
+  imports: [FormsModule, MultiSelect, Tag],
   templateUrl: './user-domains-panel.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0'

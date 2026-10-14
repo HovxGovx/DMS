@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
+import { Tag } from 'primeng/tag';
 import { OwnerlessDocumentsStateService } from '../ownerless-documents-state.service';
 import { UserAdminStateService } from '../user-admin-state.service';
 import { AdminDocumentService } from '../admin-document.service';
@@ -12,19 +13,10 @@ import { getFileTypeInfo } from '../../validation/file-type.util';
 import { SelectOption } from '../../validation/classification-select/classification-select.component';
 import { NotificationService } from '../../../core/notification.service';
 
-/** Couleurs des étiquettes de statut, reprises des sévérités PrimeNG du tableau des documents. */
-const SEVERITY_CLASSES: Record<DocTag['severity'], string> = {
-  success: 'bg-emerald-50 text-emerald-700',
-  info: 'bg-sky-50 text-sky-700',
-  warn: 'bg-amber-50 text-amber-700',
-  secondary: 'bg-slate-100 text-slate-600',
-  danger: 'bg-red-50 text-red-700'
-};
-
 @Component({
   selector: 'app-ownerless-documents-panel',
   standalone: true,
-  imports: [FormsModule, Select],
+  imports: [FormsModule, Select, Tag],
   templateUrl: './ownerless-documents-panel.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0'
@@ -61,8 +53,8 @@ export class OwnerlessDocumentsPanelComponent {
     return STATUS_TAGS[doc.status]?.label ?? doc.status;
   }
 
-  statusClass(doc: OwnerlessDocument): string {
-    return SEVERITY_CLASSES[STATUS_TAGS[doc.status]?.severity ?? 'secondary'];
+  statusSeverity(doc: OwnerlessDocument): DocTag['severity'] {
+    return STATUS_TAGS[doc.status]?.severity ?? 'secondary';
   }
 
   displayName(doc: OwnerlessDocument): string {

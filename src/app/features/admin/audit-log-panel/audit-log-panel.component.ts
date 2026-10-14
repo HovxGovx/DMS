@@ -1,6 +1,7 @@
 import { Component, OnInit, computed, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
+import { Tag } from 'primeng/tag';
 import { AuditLogStateService } from '../audit-log-state.service';
 import { UserAdminStateService } from '../user-admin-state.service';
 import { ROLE_LABELS } from '../admin-user.model';
@@ -10,7 +11,7 @@ import { SelectOption } from '../../validation/classification-select/classificat
 @Component({
   selector: 'app-audit-log-panel',
   standalone: true,
-  imports: [FormsModule, Select],
+  imports: [FormsModule, Select, Tag],
   templateUrl: './audit-log-panel.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0'

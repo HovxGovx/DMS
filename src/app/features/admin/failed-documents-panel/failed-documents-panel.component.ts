@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
+import { Tag } from 'primeng/tag';
 import { FailedDocumentsStateService } from '../failed-documents-state.service';
 import { AdminDocumentService } from '../admin-document.service';
 import { FailedDocument, FailedStatus } from '../failed-document.model';
@@ -17,6 +18,7 @@ const STATUS_LABELS: Record<FailedStatus, string> = {
 @Component({
   selector: 'app-failed-documents-panel',
   standalone: true,
+  imports: [Tag],
   templateUrl: './failed-documents-panel.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0'

@@ -12,6 +12,21 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
 
 type AdminSection = 'users' | 'failed' | 'ownerless' | 'index' | 'audit';
 
+interface AdminSectionItem {
+  id: AdminSection;
+  label: string;
+  hint: string;
+  icon: string;
+}
+
+const SECTIONS: AdminSectionItem[] = [
+  { id: 'users', label: 'Utilisateurs et domaines', hint: 'Accès des utilisateurs par domaine', icon: 'pi-users' },
+  { id: 'failed', label: 'Documents en échec', hint: 'Extraction ou indexation à relancer', icon: 'pi-exclamation-circle' },
+  { id: 'ownerless', label: 'Sans propriétaire', hint: 'Documents à rattacher à un utilisateur', icon: 'pi-user-minus' },
+  { id: 'index', label: 'Index de recherche', hint: "Reconstruction de l'index", icon: 'pi-search' },
+  { id: 'audit', label: "Journal d'audit", hint: 'Historique des actions', icon: 'pi-history' }
+];
+
 @Component({
   selector: 'app-admin-view',
   standalone: true,
@@ -27,6 +42,7 @@ export class AdminViewComponent implements OnInit {
   ownerlessState = inject(OwnerlessDocumentsStateService);
   private viewState = inject(ViewStateService);
 
+  readonly sections = SECTIONS;
   section = signal<AdminSection>('users');
 
   ngOnInit() {
@@ -34,6 +50,16 @@ export class AdminViewComponent implements OnInit {
     this.userState.loadUsers();
     this.failedState.loadFailed();
     this.ownerlessState.loadWithoutOwner();
+  }
+
+  /** Compteur affiché à droite de la section ; 0 le masque. */
+  count(id: AdminSection): number {
+    switch (id) {
+      case 'users': return this.userState.withoutDomainCount();
+      case 'failed': return this.failedState.count();
+      case 'ownerless': return this.ownerlessState.count();
+      default: return 0;
+    }
   }
 
   onBack() {

@@ -112,10 +112,7 @@
               }
             </td>
             <td class="px-4 py-2">
-              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-2xs font-semibold {{ display(entry.action).color }}">
-                <i class="pi {{ display(entry.action).icon }} text-[9px]"></i>
-                {{ display(entry.action).label }}
-              </span>
+              <p-tag [value]="display(entry.action).label" [severity]="display(entry.action).severity" styleClass="!text-xs !font-medium" />
             </td>
             <td class="px-4 py-2 text-gray-800 truncate max-w-0" [title]="entry.documentName ?? ''">
               {{ entry.documentName ?? '—' }}

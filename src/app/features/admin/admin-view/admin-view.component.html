@@ -6,92 +6,31 @@
     <span class="text-xs font-semibold text-gray-600 tracking-wide">ADMINISTRATION</span>
   </div>
 
-  <nav class="flex-1 min-h-0 overflow-y-auto p-2 flex flex-col gap-1 text-xs">
-    <button
-      class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left font-medium border-l-[3px] transition-colors"
-      [class.border-l-orange-500]="section() === 'users'"
-      [class.bg-orange-50]="section() === 'users'"
-      [class.text-prussian-blue-800]="section() === 'users'"
-      [class.border-l-transparent]="section() !== 'users'"
-      [class.text-gray-600]="section() !== 'users'"
-      [class.hover:bg-prussian-blue-50]="section() !== 'users'"
-      (click)="section.set('users')">
-      <i class="pi pi-users text-xs"></i>
-      Utilisateurs et domaines
-      @if (userState.withoutDomainCount() > 0) {
-        <span
-          class="ml-auto min-w-4.5 h-4.5 px-1 rounded-full bg-amber-500 text-white text-2xs font-semibold flex items-center justify-center"
-          title="Utilisateurs sans domaine">
-          {{ userState.withoutDomainCount() }}
-        </span>
-      }
-    </button>
+  <!-- Même liste que « À publier » : lignes pleine largeur, sélection marquée à gauche -->
+  <nav class="flex-1 min-h-0 overflow-y-auto sidebar-tree-scroll text-xs">
+    @for (item of sections; track item.id) {
+      <button
+        type="button"
+        class="w-full flex items-center gap-2 px-3 py-2 text-left cursor-pointer border-l-[3px] border-b border-b-prussian-blue-50 transition-colors duration-150"
+        [class.border-l-orange-500]="section() === item.id"
+        [class.bg-orange-50]="section() === item.id"
+        [class.border-l-transparent]="section() !== item.id"
+        [class.hover:bg-prussian-blue-50]="section() !== item.id"
+        (click)="section.set(item.id)">
+        <i class="pi {{ item.icon }} text-gray-400 shrink-0"></i>
 
-    <button
-      class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left font-medium border-l-[3px] transition-colors"
-      [class.border-l-orange-500]="section() === 'failed'"
-      [class.bg-orange-50]="section() === 'failed'"
-      [class.text-prussian-blue-800]="section() === 'failed'"
-      [class.border-l-transparent]="section() !== 'failed'"
-      [class.text-gray-600]="section() !== 'failed'"
-      [class.hover:bg-prussian-blue-50]="section() !== 'failed'"
-      (click)="section.set('failed')">
-      <i class="pi pi-exclamation-circle text-xs"></i>
-      Documents en échec
-      @if (failedState.count() > 0) {
-        <span
-          class="ml-auto min-w-4.5 h-4.5 px-1 rounded-full bg-red-500 text-white text-2xs font-semibold flex items-center justify-center"
-          title="Documents en échec">
-          {{ failedState.count() }}
-        </span>
-      }
-    </button>
+        <div class="flex flex-col min-w-0 flex-1">
+          <span class="text-gray-800 font-medium truncate">{{ item.label }}</span>
+          <span class="text-2xs text-gray-400 truncate">{{ item.hint }}</span>
+        </div>
 
-    <button
-      class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left font-medium border-l-[3px] transition-colors"
-      [class.border-l-orange-500]="section() === 'ownerless'"
-      [class.bg-orange-50]="section() === 'ownerless'"
-      [class.text-prussian-blue-800]="section() === 'ownerless'"
-      [class.border-l-transparent]="section() !== 'ownerless'"
-      [class.text-gray-600]="section() !== 'ownerless'"
-      [class.hover:bg-prussian-blue-50]="section() !== 'ownerless'"
-      (click)="section.set('ownerless')">
-      <i class="pi pi-user-minus text-xs"></i>
-      Sans propriétaire
-      @if (ownerlessState.count() > 0) {
-        <span
-          class="ml-auto min-w-4.5 h-4.5 px-1 rounded-full bg-amber-500 text-white text-2xs font-semibold flex items-center justify-center"
-          title="Documents sans propriétaire">
-          {{ ownerlessState.count() }}
-        </span>
-      }
-    </button>
-
-    <button
-      class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left font-medium border-l-[3px] transition-colors"
-      [class.border-l-orange-500]="section() === 'index'"
-      [class.bg-orange-50]="section() === 'index'"
-      [class.text-prussian-blue-800]="section() === 'index'"
-      [class.border-l-transparent]="section() !== 'index'"
-      [class.text-gray-600]="section() !== 'index'"
-      [class.hover:bg-prussian-blue-50]="section() !== 'index'"
-      (click)="section.set('index')">
-      <i class="pi pi-search text-xs"></i>
-      Index de recherche
-    </button>
-
-    <button
-      class="w-full flex items-center gap-2 px-3 py-2 rounded-md text-left font-medium border-l-[3px] transition-colors"
-      [class.border-l-orange-500]="section() === 'audit'"
-      [class.bg-orange-50]="section() === 'audit'"
-      [class.text-prussian-blue-800]="section() === 'audit'"
-      [class.border-l-transparent]="section() !== 'audit'"
-      [class.text-gray-600]="section() !== 'audit'"
-      [class.hover:bg-prussian-blue-50]="section() !== 'audit'"
-      (click)="section.set('audit')">
-      <i class="pi pi-history text-xs"></i>
-      Journal d'audit
-    </button>
+        @if (count(item.id) > 0) {
+          <span class="text-2xs font-semibold font-mono text-prussian-blue-700 bg-prussian-blue-50 rounded-full px-2 py-0.5 shrink-0">
+            {{ count(item.id) }}
+          </span>
+        }
+      </button>
+    }
   </nav>
 
   <div class="shrink-0 p-2 border-t border-prussian-blue-100">

@@ -85,13 +85,7 @@
             </td>
 
             <td class="px-4 py-2.5">
-              <span class="inline-block px-2 py-0.5 rounded-full text-2xs font-semibold"
-                [class.bg-prussian-blue-700]="user.role === 'ADMIN'"
-                [class.text-white]="user.role === 'ADMIN'"
-                [class.bg-prussian-blue-50]="user.role !== 'ADMIN'"
-                [class.text-prussian-blue-700]="user.role !== 'ADMIN'">
-                {{ roleLabels[user.role] }}
-              </span>
+              <p-tag [value]="roleLabels[user.role]" [severity]="user.role === 'ADMIN' ? 'info' : 'secondary'" styleClass="!text-xs !font-medium" />
             </td>
 
             <td class="px-4 py-2.5">
