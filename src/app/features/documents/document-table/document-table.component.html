@@ -6,7 +6,7 @@
   scrollHeight="flex"
   dataKey="id"
   [paginator]="true"
-  [rows]="rows"
+  [rows]="rows()"
   [first]="first()"
   (firstChange)="first.set($event); closeTags()"
   [showCurrentPageReport]="true"
@@ -19,98 +19,129 @@
       <th
         class="!text-xs   !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom
         Fichier</th>
+      @if (showRelevance()) {
       <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-60">Tags</th>
-      @if (showLocation()) {
-      <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-56">Emplacement</th>
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-36">Pertinence</th>
       }
       <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-36">Publication</th>
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-60">Tags</th>
       <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-32">Action</th>
+        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-32"><span class="sr-only">Actions</span></th>
     </tr>
   </ng-template>
 
   <ng-template pTemplate="body" let-doc>
-    <!-- Hauteur fixe : chaque cellule tient sur une seule ligne -->
+    <!-- Hauteur fixe : chaque cellule tient sur une seule ligne (deux pour le nom en recherche) -->
     <tr
-      class="h-12 hover:bg-prussian-blue-50/50 transition-colors duration-150 cursor-pointer"
+      class="doc-row group/row h-12 transition-colors duration-150 cursor-pointer"
+      [class.hover:!bg-prussian-blue-50]="doc.id !== highlightedId()"
       [class.!bg-prussian-blue-100]="doc.id === highlightedId()"
       (click)="rowClick.emit(doc.id)">
 
       <td>
         <div class="flex items-center gap-2 min-w-0">
           <i class="{{ doc.icon }} {{ doc.iconColor }} shrink-0"></i>
-          <span class="font-medium text-gray-800 truncate"
-            [pTooltip]="doc.name" tooltipPosition="top" [showDelay]="300">{{ doc.name }}</span>
+          <div class="flex flex-col min-w-0">
+            <span class="font-medium text-gray-800 truncate"
+              [pTooltip]="doc.name" tooltipPosition="top" [showDelay]="300">{{ doc.name }}</span>
+            <!-- En recherche, le fichier d'origine aide à distinguer des titres proches -->
+            @if (searchMode() && doc.originalFileName && doc.originalFileName !== doc.name) {
+            <span class="text-2xs text-gray-400 truncate">{{ doc.originalFileName }}</span>
+            }
+          </div>
           @if (doc.locked) {
           <i class="pi pi-lock text-xs text-amber-500 shrink-0"></i>
           }
+          @if (doc.confidential) {
+          <i class="pi pi-lock text-xs text-amber-500 shrink-0" pTooltip="Confidentiel" tooltipPosition="top"></i>
+          }
         </div>
       </td>
+      @if (showRelevance()) {
+      <td>
+        @if (doc.relevance) {
+        <div class="flex items-center gap-2 text-gray-600 whitespace-nowrap">
+          <span class="flex items-end gap-0.5 h-3 shrink-0">
+            @for (bar of relevanceBars; track bar) {
+            <span class="w-1 rounded-sm {{ relevanceBarColor(doc.relevance, bar) }}"
+              [style.height.%]="bar * 100 / 3"></span>
+            }
+          </span>
+          <span class="truncate">{{ relevanceLabel(doc.relevance) }}</span>
+        </div>
+        }
+      </td>
+      }
       <td (click)="openTags(doc, $event)">
-        <!-- Catégorie + 1 tag, le reste est résumé par le badge « +N » -->
+        <!-- 2 tags, le reste est résumé par le badge « +N » -->
         <div
           class="group flex items-center gap-1.5 min-w-0 -mx-1.5 px-1.5 py-1 rounded-md cursor-pointer hover:bg-prussian-blue-100/60 transition-colors"
           [class.bg-prussian-blue-100]="tagsDoc()?.id === doc.id"
           pTooltip="Voir tous les tags" tooltipPosition="top" [showDelay]="400">
-          <p-tag [value]="doc.category" [severity]="doc.categorySeverity"
-            styleClass="!text-xs !font-medium min-w-0 [&_.p-tag-label]:truncate [&_.p-tag-label]:min-w-0" />
-          @if (doc.tags.length) {
-          <p-tag [value]="doc.tags[0].label" [severity]="doc.tags[0].severity"
+          @for (tag of visibleTags(doc); track $index) {
+          <p-tag [value]="tag.label" [severity]="tag.severity"
             styleClass="!text-xs !font-medium min-w-0 [&_.p-tag-label]:truncate [&_.p-tag-label]:min-w-0" />
           }
-          @if (doc.tags.length > 1) {
+          @if (hiddenTagCount(doc)) {
           <span
-            class="shrink-0 px-1.5 py-0.5 rounded-full text-[11px] font-semibold border border-prussian-blue-100 bg-prussian-blue-50 text-prussian-blue-600 group-hover:bg-white group-hover:text-prussian-blue-700 transition-colors">
-            +{{ doc.tags.length - 1 }}
+            class="shrink-0 px-1.5 py-0.5 rounded-full text-2xs font-semibold border border-prussian-blue-100 bg-prussian-blue-50 text-prussian-blue-600 group-hover:bg-white group-hover:text-prussian-blue-700 transition-colors">
+            +{{ hiddenTagCount(doc) }}
           </span>
           }
         </div>
       </td>
-      @if (showLocation()) {
-      <td>
-        <div class="flex items-center gap-1 min-w-0 overflow-hidden whitespace-nowrap text-gray-500"
-          [pTooltip]="doc.location.join(' › ')" tooltipPosition="top" [showDelay]="300">
-          @for (segment of doc.location; track $index; let last = $last) {
-          <span class="truncate" [class.text-gray-700]="last">{{ segment }}</span>
-          @if (!last) {
-          <i class="pi pi-angle-right text-[10px] text-gray-300 shrink-0"></i>
-          }
-          }
-        </div>
-      </td>
-      }
-      <td>
-        <div class="flex items-center gap-1.5 text-gray-500 whitespace-nowrap">
-          <span
-            class="w-1.5 h-1.5 rounded-full shrink-0 {{ doc.modifiedDotColor }}"></span>
-          {{ doc.modified }}
-        </div>
-      </td>
       <td (click)="$event.stopPropagation()">
-        <div class="flex items-center gap-1">
-          @if (showLocation()) {
+        <!-- Boutons visibles au survol de la ligne, sur la ligne sélectionnée ou pendant une action en cours -->
+        <div class="flex items-center gap-1 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity duration-150"
+          [class.opacity-100]="doc.id === highlightedId() || cancellingId() === doc.id || unpublishService.unpublishingId() === doc.id">
+          @if (searchMode()) {
           <button
-            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 group-hover/row:text-prussian-blue-600 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-colors"
             title="Afficher dans son dossier"
             (click)="revealInFolder.emit(doc.id)">
             <i class="pi pi-folder-open text-xs"></i>
           </button>
           }
           <button
-            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
-            title="Ouvrir le fichier"
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 group-hover/row:text-prussian-blue-600 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-colors"
+            title="Voir le document"
             (click)="openFile(doc.id)">
             <i class="pi pi-external-link text-xs"></i>
           </button>
+          @if (canCancelImport(doc)) {
           <button
-            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-all duration-150 hover:scale-105 active:scale-95"
-            title="Modifier les métadonnées"
-            (click)="editMetadata.emit(doc.id)">
-            <i class="pi pi-pencil text-xs"></i>
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            title="Annuler l'import"
+            [disabled]="cancellingId() === doc.id"
+            (click)="cancelImport(doc)">
+            <i class="pi {{ cancellingId() === doc.id ? 'pi-spin pi-spinner' : 'pi-times' }} text-xs"></i>
           </button>
+          }
+          @if (authService.hasRole('VALIDATOR') && doc.manageable) {
+          <button
+            class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            title="Retirer de la consultation"
+            [disabled]="unpublishService.unpublishingId() === doc.id"
+            (click)="unpublishService.unpublish(doc.id, doc.name)">
+            <i class="pi {{ unpublishService.unpublishingId() === doc.id ? 'pi-spin pi-spinner' : 'pi-eye-slash' }} text-xs"></i>
+          </button>
+          }
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="columnCount()" class="!border-0">
+        <div class="flex flex-col items-center justify-center gap-2 py-16 text-gray-400">
+          <i class="pi {{ searchMode() ? 'pi-search' : 'pi-folder-open' }} text-2xl text-prussian-blue-200"></i>
+          @if (searchMode()) {
+          <span class="text-sm text-gray-600">Aucun document ne correspond à votre recherche</span>
+          <span class="text-xs">Essayez d'autres mots-clés ou élargissez les filtres.</span>
+          } @else {
+          <span class="text-sm text-gray-600">Aucun document à afficher</span>
+          }
         </div>
       </td>
     </tr>
@@ -143,7 +174,7 @@
       class="w-6 h-6 shrink-0 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
       title="Fermer"
       (click)="closeTags()">
-      <i class="pi pi-times text-[10px]"></i>
+      <i class="pi pi-times text-2xs"></i>
     </button>
   </div>
 

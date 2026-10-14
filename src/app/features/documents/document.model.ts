@@ -1,3 +1,6 @@
+import { DocumentStatus } from '../validation/lifecycle-document.model';
+import { RelevanceLevel } from '../search/search-result.model';
+
 export interface DocTag {
   label: string;
   severity: 'success' | 'info' | 'warn' | 'secondary' | 'danger';
@@ -12,15 +15,19 @@ export interface DocumentItem {
   id: string;
   name: string;
   originalFileName: string;
-  format: 'PDF' | 'XLSX' | 'DOCX';
+  /** Libellé court tiré de l'extension (PDF, DOCX…), ou « FICHIER » sans extension. */
+  format: string;
   icon: string;
   iconColor: string;
   category: string;
   categorySeverity: DocTag['severity'];
   tags: DocTag[];
   modified: string;
-  modifiedDotColor: string;
   locked?: boolean;
+  /** Absent pour un document de dossier ou de recherche (toujours publié). */
+  status?: DocumentStatus;
+  /** Visible seulement par la personne qui l'a importé et par les validateurs. */
+  confidential?: boolean;
   importDate?: string;
   author?: string | null;
   typeLabel?: string | null;
@@ -28,6 +35,10 @@ export interface DocumentItem {
   /** Emplacement par domaine puis par type (ex : ['Finance', 'Facture fournisseur']), ou ['Non classés']. */
   location: string[];
   statusLabel?: string | null;
+  /** Retrait et changement de confidentialité permis (en plus du rôle VALIDATOR). */
+  manageable?: boolean;
+  /** Pertinence d'un résultat de recherche par mots-clés (absente hors recherche ou sans mots-clés). */
+  relevance?: RelevanceLevel | null;
 }
 
 export interface MetadataItem {
@@ -39,6 +50,8 @@ export interface MetadataItem {
 export interface DocumentDetail {
   name: string;
   docId: string;
+  confidential: boolean;
+  manageable: boolean;
   icon: string;
   iconColor: string;
   tags: DocTag[];
@@ -63,6 +76,8 @@ export function toDocumentDetail(item: DocumentItem): DocumentDetail {
   return {
     name: item.name,
     docId: item.id,
+    confidential: !!item.confidential,
+    manageable: !!item.manageable,
     icon: item.icon,
     iconColor: item.iconColor,
     tags: [{ label: item.category, severity: item.categorySeverity }, ...item.tags],
@@ -79,7 +94,8 @@ export function toDocumentDetail(item: DocumentItem): DocumentDetail {
     businessMetadata: [
       { label: 'Domaine', value: item.domainLabel ?? '' },
       { label: 'Type', value: item.typeLabel ?? '' },
-      { label: 'Statut', value: item.statusLabel ?? '' }
+      { label: 'Statut', value: item.statusLabel ?? '' },
+      { label: 'Accès', value: item.confidential ? 'Confidentiel' : 'Public' }
     ]
   };
 }
@@ -95,16 +111,4 @@ export function withoutEmptyValues(detail: DocumentDetail): DocumentDetail {
 
 export interface TagFilterOption {
   label: string;
-  dotColor: string;
-  textColor: string;
-  borderColor: string;
-  bgActive: string;
 }
-
-export const SEVERITY_FILTER_COLORS: Record<DocTag['severity'], Omit<TagFilterOption, 'label'>> = {
-  success: { dotColor: 'bg-emerald-500', textColor: 'text-emerald-600', borderColor: 'border-emerald-300', bgActive: 'bg-emerald-50' },
-  warn: { dotColor: 'bg-orange-500', textColor: 'text-orange-600', borderColor: 'border-orange-300', bgActive: 'bg-orange-50' },
-  info: { dotColor: 'bg-blue-500', textColor: 'text-blue-600', borderColor: 'border-blue-300', bgActive: 'bg-blue-50' },
-  secondary: { dotColor: 'bg-prussian-blue-500', textColor: 'text-prussian-blue-600', borderColor: 'border-prussian-blue-300', bgActive: 'bg-prussian-blue-50' },
-  danger: { dotColor: 'bg-red-500', textColor: 'text-red-600', borderColor: 'border-red-300', bgActive: 'bg-red-50' }
-};

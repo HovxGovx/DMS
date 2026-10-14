@@ -17,7 +17,7 @@
     #fileInput
     type="file"
     multiple
-    accept=".pdf,.docx,.xlsx,.docx,.eml,.tiff,.tif,.jpeg.jpg,.png,.ppt,.pptx"
+    accept=".pdf,.docx,.xlsx,.eml,.tiff,.tif,.jpeg,.jpg,.png,.ppt,.pptx"
     class="hidden"
     (change)="onFileSelect($event)" />
 
@@ -32,33 +32,15 @@
     </div>
 
     <div>
-      <div class="text-[11px] text-gray-800">
+      <div class="text-2xs text-gray-800">
         @if (isUploading()) {
         <span class="font-semibold text-xs">Import en cours...</span>
         } @else {
-        <span class="font-semibold text-xs">Deposez les fichiers</span>
-        <span class="text-gray-500 ml-1">ou clickez pour parcourrir — PDF, DOCX,
+        <span class="font-semibold text-xs">Déposez les fichiers</span>
+        <span class="text-gray-500 ml-1">ou cliquez pour parcourir — PDF, DOCX,
           XLSX, PNG, EML </span>
         }
       </div>
-      <div class="flex items-center gap-3 mt-1 text-[11px] text-gray-500">
-        <!-- <span class="flex items-center gap-1">
-          <i class="pi pi-eye text-[10px]"></i> OCR enabled
-        </span> -->
-        <!-- <span class="flex items-center gap-1">
-          <i class="pi pi-sparkles text-[10px]"></i> Classification
-        </span>
-        <span class="flex items-center gap-1">
-          <i class="pi pi-lock text-[10px]"></i> Securiser
-        </span> -->
-      </div>
     </div>
   </div>
-
-  <!-- <p-button
-    label="Parcourrir"
-    icon="pi pi-folder-open"
-    styleClass="!text-xs !bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800 transition-transform duration-150 hover:scale-105 active:scale-95"
-    (click)="$event.stopPropagation(); fileInput.click()"
-  /> -->
 </div>

@@ -1,6 +1,7 @@
 import { Component, signal, inject, computed, ElementRef, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
+import { ViewStateService } from '../../../core/view-state.service';
 import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
 @Component({
   selector: 'app-user-menu',
@@ -10,7 +11,8 @@ import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dro
 })
 export class UserMenuComponent {
   private router = inject(Router);
-  private authService = inject(AuthService);
+  authService = inject(AuthService);
+  viewState = inject(ViewStateService);
   private elementRef = inject(ElementRef);
 
   isOpen = signal(false);
@@ -34,6 +36,11 @@ export class UserMenuComponent {
 
   close() {
     this.isOpen.set(false);
+  }
+
+  openAdministration() {
+    this.close();
+    this.viewState.setView('admin');
   }
 
   logout() {

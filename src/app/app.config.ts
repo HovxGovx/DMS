@@ -11,7 +11,7 @@ import { credentialsInterceptor } from './core/interceptors/credentials.intercep
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { MessageService,ConfirmationService } from 'primeng/api';
 
-const DocuFlowPreset = definePreset(Aura, {
+const ELaminaPreset = definePreset(Aura, {
   semantic: {
     primary: {
       50: '#e7f2fe',
@@ -36,7 +36,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: DocuFlowPreset,
+        preset: ELaminaPreset,
         options: {
           darkModeSelector: false
         }

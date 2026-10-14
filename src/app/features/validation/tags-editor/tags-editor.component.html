@@ -1,5 +1,5 @@
 <div>
-  <label class="text-[11px] font-semibold text-gray-500 tracking-wide mb-2 block">
+  <label class="text-2xs font-semibold text-gray-500 tracking-wide mb-2 block">
     TAGS SUGGÉRÉS
   </label>
 
@@ -7,7 +7,7 @@
 
     @for (tag of tags(); track tag.id) {
       <div
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors"
         [class.bg-emerald-50]="tag.status === 'ACCEPTED'"
         [class.border-emerald-200]="tag.status === 'ACCEPTED'"
         [class.text-emerald-700]="tag.status === 'ACCEPTED'"
@@ -21,32 +21,31 @@
       >
         {{ tag.label }}
 
-        @if (tag.status !== 'REJECTED') {
-          <i
-            class="pi pi-check text-[10px] cursor-pointer transition-transform hover:scale-125"
-            [class.text-emerald-600]="tag.status === 'ACCEPTED'"
-            [class.text-gray-400]="tag.status === 'PENDING'"
-            (click)="accept(tag)"
-          ></i>
-        }
-        @if (tag.status !== 'ACCEPTED') {
-          <i
-            class="pi pi-times text-[10px] cursor-pointer transition-transform hover:scale-125"
-            [class.text-red-500]="tag.status === 'REJECTED'"
-            [class.text-gray-400]="tag.status === 'PENDING'"
-            (click)="reject(tag)"
-          ></i>
-        }
+        <!-- Les deux actions restent disponibles pour pouvoir revenir sur un choix -->
+        <i
+          class="pi pi-check text-2xs cursor-pointer transition-colors hover:text-emerald-600"
+          [class.text-emerald-600]="tag.status === 'ACCEPTED'"
+          [class.text-gray-400]="tag.status !== 'ACCEPTED'"
+          [title]="tag.status === 'ACCEPTED' ? 'Accepté' : 'Accepter'"
+          (click)="tag.status !== 'ACCEPTED' && accept(tag)"
+        ></i>
+        <i
+          class="pi pi-times text-2xs cursor-pointer transition-colors hover:text-red-500"
+          [class.text-red-500]="tag.status === 'REJECTED'"
+          [class.text-gray-400]="tag.status !== 'REJECTED'"
+          [title]="tag.status === 'REJECTED' ? 'Rejeté' : 'Rejeter'"
+          (click)="tag.status !== 'REJECTED' && reject(tag)"
+        ></i>
       </div>
     }
 
     <!-- Bouton / champ d'ajout -->
     @if (!isAdding()) {
       <button
-        class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border border-dashed border-prussian-blue-300 text-prussian-blue-700 hover:bg-prussian-blue-50 hover:border-prussian-blue-400 transition-all duration-150"
+        class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border border-dashed border-prussian-blue-300 text-prussian-blue-700 hover:bg-prussian-blue-50 hover:border-prussian-blue-400 transition-colors"
         (click)="startAdding()"
       >
-        <i class="pi pi-plus text-[10px]"></i>
+        <i class="pi pi-plus text-2xs"></i>
         Ajouter
       </button>
     } @else {

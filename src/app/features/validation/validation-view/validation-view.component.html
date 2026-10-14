@@ -1,30 +1,52 @@
-<!-- Colonne gauche : file d'attente -->
+<!-- Colonne gauche : file des documents à publier -->
 <aside
   class="w-96 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
 
-  <IngestPanel />
+  <app-ingest-panel />
 
   <app-import-queue-list />
 
 </aside>
 
-<!-- Colonne droite : formulaire de validation -->
+<!-- Colonne droite : formulaire de publication -->
 <main
   class="flex-1 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
+
+  <!-- Confirmation de la dernière publication, avec accès au dossier du document -->
+  @if (state.lastPublished(); as published) {
+  <div class="shrink-0 m-2 mb-0 flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
+    <i class="pi pi-check-circle text-sm shrink-0"></i>
+    <span class="truncate">« {{ published.title }} » a été publié.</span>
+    <button
+      class="ml-auto shrink-0 font-semibold underline-offset-2 hover:underline whitespace-nowrap"
+      (click)="onRevealPublished()">
+      Voir dans son dossier
+    </button>
+    <button
+      class="shrink-0 w-6 h-6 rounded flex items-center justify-center hover:bg-emerald-100"
+      title="Fermer"
+      (click)="state.dismissLastPublished()">
+      <i class="pi pi-times text-2xs"></i>
+    </button>
+  </div>
+  }
 
   @if (state.detail(); as doc) {
 
   <div class="shrink-0 border-b border-prussian-blue-100">
-    <app-import-preview-card [document]="doc" />
+    <app-import-preview-card [document]="doc" (view)="onViewDocument()" />
   </div>
 
   <div
-    class="flex-1 min-h-0 pt-2 mt-2 overflow-y-auto scroll-smooth sidebar-tree-scroll p-1.5 flex flex-col gap-5">
+    class="flex-1 min-h-0 pt-2 mt-2 overflow-y-auto scroll-smooth sidebar-tree-scroll p-1.5 flex flex-col gap-5 transition-opacity duration-150"
+    [class.opacity-50]="state.isDetailLoading()"
+    [class.pointer-events-none]="state.isDetailLoading()">
+
     <div class="grid grid-cols-2 gap-4">
 
       <app-title-field
         label="Titre"
-        [(value)]="doc.title" />
+        [(value)]="title" />
 
       <app-classification-select
         label="Confidentialité"
@@ -35,42 +57,76 @@
     <div class="grid grid-cols-2 gap-4">
       <app-classification-select
         label="Domaine"
-        placeholder="Choisir un domaine"
         [options]="domainOptions()"
         [value]="domainCode()"
         (valueChange)="onDomainChange($event)" />
       <app-classification-select
         label="Type de document"
-        placeholder="Choisir un type"
         [options]="typeOptions()"
         [disabled]="!domainCode()"
         [(value)]="typeCode" />
 
     </div>
     <!-- Tags -->
-    <app-tags-editor [documentId]="doc.id" [(tags)]="doc.tags" />
+    <app-tags-editor [documentId]="doc.id" [(tags)]="tags" />
+
+    @if (pendingTagsCount() > 0) {
+    <p class="-mt-3 text-2xs text-amber-700 flex items-center gap-1.5">
+      <i class="pi pi-exclamation-triangle text-2xs"></i>
+      {{ pendingTagsCount() }} tag{{ pendingTagsCount() > 1 ? 's' : '' }} en attente
+      — seuls les tags acceptés (✓) seront publiés avec le document.
+    </p>
+    }
 
   </div>
   <app-validation-footer
     [remainingCount]="state.remainingCount()"
-    [validateDisabled]="!canValidate()"
-    (cancelClick)="onCancel()"
-    (validateClick)="onValidate()" />
+    [publishDisabled]="!canPublish()"
+    [isPublishing]="isPublishing()"
+    [blocker]="publishBlocker()"
+    [resetDisabled]="!isDirty()"
+    [deleteDisabled]="isDeleting() || isPublishing() || state.isDetailLoading() || state.detail()?.status === 'UNPUBLISHED'"
+    (resetClick)="onReset()"
+    (deleteClick)="onDelete()"
+    (publishClick)="onPublish()" />
 
-  } @else if (state.isDetailLoading()) {
+  } @else if (state.isDetailLoading() || (state.isLoading() && !state.pendingImports().length)) {
   <div
     class="flex-1 flex items-center justify-center text-gray-500 text-sm">
     Chargement...
   </div>
-  } @else if (state.detailError()) {
+  } @else if (state.detailError() || state.loadError()) {
   <div
     class="flex-1 flex items-center justify-center text-red-500 text-sm">
-    {{ state.detailError() }}
+    {{ state.detailError() ?? state.loadError() }}
   </div>
-  } @else {
+  } @else if (state.remainingCount() > 0) {
   <div
     class="flex-1 flex items-center justify-center text-gray-500 text-sm">
-    Tous les imports ont été traités
+    Sélectionnez un document à publier dans la liste
+  </div>
+  } @else {
+  <!-- Fin de file -->
+  <div class="flex-1 flex flex-col items-center justify-center gap-3 text-center px-6">
+    <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+      <i class="pi pi-check text-emerald-600 text-xl"></i>
+    </div>
+    <div class="text-sm font-semibold text-gray-800">Aucun document à publier</div>
+    <p class="text-xs text-gray-500 max-w-sm">
+      @if (state.publishedCount() > 0) {
+        {{ state.publishedCount() }} document{{ state.publishedCount() > 1 ? 's' : '' }}
+        publié{{ state.publishedCount() > 1 ? 's' : '' }} pendant cette session.
+      }
+      Déposez de nouveaux fichiers à gauche pour les publier.
+    </p>
+    <button
+      class="mt-1 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border border-prussian-blue-200 text-prussian-blue-700 hover:bg-prussian-blue-50 transition-colors"
+      (click)="onGoToDocuments()">
+      <i class="pi pi-folder text-xs"></i>
+      Aller aux documents
+    </button>
   </div>
   }
 </main>
+
+<app-confirm-dialog />

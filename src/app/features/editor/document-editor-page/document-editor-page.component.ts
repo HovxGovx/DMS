@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal, ElementRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { OnlyOfficeScriptLoaderService } from '../onlyoffice-script-loader.service';
+import { firstValueFrom } from 'rxjs';
+import { DocEditor, OnlyOfficeScriptLoaderService } from '../onlyoffice-script-loader.service';
 import { EditorConfigService } from '../editor-config.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class DocumentEditorPageComponent implements OnInit, OnDestroy {
   isLoading = signal(true);
   loadError = signal<string | null>(null);
 
-  private editorInstance: any = null;
+  private editorInstance: DocEditor | null = null;
 
   ngOnInit() {
     const documentId = this.route.snapshot.paramMap.get('id');
@@ -30,27 +31,20 @@ export class DocumentEditorPageComponent implements OnInit, OnDestroy {
     }
 
     this.scriptLoader.load()
-      .then(() => this.configService.getConfig(documentId).toPromise())
+      .then(() => firstValueFrom(this.configService.getConfig(documentId)))
       .then((config) => {
         this.isLoading.set(false);
-        this.editorInstance = new window.DocsAPI.DocEditor(
-          this.editorInstance = new window.DocsAPI.DocEditor(
-            'documentEditorPlaceholder',
-            config
-        )
-      );
+        // load() n'aboutit qu'une fois api.js chargé, qui définit DocsAPI
+        this.editorInstance = new window.DocsAPI!.DocEditor('documentEditorPlaceholder', config);
       })
-      .catch((err) => {
+      .catch(() => {
         this.isLoading.set(false);
         this.loadError.set("Impossible de charger l'éditeur de document.");
-        console.error('Erreur chargement éditeur:', err);
       });
   }
 
   ngOnDestroy() {
-    if (this.editorInstance?.destroyEditor) {
-      this.editorInstance.destroyEditor();
-    }
+    this.editorInstance?.destroyEditor();
   }
 
   goBack() {

@@ -1,4 +1,4 @@
-import { DocumentStatus } from './lifecycle-document.model';
+import { Confidentiality, DocumentStatus } from './lifecycle-document.model';
 
 export type TagStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED';
 export type TagOrigin = 'LUCENE' | 'USER';
@@ -10,11 +10,24 @@ export interface DocumentTag {
   origin: TagOrigin;
 }
 
+/** Élément de la file « À publier » (GET /api/dms/document/pending-validation) : nouvel import ou document retiré de la consultation. */
+export interface PendingDocument {
+  id: string;
+  fileName: string;
+  importDate: string;
+  format: string | null;
+  fileSize: string | null;
+  pageCount: number | null;
+  title: string;
+  status: DocumentStatus;
+}
+
 export interface ValidationDetail {
   id: string;
   fileName: string;
   importDate: string;
   status: DocumentStatus;
+  confidentiality: Confidentiality;
   format: string | null;
   fileSize: string | null;
   pageCount: number | null;
@@ -42,4 +55,5 @@ export interface TaxonomyDomain {
 export interface ValidateDocumentRequest {
   title: string;
   typeCode: string;
+  confidentiality: Confidentiality;
 }

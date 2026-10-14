@@ -7,13 +7,21 @@
 @import "tailwindcss/theme.css" layer(tailwind-base);
 @import "tailwindcss/utilities.css" layer(tailwind-utilities);
 
-* {
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
+/* Dans le layer de base : les utilitaires (font-mono…) restent prioritaires */
+@layer tailwind-base {
+  * {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 @theme {
-  --font-mono: 'JetBrains Mono', monospace;
+  /* Plus petite taille de texte : badges, petits libellés, icônes de boutons */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   --color-prussian-blue-50: #e7f2fe;
   --color-prussian-blue-100: #cee5fd;
   --color-prussian-blue-200: #9dccfb;
@@ -156,4 +164,10 @@
 .p-toast .p-toast-message-info {
   background: var(--color-prussian-blue-50);
   border-left-color: var(--color-prussian-blue-500);
+}
+/* p-confirmdialog ne transmet pas maskStyleClass à son masque :
+   même fond flouté que les autres fenêtres (bg-white/10 backdrop-blur-[3px]) */
+.p-overlay-mask:has(.p-confirmdialog) {
+  background: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(3px);
 }

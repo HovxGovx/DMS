@@ -1,7 +1,10 @@
+import { Confidentiality } from '../validation/lifecycle-document.model';
 /** Niveau de pertinence calculé par le backend, relatif au meilleur résultat de la même recherche. */
 export type RelevanceLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 
 export interface SearchResult {
+  /** null pour un document indexé avant l'ajout de la confidentialité (traité comme public). */
+  confidentiality: Confidentiality | null;
   id: string;
   originalFileName: string;
   title: string | null;
@@ -19,6 +22,8 @@ export interface SearchResult {
   tags: string[];
   /** Date d'ajout dans la GED (ISO) ; null pour un document indexé avant l'ajout du champ. */
   uploadDate: string | null;
+  /** L'utilisateur courant peut agir sur le document (retrait, confidentialité) : admin, auteur de l'import, ou validateur d'un de ses domaines. */
+  manageable: boolean;
 }
 
 export const RELEVANCE_DISPLAY: Record<RelevanceLevel, { label: string; severity: 'success' | 'warn' | 'secondary' }> = {

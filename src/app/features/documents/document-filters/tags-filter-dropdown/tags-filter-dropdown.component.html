@@ -1,7 +1,7 @@
 <div class="relative">
 
   <button
-    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 hover:scale-105 active:scale-95"
+    class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors"
     [class.border-prussian-blue-200]="activeTags().length === 0"
     [class.text-gray-600]="activeTags().length === 0"
     [class.hover:bg-prussian-blue-50]="activeTags().length === 0"
@@ -9,9 +9,9 @@
     [class.bg-prussian-blue-50]="activeTags().length > 0"
     [class.text-prussian-blue-700]="activeTags().length > 0"
     (click)="toggle()">
-    <i class="pi pi-tag text-[11px] text-gray-400"></i>
+    <i class="pi pi-tag text-2xs text-gray-400"></i>
     {{ displayLabel() }}
-    <i class="pi pi-angle-down text-[10px] text-gray-400"></i>
+    <i class="pi pi-angle-down text-2xs text-gray-400"></i>
   </button>
 
   <div
@@ -23,13 +23,13 @@
     [class.scale-100]="isOpen()">
     <div
       class="flex items-center justify-between px-3 py-2 border-b border-prussian-blue-100">
-      <span class="text-[11px] font-semibold text-gray-500 tracking-wide">
+      <span class="text-2xs font-semibold text-gray-500 tracking-wide">
         FILTRER PAR TAG
       </span>
 
       @if (activeTags().length > 0) {
       <button
-        class="text-[11px] cursor-pointer text-prussian-blue-600 hover:text-prussian-blue-700 transition-colors"
+        class="text-2xs cursor-pointer text-prussian-blue-600 hover:text-prussian-blue-700 transition-colors"
         (click)="clearAll()">
         Annuler
       </button>
@@ -49,11 +49,9 @@
             [class.border-prussian-blue-200]="!isActive(tag.label)"
           >
             @if (isActive(tag.label)) {
-              <i class="pi pi-check text-white text-[10px]"></i>
+              <i class="pi pi-check text-white text-2xs"></i>
             }
           </div>
-
-          <!-- <span class="w-1.5 h-1.5 rounded-full {{ tag.dotColor }}"></span> -->
 
           <span class="truncate">
             {{ tag.label }}

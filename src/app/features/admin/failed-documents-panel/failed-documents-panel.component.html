@@ -1,0 +1,106 @@
+<!-- En-tête de section -->
+<div class="shrink-0 flex items-center justify-between gap-4 px-4 py-3 border-b border-prussian-blue-100">
+  <div class="min-w-0">
+    <div class="text-sm font-semibold text-gray-800">Documents en échec</div>
+    <p class="text-xs text-gray-500">
+      Relancer refait l'étape qui a échoué à partir du fichier déjà stocké :
+      une extraction réussie renvoie le document dans « À publier », une indexation réussie le republie.
+    </p>
+  </div>
+  <button
+    class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors disabled:opacity-50"
+    title="Recharger"
+    [disabled]="state.isLoading()"
+    (click)="state.loadFailed()">
+    <i class="pi pi-refresh text-xs" [class.pi-spin]="state.isLoading()"></i>
+  </button>
+</div>
+
+<!-- Liste -->
+<div class="flex-1 min-h-0 overflow-y-auto sidebar-tree-scroll">
+  @if (state.isLoading() && !state.documents().length) {
+    <p class="text-sm text-gray-400 text-center py-8">Chargement...</p>
+  } @else if (state.loadError()) {
+    <p class="text-sm text-red-500 text-center py-8">{{ state.loadError() }}</p>
+  } @else if (!state.documents().length) {
+    <div class="flex flex-col items-center justify-center gap-3 text-center py-12">
+      <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+        <i class="pi pi-check text-emerald-600 text-xl"></i>
+      </div>
+      <div class="text-sm font-semibold text-gray-800">Aucun document en échec</div>
+    </div>
+  } @else {
+    <table class="w-full text-xs">
+      <thead class="sticky top-0 z-10 bg-slate-50 text-gray-500 text-left">
+        <tr class="border-b border-prussian-blue-100">
+          <th class="font-semibold px-4 py-2">Document</th>
+          <th class="font-semibold px-4 py-2 w-28">Échec</th>
+          <th class="font-semibold px-4 py-2 w-44">Importé par</th>
+          <th class="font-semibold px-4 py-2 w-36">Date de l'échec</th>
+          <th class="px-4 py-2 w-52"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (doc of state.documents(); track doc.id) {
+          <tr class="border-b border-prussian-blue-50 align-middle" [class.opacity-60]="isBusy(doc)">
+
+            <td class="px-4 py-2.5">
+              <div class="flex items-center gap-2 min-w-0">
+                <i class="{{ fileType(doc.fileName).icon }} {{ fileType(doc.fileName).color }} shrink-0"></i>
+                <div class="min-w-0">
+                  <div class="font-medium text-gray-800 truncate">{{ displayName(doc) }}</div>
+                  @if (doc.title) {
+                    <div class="text-gray-500 truncate">{{ doc.fileName }}</div>
+                  }
+                </div>
+              </div>
+            </td>
+
+            <td class="px-4 py-2.5">
+              <span class="inline-block px-2 py-0.5 rounded-full text-2xs font-semibold bg-red-50 text-red-700">
+                {{ statusLabels[doc.status] }}
+              </span>
+            </td>
+
+            <td class="px-4 py-2.5 truncate">
+              @if (doc.ownerName) {
+                {{ doc.ownerName }}
+              } @else {
+                <span class="text-gray-400 italic">Inconnu</span>
+              }
+            </td>
+
+            <td class="px-4 py-2.5 text-gray-600">{{ formatDate(doc.failedAt ?? doc.importDate) }}</td>
+
+            <td class="px-4 py-2.5">
+              <div class="flex items-center justify-end gap-1.5">
+                @if (canDelete(doc)) {
+                  <button
+                    class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    [disabled]="isBusy(doc)"
+                    (click)="onDelete(doc)">
+                    <i class="pi pi-trash text-2xs"></i>
+                    Supprimer
+                  </button>
+                }
+                <button
+                  class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-prussian-blue-700 text-white hover:bg-prussian-blue-800 transition-colors disabled:opacity-50"
+                  [disabled]="isBusy(doc)"
+                  (click)="onRetry(doc)">
+                  <i class="pi text-2xs" [class.pi-replay]="!isBusy(doc)" [class.pi-spinner]="isBusy(doc)" [class.pi-spin]="isBusy(doc)"></i>
+                  Relancer
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<!-- Pourquoi on ne supprime pas un échec d'indexation -->
+<div class="shrink-0 px-4 py-2 border-t border-prussian-blue-100 text-2xs text-gray-500 flex items-center gap-1.5">
+  <i class="pi pi-info-circle text-2xs"></i>
+  Un échec d'indexation concerne un document validé pour publication : il se relance, mais ne se supprime pas.
+</div>

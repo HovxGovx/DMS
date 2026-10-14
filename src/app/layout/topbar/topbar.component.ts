@@ -1,21 +1,17 @@
-import { Component } from '@angular/core';
-import { InputTextModule } from 'primeng/inputtext';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
+import { Component, inject } from '@angular/core';
 import { UserMenuComponent } from './user-menu/user-menu.component';
 import { ViewToggleComponent } from './view-toggle/view-toggle.component';
 import { SearchDropdownComponent } from '../../features/search/search-dropdown/search-dropdown.component';
-import { AdvancedSearchPanelComponent } from '../../features/search/advanced-search-panel/advanced-search-panel.component';
+import { ViewStateService } from '../../core/view-state.service';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [InputTextModule,
-    SearchDropdownComponent,
-    IconFieldModule,
-    InputIconModule,
+  imports: [SearchDropdownComponent,
     UserMenuComponent,
     ViewToggleComponent],
   templateUrl: './topbar.component.html'
 })
-export class TopbarComponent { }
+export class TopbarComponent {
+  viewState = inject(ViewStateService);
+}

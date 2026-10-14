@@ -1,0 +1,47 @@
+<div>
+  <h4 class="text-2xs font-semibold text-gray-500 tracking-wide mb-1.5">HISTORIQUE</h4>
+
+  @if (isLoading()) {
+    <p class="text-xs text-gray-400">Chargement...</p>
+  } @else if (loadError()) {
+    <p class="text-xs text-red-500">Impossible de charger l'historique.</p>
+  } @else if (!entries().length) {
+    <!-- Documents importés avant la mise en place du journal -->
+    <p class="text-xs text-gray-400">Aucune action enregistrée pour ce document.</p>
+  } @else {
+    <ol class="flex flex-col">
+      @for (entry of visibleEntries(); track entry.id; let last = $last) {
+        <li class="flex gap-2.5">
+          <!-- Pastille et trait de la frise -->
+          <div class="flex flex-col items-center">
+            <span class="w-5 h-5 shrink-0 rounded-full flex items-center justify-center {{ display(entry.action).color }}">
+              <i class="pi {{ display(entry.action).icon }} text-[9px]"></i>
+            </span>
+            @if (!last) {
+              <span class="w-px flex-1 bg-prussian-blue-100 my-0.5"></span>
+            }
+          </div>
+
+          <div class="min-w-0 pb-2.5">
+            <div class="text-xs font-medium text-gray-800">{{ display(entry.action).label }}</div>
+            @if (entry.detail) {
+              <div class="text-xs text-gray-600">{{ entry.detail }}</div>
+            }
+            <div class="text-2xs text-gray-400">
+              {{ formatDate(entry.occurredAt) }} · {{ entry.actorName ?? 'Système' }}
+            </div>
+          </div>
+        </li>
+      }
+    </ol>
+
+    @if (entries().length > collapsedCount) {
+      <button
+        class="flex items-center gap-1.5 text-xs text-prussian-blue-600 hover:text-prussian-blue-700 transition-colors"
+        (click)="expanded.set(!expanded())">
+        <i class="pi {{ expanded() ? 'pi-angle-up' : 'pi-angle-down' }} text-2xs"></i>
+        {{ expanded() ? 'Réduire' : 'Voir tout (' + entries().length + ')' }}
+      </button>
+    }
+  }
+</div>

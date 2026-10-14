@@ -8,7 +8,7 @@
     <button
       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors"
       (click)="onClearSearch()">
-      <i class="pi pi-times text-[10px]"></i>
+      <i class="pi pi-times text-2xs"></i>
       Effacer la recherche
     </button>
     }
@@ -16,19 +16,16 @@
       <app-document-filters
         [tagOptions]="tagFilterOptions()"
         [(activeTags)]="activeTagFilters" />
-
-      }
-    <app-document-toolbar
-      [viewMode]="viewMode()"
-      (viewModeChange)="viewMode.set($event)"
-      (sortClick)="onSort()"
-      (newClick)="onNew()" />
+    }
   </div>
-
-
-
-
 </div>
+
+@if (hasNoDomain()) {
+<div class="mx-3 mb-2 flex items-center gap-2 rounded-lg bg-burnt-peach-50 px-3 py-2 text-xs text-burnt-peach-800">
+  <i class="pi pi-info-circle"></i>
+  Aucun domaine ne vous est attribué : vous ne voyez que vos propres imports. Contactez un administrateur.
+</div>
+}
 
 <div class="flex-1 min-h-0">
   @if (state.isLoadingPublished() && !state.isSearchMode()) {
@@ -43,7 +40,7 @@
   } @else {
   <app-document-table
     [documents]="displayedDocuments()"
-    [showLocation]="state.isSearchMode()"
+    [searchMode]="state.isSearchMode()"
     [highlightedId]="state.selectedDocId()"
     (rowClick)="onDocClick($event)"
     (revealInFolder)="onRevealInFolder($event)" />

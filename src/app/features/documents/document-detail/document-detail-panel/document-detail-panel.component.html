@@ -1,7 +1,33 @@
 <!-- Header fixe -->
 <div class=" w-full shrink-0 flex items-center justify-between p-2.5 border-b border-prussian-blue-100">
   <span class="text-xs font-semibold text-gray-600 tracking-wide">DÉTAILS DU DOCUMENT</span>
-  <i class="pi pi-external-link text-sm text-gray-400 cursor-pointer hover:text-prussian-blue-600"></i>
+  <div class="flex items-center gap-0.5">
+    <button
+      class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-colors"
+      title="Voir le document"
+      (click)="viewDocument()">
+      <i class="pi pi-external-link text-sm"></i>
+    </button>
+    <!-- Un validateur ne gère que les documents importés dans ses domaines : sinon le backend refuse (403) -->
+    @if (authService.hasRole('VALIDATOR') && document().manageable) {
+    <button
+      class="w-7 h-7 rounded-md flex items-center justify-center hover:bg-amber-50 hover:text-amber-600 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+      [class.text-amber-500]="document().confidential"
+      [class.text-gray-400]="!document().confidential"
+      [title]="document().confidential ? 'Confidentiel — rendre public' : 'Public — rendre confidentiel'"
+      [disabled]="isChangingAccess()"
+      (click)="toggleConfidentiality()">
+      <i class="pi {{ isChangingAccess() ? 'pi-spin pi-spinner' : (document().confidential ? 'pi-lock' : 'pi-lock-open') }} text-sm"></i>
+    </button>
+    <button
+      class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+      title="Retirer de la consultation"
+      [disabled]="isUnpublishing()"
+      (click)="unpublish()">
+      <i class="pi {{ isUnpublishing() ? 'pi-spin pi-spinner' : 'pi-eye-slash' }} text-sm"></i>
+    </button>
+    }
+  </div>
 </div>
 
 <!-- Corps scrollable -->
@@ -19,19 +45,19 @@
   <hr class="border-prussian-blue-100" />
 
   <div>
-    <h4 class="text-[11px] font-semibold text-gray-500 tracking-wide mb-1.5">EMPLACEMENT</h4>
+    <h4 class="text-2xs font-semibold text-gray-500 tracking-wide mb-1.5">EMPLACEMENT</h4>
     <div class="flex items-center gap-1 flex-wrap text-xs text-gray-700">
       @for (segment of document().location; track $index; let last = $last) {
       <span [class.font-semibold]="last">{{ segment }}</span>
       @if (!last) {
-      <i class="pi pi-angle-right text-[10px] text-gray-300"></i>
+      <i class="pi pi-angle-right text-2xs text-gray-300"></i>
       }
       }
     </div>
     <button
       class="mt-1.5 flex items-center gap-1.5 text-xs text-prussian-blue-600 hover:text-prussian-blue-700 transition-colors"
       (click)="revealInFolder()">
-      <i class="pi pi-folder-open text-[11px]"></i>
+      <i class="pi pi-folder-open text-2xs"></i>
       Afficher dans son dossier
     </button>
   </div>
@@ -49,10 +75,23 @@
   <app-document-metadata-section title="MÉTADONNÉES MÉTIER" [items]="document().businessMetadata" />
   }
 
+  <hr class="border-prussian-blue-100" />
+
+  <app-document-history-section [documentId]="document().docId" [refreshKey]="document().confidential" />
+
 </div>
 
 <div
-  class="w-full shrink-0 p-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-500">
-  <span>Ceci est le footer</span>
-  <span class="font-mono">Footer</span>
+  class="w-full shrink-0 px-2.5 py-2 border-t border-prussian-blue-100 flex items-center justify-between text-xs text-gray-500">
+  <span class="flex items-center gap-1.5" [class.text-amber-600]="document().confidential">
+    <i class="pi {{ document().confidential ? 'pi-lock' : 'pi-lock-open' }} text-2xs"></i>
+    {{ document().confidential ? 'Confidentiel' : 'Public' }}
+  </span>
+  <button
+    class="flex items-center gap-1.5 text-gray-500 hover:text-prussian-blue-700 transition-colors"
+    title="Copier le titre du document"
+    (click)="copyTitle()">
+    <i class="pi pi-copy text-xs"></i>
+    Copier le titre
+  </button>
 </div>

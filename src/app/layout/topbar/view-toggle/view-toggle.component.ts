@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { ViewStateService } from '../../../core/view-state.service';
 import { ValidationStateService } from '../../../features/validation/validation-state.service';
+import { AuthService } from '../../../core/auth.service';
 
 @Component({
   selector: 'app-view-toggle',
@@ -10,4 +11,5 @@ import { ValidationStateService } from '../../../features/validation/validation-
 export class ViewToggleComponent {
   viewState = inject(ViewStateService);
   validationState = inject(ValidationStateService);
+  authService = inject(AuthService);
 }

@@ -1,0 +1,67 @@
+<!-- En-tête de section -->
+<div class="shrink-0 px-4 py-3 border-b border-prussian-blue-100">
+  <div class="text-sm font-semibold text-gray-800">Index de recherche</div>
+  <p class="text-xs text-gray-500">
+    La recherche s'appuie sur un index des documents publiés. Le reconstruire remet l'index en accord
+    avec la base, sans redémarrer le serveur.
+  </p>
+</div>
+
+<div class="flex-1 min-h-0 overflow-y-auto sidebar-tree-scroll p-4 flex flex-col gap-4 max-w-3xl">
+
+  <div class="rounded-lg border border-prussian-blue-100 bg-slate-50 p-4 text-xs text-gray-600 flex flex-col gap-2">
+    <div class="font-semibold text-gray-700">Quand reconstruire ?</div>
+    <ul class="list-disc pl-4 flex flex-col gap-1">
+      <li>un document publié n'apparaît pas dans la recherche, ou un document retiré y apparaît encore ;</li>
+      <li>après une évolution des champs indexés (nouvelle version de l'application) ;</li>
+      <li>après une restauration de la base de données.</li>
+    </ul>
+    <p>
+      L'index est vidé puis rempli à nouveau en une seule fois : pendant l'opération, la recherche continue
+      d'utiliser l'ancien index.
+    </p>
+  </div>
+
+  <div>
+    <button
+      class="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium bg-prussian-blue-700 text-white hover:bg-prussian-blue-800 transition-colors disabled:opacity-50"
+      [disabled]="state.isRebuilding()"
+      (click)="onRebuild()">
+      <i class="pi pi-refresh text-2xs" [class.pi-spin]="state.isRebuilding()"></i>
+      {{ state.isRebuilding() ? 'Reconstruction en cours...' : "Reconstruire l'index" }}
+    </button>
+  </div>
+
+  @if (state.lastResult(); as last) {
+    <div
+      class="rounded-lg border p-4 text-xs flex flex-col gap-2"
+      [class.border-emerald-200]="!last.result.failures.length"
+      [class.bg-emerald-50]="!last.result.failures.length"
+      [class.text-emerald-800]="!last.result.failures.length"
+      [class.border-amber-200]="last.result.failures.length"
+      [class.bg-amber-50]="last.result.failures.length"
+      [class.text-amber-800]="last.result.failures.length">
+      <div class="flex items-center gap-2 font-semibold">
+        <i class="pi text-sm" [class.pi-check-circle]="!last.result.failures.length" [class.pi-exclamation-triangle]="last.result.failures.length"></i>
+        Reconstruction de {{ formatTime(last.at) }} :
+        {{ last.result.indexed }} / {{ last.result.total }} document{{ last.result.total > 1 ? 's' : '' }}
+        indexé{{ last.result.indexed > 1 ? 's' : '' }} en {{ formatDuration(last.result.durationMs) }}
+      </div>
+
+      @if (last.result.failures.length) {
+        <p>
+          Ces documents restent publiés mais n'apparaissent pas dans la recherche.
+          Les journaux du serveur donnent la cause ; les retirer puis les republier les réindexe.
+        </p>
+        <ul class="flex flex-col gap-1">
+          @for (failure of last.result.failures; track failure.id) {
+            <li class="flex items-center gap-2 text-gray-700">
+              <i class="pi pi-file text-2xs text-amber-600"></i>
+              {{ failure.fileName }}
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</div>

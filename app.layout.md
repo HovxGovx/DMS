@@ -8,7 +8,7 @@ Le layout utilise une disposition flexible (`flex-col`) occupant toute la hauteu
 
 ### 1. Topbar (`app-topbar`)
 Située en haut de l'écran, elle contient les éléments de navigation globale et d'accès rapide :
-- **Branding** : Logo et titre de l'application ("DocuFlow ENTERPRISE DMS").
+- **Branding** : Logo et titre de l'application ("E-Lamina").
 - **Recherche** : Intégration de `SearchDropdownComponent` et `AdvancedSearchPanelComponent` pour un accès rapide aux documents.
 - **Contrôles de vue** : `ViewToggleComponent` permettant de basculer entre la vue "Documents" et la vue "Validation".
 - **Utilisateur** : `UserMenuComponent` pour la gestion du profil et la déconnexion.

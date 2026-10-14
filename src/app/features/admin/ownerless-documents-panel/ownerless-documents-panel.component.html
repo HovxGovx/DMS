@@ -1,0 +1,131 @@
+<!-- En-tête de section -->
+<div class="shrink-0 flex items-center justify-between gap-4 px-4 py-3 border-b border-prussian-blue-100">
+  <div class="min-w-0">
+    <div class="text-sm font-semibold text-gray-800">Documents sans propriétaire</div>
+    <p class="text-xs text-gray-500">
+      Anciens imports dont l'auteur n'a pas été enregistré. Une fois rattaché, le document apparaît dans
+      « Mes imports » de l'utilisateur et les validateurs de ses domaines peuvent le gérer.
+    </p>
+  </div>
+  <button
+    class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors disabled:opacity-50"
+    title="Recharger"
+    [disabled]="state.isLoading()"
+    (click)="state.loadWithoutOwner()">
+    <i class="pi pi-refresh text-xs" [class.pi-spin]="state.isLoading()"></i>
+  </button>
+</div>
+
+@if (state.documents().length) {
+<!-- Filtre et rattachement des documents cochés -->
+<div class="shrink-0 flex items-center gap-3 px-4 py-2 border-b border-prussian-blue-100">
+  <div class="relative w-64">
+    <i class="pi pi-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-2xs text-gray-400"></i>
+    <input
+      type="text"
+      [value]="state.filter()"
+      (input)="state.filter.set($any($event.target).value)"
+      (keydown.escape)="state.filter.set('')"
+      placeholder="Filtrer par titre ou nom de fichier..."
+      class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+  </div>
+
+  <div class="ml-auto flex items-center gap-2">
+    <span class="text-xs text-gray-500 whitespace-nowrap">
+      {{ selectedCount() }} sélectionné{{ selectedCount() > 1 ? 's' : '' }} — rattacher à
+    </span>
+    <p-select
+      class="w-64"
+      [options]="ownerOptions()"
+      optionLabel="label"
+      optionValue="value"
+      [ngModel]="ownerId()"
+      (ngModelChange)="ownerId.set($event)"
+      placeholder="Choisir un utilisateur"
+      [filter]="true"
+      filterBy="label"
+      [fluid]="true"
+      size="small"
+      appendTo="body"
+      panelStyleClass="!text-sm" />
+    <button
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium bg-prussian-blue-700 text-white hover:bg-prussian-blue-800 transition-colors disabled:opacity-50 whitespace-nowrap"
+      [disabled]="!canAssign()"
+      (click)="onAssign()">
+      <i class="pi text-2xs" [class.pi-user-plus]="!isAssigning()" [class.pi-spinner]="isAssigning()" [class.pi-spin]="isAssigning()"></i>
+      Rattacher
+    </button>
+  </div>
+</div>
+}
+
+<!-- Liste -->
+<div class="flex-1 min-h-0 overflow-y-auto sidebar-tree-scroll">
+  @if (state.isLoading() && !state.documents().length) {
+    <p class="text-sm text-gray-400 text-center py-8">Chargement...</p>
+  } @else if (state.loadError()) {
+    <p class="text-sm text-red-500 text-center py-8">{{ state.loadError() }}</p>
+  } @else if (!state.documents().length) {
+    <div class="flex flex-col items-center justify-center gap-3 text-center py-12">
+      <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
+        <i class="pi pi-check text-emerald-600 text-xl"></i>
+      </div>
+      <div class="text-sm font-semibold text-gray-800">Tous les documents ont un propriétaire</div>
+    </div>
+  } @else if (!state.filteredDocuments().length) {
+    <p class="text-sm text-gray-400 text-center py-8">Aucun document ne correspond au filtre</p>
+  } @else {
+    <table class="w-full text-xs">
+      <thead class="sticky top-0 z-10 bg-slate-50 text-gray-500 text-left">
+        <tr class="border-b border-prussian-blue-100">
+          <th class="px-4 py-2 w-10">
+            <input
+              type="checkbox"
+              class="accent-orange-500 cursor-pointer"
+              title="Tout cocher"
+              [checked]="allFilteredSelected()"
+              (change)="state.setAllFiltered($any($event.target).checked)" />
+          </th>
+          <th class="font-semibold px-2 py-2">Document</th>
+          <th class="font-semibold px-4 py-2 w-40">Statut</th>
+          <th class="font-semibold px-4 py-2 w-28">Importé le</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (doc of state.filteredDocuments(); track doc.id) {
+          <tr
+            class="border-b border-prussian-blue-50 align-middle cursor-pointer transition-colors"
+            [class.bg-orange-50]="state.selectedIds().has(doc.id)"
+            [class.hover:bg-prussian-blue-50]="!state.selectedIds().has(doc.id)"
+            (click)="state.toggle(doc.id)">
+            <td class="px-4 py-2.5">
+              <input
+                type="checkbox"
+                class="accent-orange-500 cursor-pointer"
+                [checked]="state.selectedIds().has(doc.id)"
+                (click)="$event.stopPropagation()"
+                (change)="state.toggle(doc.id)" />
+            </td>
+            <td class="px-2 py-2.5">
+              <div class="flex items-center gap-2 min-w-0">
+                <i class="{{ fileType(doc.fileName).icon }} {{ fileType(doc.fileName).color }} shrink-0"></i>
+                <div class="min-w-0">
+                  <div class="font-medium text-gray-800 truncate">{{ displayName(doc) }}</div>
+                  @if (doc.title) {
+                    <div class="text-gray-500 truncate">{{ doc.fileName }}</div>
+                  }
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-2.5">
+              <span class="inline-block px-2 py-0.5 rounded-full text-2xs font-semibold {{ statusClass(doc) }}">
+                {{ statusLabel(doc) }}
+              </span>
+            </td>
+            <td class="px-4 py-2.5 text-gray-600">{{ formatDate(doc.importDate) }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

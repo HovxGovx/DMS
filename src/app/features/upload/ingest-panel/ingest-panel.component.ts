@@ -1,14 +1,14 @@
 import { Component, signal, inject } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
 import { LifecycleDocumentService } from '../../validation/lifecycle-document.service';
 import { ValidationStateService } from '../../validation/validation-state.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { BatchUploadResult } from '../../validation/lifecycle-document.model';
 import { NotificationService } from '../../../core/notification.service';
+import { AuthService } from '../../../core/auth.service';
+import { SmartFolderStateService } from '../../documents/smart-folder-state.service';
 @Component({
-  selector: 'IngestPanel',
+  selector: 'app-ingest-panel',
   standalone: true,
-  imports: [ButtonModule],
   templateUrl: './ingest-panel.component.html'
 })
 export class IngestPanelComponent {
@@ -16,11 +16,11 @@ export class IngestPanelComponent {
   private validationState = inject(ValidationStateService);
   private viewState = inject(ViewStateService);
   private notification = inject(NotificationService);
+  private authService = inject(AuthService);
+  private folderState = inject(SmartFolderStateService);
 
   isDragOver = signal(false);
   isUploading = signal(false);
-  uploadFeedback = signal<{ success: boolean; message: string; failedFiles: string[] } | null>(null);
-
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -56,32 +56,37 @@ export class IngestPanelComponent {
     this.documentService.uploadBatch(files).subscribe({
       next: (result: BatchUploadResult) => {
         this.isUploading.set(false);
-        this.showPerFileToasts(files, result.failedFiles);
+        this.showSummaryToasts(files, result.failedFiles);
 
-        this.validationState.loadPendingImports();
-        this.viewState.setView('validation');
+        // Seul un validateur publie : lui seul est emmené vers la file « À publier »
+        if (this.authService.hasRole('VALIDATOR')) {
+          this.validationState.loadPendingImports();
+          this.viewState.setView('validation');
+        } else {
+          this.folderState.loadMyImports();
+        }
       },
       error: (err) => {
         this.isUploading.set(false);
 
         const serverMessage = err.error?.message;
         this.notification.error(serverMessage ?? "Échec de l'import — vérifiez votre connexion ou réessayez.");
-        console.error('Erreur upload:', err);
       }
     });
   }
 
-  private showPerFileToasts(files: File[], failedFiles: string[]) {
-    for (const file of files) {
-      if (failedFiles.includes(file.name)) {
-        this.notification.error(`${file.name} — échec de l'import`, 'Import');
-      } else {
-        this.notification.success(`${file.name} — importé avec succès`, 'Import');
-      }
+  // Un toast de synthèse plutôt qu'un par fichier : seuls les échecs sont nommés
+  private showSummaryToasts(files: File[], failedFiles: string[]) {
+    const successCount = files.filter(file => !failedFiles.includes(file.name)).length;
+    if (successCount > 0) {
+      const plural = successCount > 1 ? 's' : '';
+      const next = this.authService.hasRole('VALIDATOR')
+        ? `prêt${plural} à publier.`
+        : 'en attente de publication par un validateur.';
+      this.notification.success(`${successCount} fichier${plural} importé${plural} — ${next}`, 'Import');
     }
-  }
-
-  dismissFeedback() {
-    this.uploadFeedback.set(null);
+    if (failedFiles.length > 0) {
+      this.notification.error(`Échec de l'import : ${failedFiles.join(', ')}`, 'Import');
+    }
   }
 }

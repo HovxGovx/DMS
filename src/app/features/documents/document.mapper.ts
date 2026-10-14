@@ -1,7 +1,7 @@
 import { DocumentStatus, LifecycleDocument } from '../validation/lifecycle-document.model';
-import { DocumentItem, DocumentDetail, locationOf } from './document.model';
+import { DocTag, DocumentItem, DocumentDetail, locationOf } from './document.model';
 import { DocMetadata } from './document-metadata.service';
-import { RELEVANCE_DISPLAY, SearchResult } from '../search/search-result.model';
+import { SearchResult } from '../search/search-result.model';
 import { FolderDocument } from './smart-folder.model';
 export interface FileTypeInfo {
   format: string;
@@ -61,11 +61,22 @@ function formatDateSafe(iso: string | null): string | null {
   return formatDate(iso);
 }
 
+/** Étiquette courte du statut dans le tableau (« Mes imports » mélange les statuts). */
+export const STATUS_TAGS: Record<DocumentStatus, DocTag> = {
+  IMPORTED: { label: 'Importé', severity: 'secondary' },
+  PENDING_VALIDATION: { label: 'À publier', severity: 'warn' },
+  EXTRACTION_FAILED: { label: "Échec de l'extraction", severity: 'danger' },
+  PUBLISHED: { label: 'Publié', severity: 'success' },
+  UNPUBLISHED: { label: 'Retiré', severity: 'secondary' },
+  INDEXING_FAILED: { label: "Échec de l'indexation", severity: 'danger' }
+};
+
 const STATUS_LABELS: Record<DocumentStatus, string> = {
   IMPORTED: 'Importé',
   PENDING_VALIDATION: 'En attente de validation',
   EXTRACTION_FAILED: "Échec de l'extraction",
   PUBLISHED: 'Publié',
+  UNPUBLISHED: 'Retiré',
   INDEXING_FAILED: "Échec de l'indexation"
 };
 
@@ -80,17 +91,19 @@ export function fromLifecycleDocument(doc: LifecycleDocument): DocumentItem {
     id: doc.id,
     name: doc.originalFileName,
     originalFileName: doc.originalFileName,
-    format: format as DocumentItem['format'],
+    format,
     icon,
     iconColor,
     category: 'Document',
     categorySeverity: 'secondary',
-    tags: [{ label: 'Publié', severity: 'success' }],
+    tags: [STATUS_TAGS[doc.status] ?? STATUS_TAGS.PUBLISHED],
     modified: formatDate(doc.importDate),
-    modifiedDotColor: 'bg-prussian-blue-500',
     importDate: doc.importDate,
     location: [],
-    statusLabel: STATUS_LABELS[doc.status] ?? null
+    statusLabel: STATUS_LABELS[doc.status] ?? null,
+    status: doc.status,
+    confidential: doc.confidentiality === 'CONFIDENTIAL',
+    manageable: doc.manageable
   };
 }
 
@@ -134,27 +147,27 @@ export function mergeWithRealMetadata(base: DocumentDetail, metadata: DocMetadat
  */
 export function fromSearchResult(result: SearchResult): DocumentItem {
   const { format, icon, iconColor } = detectFileType(result.originalFileName);
-  const relevance = result.relevance ? RELEVANCE_DISPLAY[result.relevance] : null;
-  const relevanceTags = relevance ? [{ label: relevance.label, severity: relevance.severity }] : [];
 
   return {
     id: result.id,
     name: result.title?.trim() ? result.title : result.originalFileName,
     originalFileName: result.originalFileName,
-    format: format as DocumentItem['format'],
+    format,
     icon,
     iconColor,
     category: result.typeLabel ?? 'Non classé',
     categorySeverity: 'secondary',
-    tags: [...relevanceTags, ...(result.tags ?? []).map(label => ({ label, severity: 'info' as const }))],
+    tags: (result.tags ?? []).map(label => ({ label, severity: 'info' as const })),
     modified: formatDateSafe(result.uploadDate) ?? '',
-    modifiedDotColor: 'bg-prussian-blue-500',
     importDate: result.uploadDate ?? undefined,
     author: result.author,
     typeLabel: result.typeLabel,
     domainLabel: result.domainLabel,
     location: locationOf(result.domainLabel, result.typeLabel),
-    statusLabel: STATUS_LABELS.PUBLISHED
+    statusLabel: STATUS_LABELS.PUBLISHED,
+    confidential: result.confidentiality === 'CONFIDENTIAL',
+    manageable: result.manageable,
+    relevance: result.relevance
   };
 }
 
@@ -162,6 +175,7 @@ export function fromFolderDocument(doc: FolderDocument): DocumentItem {
   const base = fromLifecycleDocument(doc);
   return {
     ...base,
+    status: undefined,
     name: doc.title?.trim() ? doc.title : base.name,
     category: doc.typeLabel ?? 'Non classé',
     typeLabel: doc.typeLabel,

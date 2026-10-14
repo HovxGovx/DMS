@@ -6,13 +6,13 @@ import { ViewStateService } from '../../../core/view-state.service';
 import { AdvancedSearchRequest } from '../search-request.model';
 import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
 import { FloatLabel } from 'primeng/floatlabel';
-
-type TriState = 'any' | 'yes' | 'no';
+import { InputText } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-advanced-search-panel',
   standalone: true,
-  imports: [FormsModule, DropdownBackdropComponent, FloatLabel],
+  // InputText pose la classe p-filled : sans elle, le libellé redescend dans un champ rempli
+  imports: [FormsModule, DropdownBackdropComponent, FloatLabel, InputText],
   templateUrl: './advanced-search-panel.component.html'
 })
 export class AdvancedSearchPanelComponent {
@@ -27,8 +27,6 @@ export class AdvancedSearchPanelComponent {
   keywords = signal('');
   format = signal('');
   language = signal('');
-  encrypted = signal<TriState>('any');
-  signed = signal<TriState>('any');
   startDate = signal('');
   endDate = signal('');
   fuzzy = signal(false);
@@ -39,12 +37,6 @@ export class AdvancedSearchPanelComponent {
 
   close() {
     this.isOpen.set(false);
-  }
-
-  private triStateToBoolean(value: TriState): boolean | null {
-    if (value === 'yes') return true;
-    if (value === 'no') return false;
-    return null;
   }
 
   // 'YYYY-MM-DD' -> début (00:00:00.000) ou fin (23:59:59.999) du jour en heure locale
@@ -61,8 +53,6 @@ export class AdvancedSearchPanelComponent {
       keywords: this.keywords().trim() || null,
       format: this.format().trim() || null,
       language: this.language().trim() || null,
-      encrypted: this.triStateToBoolean(this.encrypted()),
-      signed: this.triStateToBoolean(this.signed()),
       creationDateStart: this.startDate() ? this.toLocalDayBound(this.startDate(), false) : null,
       creationDateEnd: this.endDate() ? this.toLocalDayBound(this.endDate(), true) : null,
       fuzzy: this.fuzzy() || null
@@ -88,8 +78,6 @@ export class AdvancedSearchPanelComponent {
     this.keywords.set('');
     this.format.set('');
     this.language.set('');
-    this.encrypted.set('any');
-    this.signed.set('any');
     this.startDate.set('');
     this.endDate.set('');
     this.fuzzy.set(false);

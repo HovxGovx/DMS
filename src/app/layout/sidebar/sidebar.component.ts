@@ -1,15 +1,15 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { InputTextModule } from 'primeng/inputtext';
-import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { ConfirmationService } from 'primeng/api';
 import { TreeNodeComponent } from './tree-node/tree-node.component';
 import { HierarchyNode, NodeActionEvent } from '../../features/documents/hierarchy.model';
-import { IconField } from "primeng/iconfield";
-import { SmartFolderStateService } from '../../features/documents/smart-folder-state.service';
+import { MY_IMPORTS_FOLDER_ID, SmartFolderStateService } from '../../features/documents/smart-folder-state.service';
 import { SmartFolderApiService } from '../../features/documents/smart-folder-api.service';
 import { FolderEditorDialogComponent } from '../../features/documents/folder-editor/folder-editor-dialog/folder-editor-dialog.component';
 import { NotificationService } from '../../core/notification.service';
 import { DocumentStateService } from '../../features/documents/document-state.service';
+import { AuthService } from '../../core/auth.service';
+import { DocumentValidationService } from '../../features/validation/document-validation.service';
 
 interface EditorState {
   mode: 'create' | 'edit';
@@ -21,9 +21,8 @@ interface EditorState {
   selector: 'app-sidebar',
   standalone: true,
   imports: [
-    InputTextModule,
     TreeNodeComponent,
-    ConfirmDialog,
+    ConfirmDialogComponent,
     FolderEditorDialogComponent],
   templateUrl: './sidebar.component.html',
   host: { class: 'flex flex-col flex-1 min-h-0 h-full' }
@@ -34,15 +33,45 @@ export class SidebarComponent implements OnInit {
   private confirmation = inject(ConfirmationService);
   private notification = inject(NotificationService);
   private documentState = inject(DocumentStateService);
+  private authService = inject(AuthService);
+  private validationService = inject(DocumentValidationService);
 
   editor = signal<EditorState | null>(null);
 
-  totalDocs = '2,847 docs';
-  totalSize = '14.2 GB';
-  version = 'v3.2.1';
+  /** Libellés des domaines de la taxonomie, par code (vide tant qu'ils ne sont pas chargés). */
+  private domainLabels = signal<Map<string, string>>(new Map());
+
+  domainsLabel = computed(() => {
+    if (this.authService.hasRole('ADMIN')) return 'Tous les domaines';
+    const codes = this.authService.currentUser()?.domainCodes ?? [];
+    if (!codes.length) return 'Aucun domaine attribué';
+    const labels = codes.map(code => this.domainLabels().get(code) ?? code);
+    return `${codes.length > 1 ? 'Domaines' : 'Domaine'} : ${labels.join(', ')}`;
+  });
+
+  /** Les validateurs suivent les imports dans « À publier » : le dossier ne sert qu'aux contributeurs. */
+  showMyImports = computed(() => this.authService.hasRole('CONTRIBUTOR') && !this.authService.hasRole('VALIDATOR'));
+
+  myImportsNode = computed<HierarchyNode>(() => ({
+    key: MY_IMPORTS_FOLDER_ID,
+    label: 'Mes imports',
+    icon: 'pi pi-upload',
+    type: 'leaf',
+    path: ['Mes imports'],
+    count: this.state.myImportsCount() ?? undefined,
+    hasChildren: false,
+    editable: false
+  }));
 
   ngOnInit() {
     this.state.loadRoots();
+    // En cas d'échec, les codes des domaines restent affichés
+    this.validationService.getDomains().subscribe({
+      next: domains => this.domainLabels.set(new Map(domains.map(d => [d.code, d.label])))
+    });
+    if (this.showMyImports()) {
+      this.state.loadMyImports();
+    }
   }
 
   isExpanded = (key: string) => this.state.expandedIds().has(key);
@@ -95,7 +124,7 @@ export class SidebarComponent implements OnInit {
 
   private confirmDelete(node: HierarchyNode) {
     this.confirmation.confirm({
-      header: 'Supprimer le dossier',
+      header: 'Suppression',
       message: `Supprimer « ${node.label} » et ses sous-dossiers ? Les documents ne sont pas supprimés.`,
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Supprimer',

@@ -11,9 +11,13 @@
     </div>
   </div>
 
+  <!-- La recherche ne porte que sur les documents publiés : masquée pendant la publication -->
+  @if (viewState.currentView() === 'documents') {
   <app-search-dropdown />
-  <!-- <app-advanced-search-panel /> -->
-  <!-- Changement de view en document ou validation -->
+  } @else {
+  <div class="flex-1 max-w-xl mx-8"></div>
+  }
+  <!-- Changement de vue : documents ou publication -->
   <app-view-toggle />
   <!-- Profil utilisateur -->
   <app-user-menu />

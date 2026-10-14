@@ -1,4 +1,4 @@
-import { DocumentStatus } from '../validation/lifecycle-document.model';
+import { Confidentiality, DocumentStatus } from '../validation/lifecycle-document.model';
 
 export interface SmartFolderNode {
   id: string;
@@ -27,7 +27,10 @@ export interface FolderDocument {
   typeLabel: string | null;
   domainCode: string | null;
   domainLabel: string | null;
+  confidentiality: Confidentiality;
   tags: string[];
+  /** L'utilisateur courant peut agir sur le document (retrait, confidentialité) : admin, auteur de l'import, ou validateur d'un de ses domaines. */
+  manageable: boolean;
 }
 
 export interface FolderDocumentsPage {

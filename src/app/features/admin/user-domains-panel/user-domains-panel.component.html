@@ -1,0 +1,155 @@
+<!-- En-tête de section -->
+<div class="shrink-0 flex items-center justify-between gap-4 px-4 py-3 border-b border-prussian-blue-100">
+  <div class="min-w-0">
+    <div class="text-sm font-semibold text-gray-800">Utilisateurs et domaines</div>
+    <p class="text-xs text-gray-500">
+      Les domaines décident des documents publiés qu'un utilisateur peut lire.
+      Le rôle vient de LDAP et n'est pas modifiable ici.
+    </p>
+  </div>
+  <button
+    class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors disabled:opacity-50"
+    title="Recharger"
+    [disabled]="state.isLoading()"
+    (click)="state.loadUsers()">
+    <i class="pi pi-refresh text-xs" [class.pi-spin]="state.isLoading()"></i>
+  </button>
+</div>
+
+<!-- Filtres -->
+<div class="shrink-0 flex items-center gap-3 px-4 py-2 border-b border-prussian-blue-100">
+  <div class="relative w-72">
+    <i class="pi pi-filter absolute left-2.5 top-1/2 -translate-y-1/2 text-2xs text-gray-400"></i>
+    <input
+      type="text"
+      [value]="state.filter()"
+      (input)="state.filter.set($any($event.target).value)"
+      (keydown.escape)="state.filter.set('')"
+      placeholder="Filtrer par nom, identifiant ou email..."
+      class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+  </div>
+
+  <label class="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer select-none">
+    <input
+      type="checkbox"
+      class="accent-orange-500"
+      [checked]="state.onlyWithoutDomain()"
+      (change)="state.onlyWithoutDomain.set($any($event.target).checked)" />
+    Sans domaine uniquement
+  </label>
+
+  <span class="ml-auto text-xs text-gray-500">
+    {{ state.users().length }} utilisateur{{ state.users().length > 1 ? 's' : '' }}
+    @if (state.withoutDomainCount() > 0) {
+      · <span class="font-semibold text-amber-700">{{ state.withoutDomainCount() }} sans domaine</span>
+    }
+  </span>
+</div>
+
+<!-- Liste -->
+<div class="flex-1 min-h-0 overflow-y-auto sidebar-tree-scroll">
+  @if (state.isLoading() && !state.users().length) {
+    <p class="text-sm text-gray-400 text-center py-8">Chargement...</p>
+  } @else if (state.loadError()) {
+    <p class="text-sm text-red-500 text-center py-8">{{ state.loadError() }}</p>
+  } @else if (!state.filteredUsers().length) {
+    <p class="text-sm text-gray-400 text-center py-8">
+      {{ state.users().length ? 'Aucun utilisateur ne correspond au filtre' : 'Aucun utilisateur' }}
+    </p>
+  } @else {
+    <table class="w-full text-xs">
+      <thead class="sticky top-0 z-10 bg-slate-50 text-gray-500 text-left">
+        <tr class="border-b border-prussian-blue-100">
+          <th class="font-semibold px-4 py-2 w-1/4">Utilisateur</th>
+          <th class="font-semibold px-4 py-2 w-32">Rôle</th>
+          <th class="font-semibold px-4 py-2">Domaines</th>
+          <th class="px-4 py-2 w-48"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of state.filteredUsers(); track user.id) {
+          <tr
+            class="border-b border-prussian-blue-50 border-l-[3px] align-middle"
+            [class.border-l-amber-400]="isWithoutDomain(user)"
+            [class.bg-amber-50]="isWithoutDomain(user)"
+            [class.border-l-transparent]="!isWithoutDomain(user)">
+
+            <td class="px-4 py-2.5">
+              <div class="font-medium text-gray-800 truncate">
+                {{ user.fullName || user.uid }}
+                @if (isCurrentUser(user)) {
+                  <span class="ml-1 text-2xs font-normal text-gray-400">(vous)</span>
+                }
+              </div>
+              <div class="text-gray-500 truncate">{{ user.uid }}@if (user.email) { · {{ user.email }} }</div>
+            </td>
+
+            <td class="px-4 py-2.5">
+              <span class="inline-block px-2 py-0.5 rounded-full text-2xs font-semibold"
+                [class.bg-prussian-blue-700]="user.role === 'ADMIN'"
+                [class.text-white]="user.role === 'ADMIN'"
+                [class.bg-prussian-blue-50]="user.role !== 'ADMIN'"
+                [class.text-prussian-blue-700]="user.role !== 'ADMIN'">
+                {{ roleLabels[user.role] }}
+              </span>
+            </td>
+
+            <td class="px-4 py-2.5">
+              @if (user.role === 'ADMIN') {
+                <span class="text-gray-400 italic">Accès à tous les domaines</span>
+              } @else {
+                <p-multiselect
+                  [options]="domainOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [ngModel]="selectedDomains(user)"
+                  (ngModelChange)="onDomainsChange(user, $event)"
+                  display="chip"
+                  placeholder="Aucun domaine"
+                  [showToggleAll]="true"
+                  [filter]="false"
+                  [disabled]="isSaving(user)"
+                  [fluid]="true"
+                  size="small"
+                  appendTo="body"
+                  panelStyleClass="!text-sm" />
+                @if (isWithoutDomain(user) && !isDirty(user)) {
+                  <p class="mt-1 text-2xs text-amber-700 flex items-center gap-1.5">
+                    <i class="pi pi-exclamation-triangle text-2xs"></i>
+                    Ne voit que ses propres imports.
+                  </p>
+                }
+              }
+            </td>
+
+            <td class="px-4 py-2.5">
+              @if (isDirty(user)) {
+                <div class="flex items-center justify-end gap-1.5">
+                  <button
+                    class="px-2.5 py-1.5 rounded-md text-xs font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-50"
+                    [disabled]="isSaving(user)"
+                    (click)="onCancel(user)">
+                    Annuler
+                  </button>
+                  <button
+                    class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-prussian-blue-700 text-white hover:bg-prussian-blue-800 transition-colors disabled:opacity-50"
+                    [disabled]="isSaving(user)"
+                    (click)="onSave(user)">
+                    <i class="pi text-2xs" [class.pi-check]="!isSaving(user)" [class.pi-spinner]="isSaving(user)" [class.pi-spin]="isSaving(user)"></i>
+                    Enregistrer
+                  </button>
+                </div>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>
+
+<!-- Rappel : les comptes LDAP sont créés à la première connexion -->
+<div class="shrink-0 px-4 py-2 border-t border-prussian-blue-100 text-2xs text-gray-500 flex items-center gap-1.5">
+  <i class="pi pi-info-circle text-2xs"></i>
+  Un compte LDAP n'apparaît dans cette liste qu'après sa première connexion.
+</div>

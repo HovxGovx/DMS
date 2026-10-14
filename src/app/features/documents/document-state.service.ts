@@ -38,10 +38,9 @@ export class DocumentStateService {
         this.publishedDocuments.set(docs.map(fromLifecycleDocument));
         this.isLoadingPublished.set(false);
       },
-      error: (err) => {
+      error: () => {
         this.isLoadingPublished.set(false);
         this.publishedLoadError.set("Impossible de charger les documents.");
-        console.error('Erreur chargement documents publiés:', err);
       }
     });
   }
@@ -66,6 +65,23 @@ export class DocumentStateService {
       }
     });
   }
+  // Mutateur appelé après le retrait de la consultation : le document ne fait plus partie des documents publiés.
+  removeDocument(id: string) {
+    this.publishedDocuments.update(docs => docs.filter(d => d.id !== id));
+    this.searchResults.update(docs => docs.filter(d => d.id !== id));
+    if (this.selectedDocId() === id) {
+      this.selectedDocId.set(null);
+      this.documentMetadata.set(null);
+    }
+  }
+
+  // Mutateur appelé après un changement de confidentialité par un validateur.
+  setConfidential(id: string, confidential: boolean) {
+    const update = (docs: DocumentItem[]) => docs.map(d => d.id === id ? { ...d, confidential } : d);
+    this.publishedDocuments.update(update);
+    this.searchResults.update(update);
+  }
+
   setSearchResults(results: SearchResult[], label: string | null = null) {
     this.searchResults.set(results.map(fromSearchResult));
     this.searchLabel.set(label);

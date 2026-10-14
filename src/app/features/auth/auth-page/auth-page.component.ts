@@ -1,23 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { LoginFormComponent } from '../login-form/login-form.component';
-import { SignupFormComponent } from '../signup-form/signup-form.component';
 import { AuthOverlayComponent } from '../auth-overlay/auth-overlay.component';
 
+/** Les comptes viennent de l'annuaire LDAP : la page ne propose que la connexion. */
 @Component({
   selector: 'app-auth-page',
   standalone: true,
-  imports: [LoginFormComponent, SignupFormComponent, AuthOverlayComponent],
-  templateUrl: './auth-page.component.html',
-  styleUrl: './auth-page.component.css'
+  imports: [LoginFormComponent, AuthOverlayComponent],
+  templateUrl: './auth-page.component.html'
 })
-export class AuthPageComponent {
-  mode = signal<'signin' | 'signup'>('signin');
-
-  switchToSignup() {
-    this.mode.set('signup');
-  }
-
-  switchToSignin() {
-    this.mode.set('signin');
-  }
-}
+export class AuthPageComponent {}

@@ -1,24 +1,13 @@
-<div class="relative">
-  <p-floatlabel variant="on">
-    <p-select
+<p-floatlabel variant="on">
+  <p-select
     [options]="options()"
     optionLabel="label"
     optionValue="value"
     [(ngModel)]="value"
     [class.p-inputwrapper-filled]="!!value()"
     [disabled]="disabled()"
-    [filter]="filter()"
-    filterBy="label"
-    [showClear]="showClear()"
     [fluid]="true"
     appendTo="body"
     panelStyleClass="!text-sm" />
-    <label >{{ label() }} <span class="text-almond-silk-500">*</span></label>
-  </p-floatlabel>
-
-  @if (confidence() !== null) {
-    <div class="absolute right-9 top-1/2 -translate-y-1/2 pointer-events-none">
-      <app-confidence-badge [value]="confidence() ?? 0" />
-    </div>
-  }
-</div>
+  <label>{{ label() }} <span class="text-almond-silk-500">*</span></label>
+</p-floatlabel>

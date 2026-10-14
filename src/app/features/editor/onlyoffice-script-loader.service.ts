@@ -1,9 +1,18 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
+import { DocsEditorConfig } from './editor-config.service';
+
+/** Seule partie de l'éditeur OnlyOffice utilisée par l'application. */
+export interface DocEditor {
+  destroyEditor(): void;
+}
 
 declare global {
   interface Window {
-    DocsAPI: any;
+    // Défini par api.js une fois le script chargé
+    DocsAPI?: {
+      DocEditor: new (placeholderId: string, config: DocsEditorConfig) => DocEditor;
+    };
   }
 }
 

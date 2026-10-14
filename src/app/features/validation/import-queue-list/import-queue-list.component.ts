@@ -1,11 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, ElementRef, effect, inject, OnInit } from '@angular/core';
 import { ValidationStateService } from '../validation-state.service';
-import { TableModule } from 'primeng/table';
 import { getDisplayName, getFileTypeInfo } from '../file-type.util';
 @Component({
   selector: 'app-import-queue-list',
   standalone: true,
-  imports: [TableModule],
   templateUrl: './import-queue-list.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0 h-full'
@@ -13,6 +11,19 @@ import { getDisplayName, getFileTypeInfo } from '../file-type.util';
 })
 export class ImportQueueListComponent implements OnInit {
   state = inject(ValidationStateService);
+  private elementRef = inject(ElementRef<HTMLElement>);
+
+  constructor() {
+    // Garde le document sélectionné visible (navigation clavier, passage au suivant après publication)
+    effect(() => {
+      const id = this.state.selectedImportId();
+      if (!id) return;
+      queueMicrotask(() => {
+        const row = (this.elementRef.nativeElement as HTMLElement).querySelector(`[data-id="${id}"]`);
+        row?.scrollIntoView({ block: 'nearest' });
+      });
+    });
+  }
 
   ngOnInit() {
     this.state.loadPendingImports();

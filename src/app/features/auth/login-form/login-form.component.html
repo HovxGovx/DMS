@@ -1,53 +1,49 @@
 <div class="h-full flex flex-col justify-center px-14 max-w-md mx-auto">
 
-  <span class="text-[11px] font-semibold text-gray-500 tracking-wide mb-2">
+  <span class="text-2xs font-semibold text-gray-500 tracking-wide mb-2">
     ACCÈS SÉCURISÉ À L'ESPACE DE TRAVAIL
   </span>
 
   <h1 class="text-xl font-bold text-gray-800 mb-6">Connectez-vous à votre compte</h1>
 
-
   <form class="flex flex-col gap-5" (ngSubmit)="onSubmit()">
 
     <div>
-      <label class="text-sm font-medium text-gray-800 mb-1.5 block">E-mail ou nom d'utilisateur</label>
+      <label for="login-uid" class="text-sm font-medium text-gray-800 mb-1.5 block">E-mail ou nom d'utilisateur</label>
       <p-iconfield class="w-full">
-        <p-inputicon class="pi pi-envelope" />
-        <input pInputText type="text" [(ngModel)]="uid" name="uid"
-               placeholder="nom@entreprise.com" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100 transition-all duration-150 active:scale-[1.02] active:scale-95" />
+        <p-inputicon class="pi pi-user" />
+        <input pInputText id="login-uid" type="text" [(ngModel)]="uid" name="uid" required
+               autocomplete="username" autofocus
+               placeholder="nom@entreprise.com" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100" />
       </p-iconfield>
     </div>
 
     <div>
-      <label class="text-sm font-medium text-gray-800 mb-1.5 block">Mot de passe</label>
+      <label for="login-password" class="text-sm font-medium text-gray-800 mb-1.5 block">Mot de passe</label>
       <p-iconfield class="w-full">
         <p-inputicon class="pi pi-lock" />
-        <input pInputText type="password" [(ngModel)]="password" name="password"
-               placeholder="Entrez votre mot de passe" !required class="w-full !bg-prussian-blue-50 !border-prussian-blue-100 transition-all duration-150 active:scale-[1.02] active:scale-95" />
+        <input pInputText id="login-password" type="password" [(ngModel)]="password" name="password" required
+               autocomplete="current-password"
+               placeholder="Entrez votre mot de passe" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100" />
       </p-iconfield>
     </div>
-<!--
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <p-checkbox [(ngModel)]="rememberMe" name="rememberMe" [binary]="true" inputId="remember" />
-        <label for="remember" class="text-sm text-gray-600 cursor-pointer">Se souvenir de moi</label>
-      </div>
-      <a class=" text-sm text-prussian-blue-600 font-medium hover:text-prussian-blue-800 cursor-pointer">
-        Mot de passe oublié ?
-      </a>
-    </div> -->
+
     @if (errorMessage()) {
-      <p class="text-xs text-red-500 flex items-center gap-1.5">
-        <i class="pi pi-exclamation-circle text-[10px]"></i>
+      <p class="text-xs text-red-500 flex items-center gap-1.5" role="alert">
+        <i class="pi pi-exclamation-circle text-2xs"></i>
         {{ errorMessage() }}
       </p>
     }
     <button
       type="submit"
-      class="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-rusty-spice-500 text-white text-sm font-semibold hover:bg-rusty-spice-600 transition-all duration-150 hover:scale-[1.02] active:scale-95 cursor-pointer"
+      class="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-rusty-spice-500 text-white text-sm font-semibold hover:bg-rusty-spice-600 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+      [disabled]="isLoading()"
     >
-      {{ isLoading() ? 'Connexion...' : 'Se connecter' }}
-      @if (!isLoading()) {
+      @if (isLoading()) {
+        <i class="pi pi-spin pi-spinner text-xs"></i>
+        Connexion…
+      } @else {
+        Se connecter
         <i class="pi pi-arrow-right text-xs"></i>
       }
     </button>

@@ -4,10 +4,6 @@
     <div class="w-8 h-8 rounded-full bg-prussian-blue-700 text-white flex items-center justify-center text-xs font-semibold shrink-0">
       {{ userInitials() }}
     </div>
-    <!-- <div class="leading-tight">
-      <div class="text-[8px] font-medium text-prussian-blue-900">{{ userName() }}</div>
-      <div class="text-[8px] text-prussian-blue-400">{{ userRole() }}</div>
-    </div> -->
     <i
       class="pi pi-chevron-down text-xs text-prussian-blue-300 ml-1 transition-transform duration-200"
       [class.rotate-180]="isOpen()"
@@ -24,6 +20,17 @@
     [class.opacity-100]="isOpen()"
     [class.scale-100]="isOpen()"
   >
+
+    @if (authService.hasRole('ADMIN')) {
+    <button
+      class="w-full text-left px-3.5 py-2 text-sm text-prussian-blue-800 hover:bg-prussian-blue-50 flex items-center gap-2.5 transition-colors"
+      [class.font-semibold]="viewState.currentView() === 'admin'"
+      (click)="openAdministration()"
+    >
+      <i class="pi pi-cog text-xs"></i>
+      Administration
+    </button>
+    }
 
     <hr class="my-1.5 border-prussian-blue-100" />
 

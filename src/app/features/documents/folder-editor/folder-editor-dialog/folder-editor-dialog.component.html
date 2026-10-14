@@ -40,7 +40,7 @@
 
       @if (inherited().length) {
         <div>
-          <span class="text-[11px] font-semibold text-gray-500 tracking-wide mb-2 block">CRITÈRES HÉRITÉS</span>
+          <span class="text-2xs font-semibold text-gray-500 tracking-wide mb-2 block">CRITÈRES HÉRITÉS</span>
           <div class="flex flex-wrap gap-2">
             @for (criterion of inherited(); track $index) {
               <span class="px-3 py-1 rounded-full text-xs border border-prussian-blue-200 bg-prussian-blue-50 text-gray-700">
@@ -53,12 +53,12 @@
 
       <div>
         <div class="flex items-center justify-between mb-2">
-          <span class="text-[11px] font-semibold text-gray-500 tracking-wide">CRITÈRES</span>
+          <span class="text-2xs font-semibold text-gray-500 tracking-wide">CRITÈRES</span>
           <button
             class="flex items-center gap-1.5 text-xs font-medium text-prussian-blue-600 border border-prussian-blue-300 rounded-full px-3 py-1 hover:bg-prussian-blue-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             [disabled]="rows().length >= maxCriteria"
             (click)="addRow()">
-            <i class="pi pi-plus text-[10px]"></i>
+            <i class="pi pi-plus text-2xs"></i>
             Ajouter un critère
           </button>
         </div>
@@ -66,6 +66,10 @@
         @if (rows().length === 0) {
           <p class="text-xs text-gray-400">
             Sans critère, le dossier affiche tous les documents de son dossier parent.
+          </p>
+        } @else if (rows().length > 1) {
+          <p class="text-xs text-gray-400 mb-2">
+            Plusieurs critères sur un même champ : au moins un doit correspondre. Champs différents : tous doivent correspondre.
           </p>
         }
 
