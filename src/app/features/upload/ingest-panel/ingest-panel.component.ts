@@ -6,6 +6,10 @@ import { BatchUploadResult } from '../../validation/lifecycle-document.model';
 import { NotificationService } from '../../../core/notification.service';
 import { AuthService } from '../../../core/auth.service';
 import { SmartFolderStateService } from '../../documents/smart-folder-state.service';
+import {
+  ACCEPT_ATTRIBUTE, MAX_BATCH_SIZE_MB, MAX_FILE_SIZE_MB,
+  isAllowedFormat, isBatchTooLarge, isFileTooLarge, toMegabytes, totalSize
+} from '../upload-limits';
 @Component({
   selector: 'app-ingest-panel',
   standalone: true,
@@ -21,6 +25,8 @@ export class IngestPanelComponent {
 
   isDragOver = signal(false);
   isUploading = signal(false);
+  readonly maxFileSizeMb = MAX_FILE_SIZE_MB;
+  readonly acceptedExtensions = ACCEPT_ATTRIBUTE;
 
   onDragOver(event: DragEvent) {
     event.preventDefault();
@@ -50,7 +56,16 @@ export class IngestPanelComponent {
   }
 
   private handleFiles(fileList: FileList) {
-    const files = Array.from(fileList);
+    const files = this.withoutTooLargeFiles(this.withoutUnsupportedFiles(Array.from(fileList)));
+    if (files.length === 0) {
+      return;
+    }
+    if (isBatchTooLarge(files)) {
+      this.notification.error(
+        `Import trop volumineux : ${toMegabytes(totalSize(files))} Mo au total, ${MAX_BATCH_SIZE_MB} Mo maximum. Importez les fichiers en plusieurs fois.`,
+        'Import');
+      return;
+    }
     this.isUploading.set(true);
 
     this.documentService.uploadBatch(files).subscribe({
@@ -69,10 +84,38 @@ export class IngestPanelComponent {
       error: (err) => {
         this.isUploading.set(false);
 
+        // Un 413 renvoyé par nginx n'a pas de corps JSON : on rappelle les limites nous-mêmes
         const serverMessage = err.error?.message;
-        this.notification.error(serverMessage ?? "Échec de l'import — vérifiez votre connexion ou réessayez.");
+        const fallback = err.status === 413
+          ? `Import trop volumineux : ${MAX_FILE_SIZE_MB} Mo maximum par fichier, ${MAX_BATCH_SIZE_MB} Mo par import.`
+          : "Échec de l'import — vérifiez votre connexion ou réessayez.";
+        this.notification.error(serverMessage ?? fallback);
       }
     });
+  }
+
+  // Le glisser-déposer ignore l'attribut accept : les formats refusés par le backend sont écartés et nommés ici
+  private withoutUnsupportedFiles(files: File[]): File[] {
+    const unsupported = files.filter(file => !isAllowedFormat(file));
+    if (unsupported.length > 0) {
+      const plural = unsupported.length > 1 ? 's' : '';
+      this.notification.error(
+        `Format${plural} non accepté${plural} (PDF et documents bureautiques seulement) : ${unsupported.map(file => file.name).join(', ')}`,
+        'Import');
+    }
+    return files.filter(isAllowedFormat);
+  }
+
+  // Les fichiers trop gros sont écartés et nommés ; les autres partent quand même
+  private withoutTooLargeFiles(files: File[]): File[] {
+    const tooLarge = files.filter(isFileTooLarge);
+    if (tooLarge.length > 0) {
+      const plural = tooLarge.length > 1 ? 's' : '';
+      this.notification.error(
+        `Fichier${plural} trop volumineux (${MAX_FILE_SIZE_MB} Mo maximum) : ${tooLarge.map(file => file.name).join(', ')}`,
+        'Import');
+    }
+    return files.filter(file => !isFileTooLarge(file));
   }
 
   // Un toast de synthèse plutôt qu'un par fichier : seuls les échecs sont nommés

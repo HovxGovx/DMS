@@ -1,10 +1,16 @@
 <div class="relative">
 
   <button
-    class="w-9 h-9 rounded-lg border border-prussian-blue-200 flex items-center justify-center text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
-    title="Recherche avancée"
+    class="relative w-9 h-9 rounded-lg border border-prussian-blue-200 flex items-center justify-center text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+    [class.text-prussian-blue-700]="activeCount() > 0"
+    title="Filtres"
     (click)="toggle()">
     <i class="pi pi-sliders-h text-sm"></i>
+    @if (activeCount() > 0) {
+      <span class="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full bg-burnt-peach-500 text-white text-[10px] leading-4 text-center">
+        {{ activeCount() }}
+      </span>
+    }
   </button>
 
   <div
@@ -14,24 +20,10 @@
     [class.pointer-events-none]="!isOpen()"
     [class.opacity-100]="isOpen()"
     [class.scale-100]="isOpen()">
-    <span class="text-xs font-semibold text-gray-600 tracking-wide">RECHERCHE
-      AVANCÉE</span>
+    <span class="text-xs font-semibold text-gray-600 tracking-wide">FILTRES</span>
+    <p class="text-xs text-gray-400 mt-1">Affinent la recherche saisie dans la barre.</p>
 
     <div class="flex flex-col gap-3 mt-3 ">
-
-      <div>
-        <p-floatlabel variant="on">
-          <input
-            pInputText
-            id="adv-keywords"
-            [(ngModel)]="keywords"
-            variant="outlined"
-            autocomplete="off"
-            class="w-full px-2.5 py-1.5 rounded-md border border-prussian-blue-200 text-sm focus:outline-none focus:border-prussian-blue-500" />
-          <label for="adv-keywords" class="text-xs text-gray-500"> Titre ou contenu
-            du document</label>
-        </p-floatlabel>
-      </div>
 
       <div class="grid grid-cols-2 gap-2">
         <p-floatlabel variant="on">
@@ -75,13 +67,6 @@
         </div>
       </div>
 
-      <label class="flex items-center gap-2 cursor-pointer">
-        <input type="checkbox" [(ngModel)]="fuzzy"
-          class="rounded border-prussian-blue-300" />
-        <span class="text-sm text-gray-600">Tolère les fautes de
-          frappe</span>
-      </label>
-
     </div>
 
     <div
@@ -93,15 +78,10 @@
       </button>
 
       <button
-        class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-prussian-blue-700 text-white text-xs font-medium hover:bg-prussian-blue-800 transition-colors disabled:opacity-60"
-        [disabled]="isSearching()"
-        (click)="onSearch()">
-        @if (isSearching()) {
-        <i class="pi pi-spin pi-spinner text-xs"></i>
-        } @else {
-        <i class="pi pi-search text-xs"></i>
-        }
-        Rechercher
+        class="flex items-center gap-2 px-3 py-1.5 rounded-md bg-prussian-blue-700 text-white text-xs font-medium hover:bg-prussian-blue-800 transition-colors"
+        (click)="onApply()">
+        <i class="pi pi-check text-xs"></i>
+        Appliquer
       </button>
     </div>
 

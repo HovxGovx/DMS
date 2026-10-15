@@ -17,7 +17,7 @@
     #fileInput
     type="file"
     multiple
-    accept=".pdf,.docx,.xlsx,.eml,.tiff,.tif,.jpeg,.jpg,.png,.ppt,.pptx"
+    [accept]="acceptedExtensions"
     class="hidden"
     (change)="onFileSelect($event)" />
 
@@ -37,8 +37,8 @@
         <span class="font-semibold text-xs">Import en cours...</span>
         } @else {
         <span class="font-semibold text-xs">Déposez les fichiers</span>
-        <span class="text-gray-500 ml-1">ou cliquez pour parcourir — PDF, DOCX,
-          XLSX, PNG, EML </span>
+        <span class="text-gray-500 ml-1">ou cliquez pour parcourir — PDF, Word, Excel,
+          PowerPoint, OpenDocument, RTF · {{ maxFileSizeMb }} Mo max par fichier</span>
         }
       </div>
     </div>

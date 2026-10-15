@@ -19,6 +19,8 @@ const MIME_FORMATS: Record<string, string> = {
   'application/vnd.ms-powerpoint': 'PPT',
   'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'PPTX',
   'application/vnd.oasis.opendocument.text': 'ODT',
+  'application/vnd.oasis.opendocument.spreadsheet': 'ODS',
+  'application/vnd.oasis.opendocument.presentation': 'ODP',
   'application/rtf': 'RTF',
   'text/plain': 'TXT',
   'text/csv': 'CSV'
@@ -41,10 +43,17 @@ export function detectFileType(fileName: string): FileTypeInfo {
       return { format: 'PDF', icon: 'pi pi-file-pdf', iconColor: 'text-red-500' };
     case 'xlsx':
     case 'xls':
+    case 'ods':
       return { format: ext.toUpperCase(), icon: 'pi pi-file-excel', iconColor: 'text-green-600' };
     case 'docx':
     case 'doc':
+    case 'odt':
+    case 'rtf':
       return { format: ext.toUpperCase(), icon: 'pi pi-file-word', iconColor: 'text-blue-600' };
+    case 'pptx':
+    case 'ppt':
+    case 'odp':
+      return { format: ext.toUpperCase(), icon: 'pi pi-file', iconColor: 'text-orange-600' };
     default:
       return { format: ext.toUpperCase() || 'FICHIER', icon: 'pi pi-file', iconColor: 'text-prussian-blue-400' };
   }

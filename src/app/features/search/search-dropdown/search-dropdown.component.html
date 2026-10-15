@@ -17,7 +17,7 @@
       />
 
       <p-inputgroup-addon class="!p-0 !bg-slate-50 !border-slate-200">
-        <app-advanced-search-panel />
+        <app-advanced-search-panel [filters]="filters()" (apply)="onApplyFilters($event)" />
       </p-inputgroup-addon>
     </p-inputgroup>
   </div>

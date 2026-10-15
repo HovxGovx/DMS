@@ -9,10 +9,8 @@ import { AdvancedSearchRequest } from './search-request.model';
 export class SearchService {
   private http = inject(HttpClient);
 
-  searchSimple(keywords: string): Observable<SearchResult[]> {
-    return this.http.post<SearchResult[]>(`${environment.apiUrl}/api/dms/search/simple`, { keywords });
-  }
-  searchAdvanced(request: AdvancedSearchRequest): Observable<SearchResult[]> {
+  /** Seule recherche de l'interface : mots-clés de la barre et filtres éventuels. */
+  search(request: AdvancedSearchRequest): Observable<SearchResult[]> {
     return this.http.post<SearchResult[]>(`${environment.apiUrl}/api/dms/search/advanced`, request);
   }
 }

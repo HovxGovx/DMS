@@ -1,4 +1,4 @@
-import { Component, signal, inject, ElementRef, HostListener, DestroyRef } from '@angular/core';
+import { Component, signal, inject, ElementRef, HostListener, DestroyRef, effect, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs/oper
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchService } from '../search.service';
 import { RELEVANCE_DISPLAY, SearchResult } from '../search-result.model';
+import { activeFilterCount, NO_FILTERS, SearchFilters, toSearchRequest } from '../search-request.model';
 import { detectFileType } from '../../documents/document.mapper';
 import { DocumentStateService } from '../../documents/document-state.service';
 import { DocumentLocationService } from '../../documents/document-location.service';
@@ -29,6 +30,7 @@ import { InputGroupAddon } from 'primeng/inputgroupaddon';
   ],
   templateUrl: './search-dropdown.component.html'
 })
+/** La recherche unique de l'interface : la barre (tolérante aux fautes) et ses filtres, qui l'affinent. */
 export class SearchDropdownComponent {
   private searchService = inject(SearchService);
   private documentState = inject(DocumentStateService);
@@ -42,6 +44,7 @@ export class SearchDropdownComponent {
   isOpen = signal(false);
   isLoading = signal(false);
   hasSearched = signal(false);
+  filters = signal<SearchFilters>(NO_FILTERS);
 
   private query$ = new Subject<string>();
 
@@ -52,7 +55,7 @@ export class SearchDropdownComponent {
       filter(q => q.trim().length >= 2),
       switchMap(q => {
         this.isLoading.set(true);
-        return this.searchService.searchSimple(q);
+        return this.searchService.search(toSearchRequest(q, this.filters()));
       }),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe({
@@ -67,6 +70,16 @@ export class SearchDropdownComponent {
         this.isLoading.set(false);
         this.hasSearched.set(true);
         this.isOpen.set(true);
+      }
+    });
+
+    // Quitter les résultats (dossier, « effacer la recherche ») termine la recherche : la barre et les filtres repartent à vide
+    effect(() => {
+      if (!this.documentState.isSearchMode()) {
+        untracked(() => {
+          this.reset();
+          this.filters.set(NO_FILTERS);
+        });
       }
     });
   }
@@ -96,14 +109,36 @@ export class SearchDropdownComponent {
     this.locationService.revealInFolder(result.id);
   }
 
-  /** Affiche tous les résultats dans le tableau, avec leur emplacement. */
+  /** Affiche tous les résultats dans le tableau ; la saisie reste dans la barre pour pouvoir l'affiner avec les filtres. */
   showAllResults() {
     const label = this.query().trim();
     const results = this.results();
     if (label.length < 2 || !this.hasSearched()) return;
-    this.reset();
+    this.close();
     this.viewState.setView('documents');
     this.documentState.setSearchResults(results, label);
+  }
+
+  /** Applique les filtres à la saisie de la barre (ou seuls, sans mots-clés) et affiche les résultats dans le tableau. */
+  onApplyFilters(filters: SearchFilters) {
+    this.filters.set(filters);
+    const keywords = this.query().trim();
+    if (!keywords && activeFilterCount(filters) === 0) {
+      this.documentState.clearSearch();
+      return;
+    }
+
+    this.searchService.search(toSearchRequest(keywords, filters)).subscribe({
+      next: (results) => {
+        if (keywords.length >= 2) {
+          this.results.set(results);
+          this.hasSearched.set(true);
+        }
+        this.viewState.setView('documents');
+        this.documentState.setSearchResults(results, keywords || null);
+      },
+      error: (err) => console.error('Erreur recherche :', err)
+    });
   }
 
   locationLabel(result: SearchResult): string {

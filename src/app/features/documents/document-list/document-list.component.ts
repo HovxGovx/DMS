@@ -35,8 +35,8 @@ export class DocumentListComponent {
     if (this.state.isSearchMode()) {
       const count = this.state.searchResultCount();
       const label = this.state.searchLabel();
-      const what = label ? `Recherche « ${label} »` : 'Recherche avancée';
-      return [`${what} · ${count} résultat${count > 1 ? 's' : ''}`];
+      const what = label ? `Recherche « ${label} »` : '';
+      return [`${what}  ${count} résultat${count > 1 ? 's' : ''}`];
     }
     const path = this.folderState.currentPath();
     return path.length ? path : ['Documents publiés'];

@@ -1,13 +1,14 @@
-import { Component, signal, inject, ElementRef, HostListener, input } from '@angular/core';
+import { Component, signal, inject, ElementRef, HostListener, input, output, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SearchService } from '../search.service';
-import { DocumentStateService } from '../../documents/document-state.service';
-import { ViewStateService } from '../../../core/view-state.service';
-import { AdvancedSearchRequest } from '../search-request.model';
+import { activeFilterCount, NO_FILTERS, SearchFilters } from '../search-request.model';
 import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
 import { FloatLabel } from 'primeng/floatlabel';
 import { InputText } from 'primeng/inputtext';
 
+/**
+ * Filtres de la recherche : ils affinent les mots-clés saisis dans la barre (pas de second champ de recherche).
+ * Le panneau édite un brouillon ; la recherche est relancée par la barre quand on applique.
+ */
 @Component({
   selector: 'app-advanced-search-panel',
   standalone: true,
@@ -16,22 +17,24 @@ import { InputText } from 'primeng/inputtext';
   templateUrl: './advanced-search-panel.component.html'
 })
 export class AdvancedSearchPanelComponent {
-  private searchService = inject(SearchService);
-  private documentState = inject(DocumentStateService);
-  private viewState = inject(ViewStateService);
   private elementRef = inject(ElementRef);
   size = input<'small' | 'large' | undefined>(undefined);
-  isOpen = signal(false);
-  isSearching = signal(false);
+  /** Filtres actuellement appliqués à la recherche. */
+  filters = input.required<SearchFilters>();
+  apply = output<SearchFilters>();
 
-  keywords = signal('');
+  isOpen = signal(false);
+  activeCount = computed(() => activeFilterCount(this.filters()));
+
   format = signal('');
   language = signal('');
   startDate = signal('');
   endDate = signal('');
-  fuzzy = signal(false);
 
   toggle() {
+    if (!this.isOpen()) {
+      this.loadDraft(this.filters());
+    }
     this.isOpen.update(v => !v);
   }
 
@@ -39,48 +42,25 @@ export class AdvancedSearchPanelComponent {
     this.isOpen.set(false);
   }
 
-  // 'YYYY-MM-DD' -> début (00:00:00.000) ou fin (23:59:59.999) du jour en heure locale
-  private toLocalDayBound(value: string, endOfDay: boolean): string {
-    const [year, month, day] = value.split('-').map(Number);
-    const date = endOfDay
-      ? new Date(year, month - 1, day, 23, 59, 59, 999)
-      : new Date(year, month - 1, day, 0, 0, 0, 0);
-    return date.toISOString();
-  }
-
-  onSearch() {
-    const request: AdvancedSearchRequest = {
-      keywords: this.keywords().trim() || null,
-      format: this.format().trim() || null,
-      language: this.language().trim() || null,
-      creationDateStart: this.startDate() ? this.toLocalDayBound(this.startDate(), false) : null,
-      creationDateEnd: this.endDate() ? this.toLocalDayBound(this.endDate(), true) : null,
-      fuzzy: this.fuzzy() || null
-    };
-
-    this.isSearching.set(true);
-
-    this.searchService.searchAdvanced(request).subscribe({
-      next: (results) => {
-        this.isSearching.set(false);
-        this.close();
-        this.documentState.setSearchResults(results, request.keywords);
-        this.viewState.setView('documents');
-      },
-      error: (err) => {
-        this.isSearching.set(false);
-        console.error('Erreur recherche avancée:', err);
-      }
+  onApply() {
+    this.apply.emit({
+      format: this.format(),
+      language: this.language(),
+      startDate: this.startDate(),
+      endDate: this.endDate()
     });
+    this.close();
   }
 
   reset() {
-    this.keywords.set('');
-    this.format.set('');
-    this.language.set('');
-    this.startDate.set('');
-    this.endDate.set('');
-    this.fuzzy.set(false);
+    this.loadDraft(NO_FILTERS);
+  }
+
+  private loadDraft(filters: SearchFilters) {
+    this.format.set(filters.format);
+    this.language.set(filters.language);
+    this.startDate.set(filters.startDate);
+    this.endDate.set(filters.endDate);
   }
 
   @HostListener('document:click', ['$event'])

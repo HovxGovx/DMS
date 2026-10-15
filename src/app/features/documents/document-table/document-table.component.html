@@ -140,7 +140,7 @@
           <span class="text-sm text-gray-600">Aucun document ne correspond à votre recherche</span>
           <span class="text-xs">Essayez d'autres mots-clés ou élargissez les filtres.</span>
           } @else {
-          <span class="text-sm text-gray-600">Aucun document à afficher</span>
+          <span class="text-sm text-gray-600">Aucun document correspondant</span>
           }
         </div>
       </td>
@@ -148,7 +148,6 @@
   </ng-template>
 </p-table>
 
-<!-- Tous les tags du document : même panneau que le menu utilisateur (Déconnexion) -->
 <app-dropdown-backdrop [visible]="!!tagsDoc()" />
 
 <div
