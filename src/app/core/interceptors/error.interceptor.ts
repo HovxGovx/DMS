@@ -1,11 +1,8 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthStateService } from '../auth-state.service';
-
-/** Message d'un 403 sans corps (refus de Spring Security sur le rôle). */
-const FORBIDDEN_MESSAGE = "Vos droits ne permettent pas cette action.";
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
@@ -24,17 +21,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         } else {
           router.navigate(['/login']);
         }
-      } else if (error.status === 403 && error instanceof HttpErrorResponse && !error.error?.message) {
-        // Authentifié, mais action refusée — ne PAS déconnecter. Pas de toast ici : le composant affiche
-        // déjà err.error?.message (un toast de plus faisait deux messages). On lui fournit le message manquant.
-        return throwError(() => new HttpErrorResponse({
-          error: { message: FORBIDDEN_MESSAGE },
-          headers: error.headers,
-          status: error.status,
-          statusText: error.statusText,
-          url: error.url ?? undefined
-        }));
       }
+      // Les autres erreurs (403 compris) sont annoncées par le composant, avec un message propre à l'action
+      // (httpErrorMessage) : un toast ici en ferait deux.
       return throwError(() => error);
     })
   );

@@ -3,6 +3,7 @@ import { ConfirmationService } from 'primeng/api';
 import { AdminIndexService } from '../admin-index.service';
 import { IndexRebuildStateService } from '../index-rebuild-state.service';
 import { NotificationService } from '../../../core/notification.service';
+import { httpErrorMessage } from '../../../core/http-error-message';
 
 @Component({
   selector: 'app-index-rebuild-panel',
@@ -54,7 +55,9 @@ export class IndexRebuildPanelComponent {
       },
       error: err => {
         this.state.isRebuilding.set(false);
-        this.notification.error(err.error?.message ?? "La reconstruction de l'index a échoué.", 'Administration');
+        this.notification.error(httpErrorMessage(err, "La reconstruction de l'index a échoué.", {
+          409: "Une reconstruction de l'index est déjà en cours."
+        }), 'Administration');
       }
     });
   }

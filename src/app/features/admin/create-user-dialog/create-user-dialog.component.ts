@@ -167,6 +167,8 @@ function errorMessage(err: HttpErrorResponse, uid: string): string {
     case 503: return "L'annuaire LDAP est injoignable. Réessayez plus tard.";
     case 500: return "L'annuaire LDAP a refusé la création du compte.";
     case 403: return 'Action réservée aux administrateurs.';
-    default: return err.error?.message ?? 'Impossible de créer le compte.';
+    // Le texte du backend s'adresse aux développeurs : un refus de validation est résumé ici
+    case 400: return "Les informations du compte ont été refusées : vérifiez l'identifiant, l'email et le mot de passe.";
+    default: return 'Impossible de créer le compte.';
   }
 }

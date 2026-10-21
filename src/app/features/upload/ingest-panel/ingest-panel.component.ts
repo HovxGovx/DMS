@@ -10,6 +10,7 @@ import {
   ACCEPT_ATTRIBUTE, MAX_BATCH_SIZE_MB, MAX_FILE_SIZE_MB,
   isAllowedFormat, isBatchTooLarge, isFileTooLarge, toMegabytes, totalSize
 } from '../upload-limits';
+import { httpErrorMessage } from '../../../core/http-error-message';
 @Component({
   selector: 'app-ingest-panel',
   standalone: true,
@@ -89,12 +90,10 @@ export class IngestPanelComponent {
       error: (err) => {
         this.isUploading.set(false);
 
-        // Un 413 renvoyé par nginx n'a pas de corps JSON : on rappelle les limites nous-mêmes
-        const serverMessage = err.error?.message;
-        const fallback = err.status === 413
-          ? `Import trop volumineux : ${MAX_FILE_SIZE_MB} Mo maximum par fichier, ${MAX_BATCH_SIZE_MB} Mo par import.`
-          : "Échec de l'import — vérifiez votre connexion ou réessayez.";
-        this.notification.error(serverMessage ?? fallback);
+        this.notification.error(httpErrorMessage(err, "Échec de l'import : réessayez dans quelques instants.", {
+          413: `Import trop volumineux : ${MAX_FILE_SIZE_MB} Mo maximum par fichier, ${MAX_BATCH_SIZE_MB} Mo par import.`,
+          415: 'Format non accepté : PDF et documents bureautiques seulement.'
+        }), 'Import');
       }
     });
   }

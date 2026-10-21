@@ -10,6 +10,7 @@ import { DocumentStateService } from '../../features/documents/document-state.se
 import { AuthService } from '../../core/auth.service';
 import { DocumentValidationService } from '../../features/validation/document-validation.service';
 import { LayoutStateService } from '../../core/layout-state.service';
+import { httpErrorMessage } from '../../core/http-error-message';
 
 interface EditorState {
   mode: 'create' | 'edit';
@@ -135,8 +136,10 @@ export class SidebarComponent implements OnInit {
             this.state.afterDelete(node.key, node.parentId ?? null);
             this.notification.success('Le dossier a été supprimé.', 'Dossiers');
           },
-          error: err => this.notification.error(
-            err.error?.message ?? 'Impossible de supprimer le dossier.', 'Dossiers')
+          error: err => this.notification.error(httpErrorMessage(err, 'Impossible de supprimer le dossier.', {
+            403: 'Les dossiers système ne peuvent pas être supprimés.',
+            404: 'Ce dossier a déjà été supprimé.'
+          }), 'Dossiers')
         });
       }
     });

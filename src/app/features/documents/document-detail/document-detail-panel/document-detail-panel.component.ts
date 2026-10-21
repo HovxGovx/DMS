@@ -11,6 +11,7 @@ import { DocumentStateService } from '../../document-state.service';
 import { LifecycleDocumentService } from '../../../validation/lifecycle-document.service';
 import { NotificationService } from '../../../../core/notification.service';
 import { LayoutStateService } from '../../../../core/layout-state.service';
+import { httpErrorMessage } from '../../../../core/http-error-message';
 
 @Component({
   selector: 'app-document-detail-panel',
@@ -73,7 +74,9 @@ export class DocumentDetailPanelComponent {
       },
       error: (err) => {
         this.isChangingAccess.set(false);
-        this.notification.error(err.error?.message ?? "Impossible de changer l'accès au document.", 'Accès');
+        this.notification.error(httpErrorMessage(err, "Impossible de changer l'accès au document.", {
+          403: `Ce document a été importé hors de vos domaines : vous ne pouvez pas changer son accès.`
+        }), 'Accès');
       }
     });
   }

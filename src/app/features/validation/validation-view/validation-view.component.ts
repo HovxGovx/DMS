@@ -18,6 +18,7 @@ import { NotificationService } from '../../../core/notification.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { SmartFolderStateService } from '../../documents/smart-folder-state.service';
 import { DocumentLocationService } from '../../documents/document-location.service';
+import { httpErrorMessage } from '../../../core/http-error-message';
 
 @Component({
   selector: 'app-validation-view',
@@ -220,8 +221,12 @@ export class ValidationViewComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.isPublishing.set(false);
-        const serverMessage = err.error?.message;
-        this.notification.error(serverMessage ?? `Échec de la publication de « ${title} ».`, 'Publication');
+        this.notification.error(httpErrorMessage(err, `Échec de la publication de « ${title} ».`, {
+          400: 'La publication a été refusée : vérifiez le titre, la confidentialité, le domaine et le type.',
+          403: `Ce document a été importé hors de vos domaines : vous ne pouvez pas le publier.`,
+          404: "Le document ou le type choisi n'existe plus : rechargez la page.",
+          409: `« ${title} » a été publié ou supprimé entre-temps.`
+        }), 'Publication');
       }
     });
   }

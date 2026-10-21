@@ -13,6 +13,7 @@ import { SmartFolderStateService } from '../smart-folder-state.service';
 import { NotificationService } from '../../../core/notification.service';
 import { DocumentStatus } from '../../validation/lifecycle-document.model';
 import { RELEVANCE_DISPLAY, RelevanceLevel } from '../../search/search-result.model';
+import { httpErrorMessage } from '../../../core/http-error-message';
 
 /** Lignes par page avant la première mesure, et minimum sur un écran très bas. */
 const DEFAULT_ROWS = 10;
@@ -167,7 +168,10 @@ export class DocumentTableComponent {
           },
           error: (err) => {
             this.cancellingId.set(null);
-            this.notification.error(err.error?.message ?? "Impossible d'annuler l'import.", 'Import');
+            this.notification.error(httpErrorMessage(err, "Impossible d'annuler l'import.", {
+              409: "Cet import a été publié entre-temps : il ne peut plus être annulé.",
+              404: 'Cet import a déjà été supprimé.'
+            }), 'Import');
           }
         });
       }

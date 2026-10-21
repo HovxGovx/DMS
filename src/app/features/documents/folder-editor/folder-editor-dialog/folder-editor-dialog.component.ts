@@ -12,6 +12,7 @@ import {
   CriterionFieldDefinition,
   CriterionOperator
 } from '../../smart-folder.model';
+import { httpErrorMessage } from '../../../../core/http-error-message';
 
 interface CriterionRow {
   field: CriterionFieldCode | null;
@@ -151,7 +152,11 @@ export class FolderEditorDialogComponent implements OnInit {
       },
       error: err => {
         this.isSaving.set(false);
-        this.error.set(err.error?.message ?? "Impossible d'enregistrer le dossier.");
+        this.error.set(httpErrorMessage(err, "Impossible d'enregistrer le dossier.", {
+          400: 'Le dossier a été refusé : vérifiez son nom et ses critères.',
+          403: 'Les dossiers système ne peuvent pas être modifiés.',
+          404: 'Ce dossier a été supprimé entre-temps.'
+        }));
       }
     });
   }
@@ -192,8 +197,10 @@ export class FolderEditorDialogComponent implements OnInit {
     return this.fields().find(f => f.field === field);
   }
 
-  private failLoading(err: { error?: { message?: string } }) {
+  private failLoading(err: unknown) {
     this.isLoading.set(false);
-    this.error.set(err.error?.message ?? 'Impossible de charger les données du dossier.');
+    this.error.set(httpErrorMessage(err, 'Impossible de charger les données du dossier.', {
+      404: 'Ce dossier a été supprimé entre-temps.'
+    }));
   }
 }

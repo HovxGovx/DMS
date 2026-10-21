@@ -5,6 +5,7 @@ import { SmartFolderStateService } from './smart-folder-state.service';
 import { LifecycleDocumentService } from '../validation/lifecycle-document.service';
 import { ValidationStateService } from '../validation/validation-state.service';
 import { NotificationService } from '../../core/notification.service';
+import { httpErrorMessage } from '../../core/http-error-message';
 
 /**
  * Retrait de la consultation d'un document depuis le tableau ou le panneau de détails :
@@ -42,7 +43,10 @@ export class DocumentUnpublishService {
           },
           error: (err) => {
             this.unpublishingId.set(null);
-            this.notification.error(err.error?.message ?? 'Impossible de retirer le document.', 'Publication');
+            this.notification.error(httpErrorMessage(err, 'Impossible de retirer le document.', {
+              403: `Ce document a été importé hors de vos domaines : vous ne pouvez pas le retirer.`,
+              409: "Ce document n'est plus publié : rechargez la page."
+            }), 'Publication');
           }
         });
       }

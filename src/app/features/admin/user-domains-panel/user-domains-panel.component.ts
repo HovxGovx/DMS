@@ -11,6 +11,7 @@ import { SelectOption } from '../../validation/classification-select/classificat
 import { NotificationService } from '../../../core/notification.service';
 import { AuthService } from '../../../core/auth.service';
 import { CreateUserDialogComponent } from '../create-user-dialog/create-user-dialog.component';
+import { httpErrorMessage } from '../../../core/http-error-message';
 
 @Component({
   selector: 'app-user-domains-panel',
@@ -103,7 +104,10 @@ export class UserDomainsPanelComponent implements OnInit {
       },
       error: err => {
         this.setSaving(user.id, false);
-        this.notification.error(err.error?.message ?? 'Impossible d\'enregistrer les domaines.', 'Administration');
+        this.notification.error(httpErrorMessage(err, "Impossible d'enregistrer les domaines.", {
+          400: "Un des domaines choisis n'existe plus : rechargez la page.",
+          404: "Cet utilisateur n'existe plus : rechargez la page."
+        }), 'Administration');
       }
     });
   }

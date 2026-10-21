@@ -9,6 +9,7 @@ import { ValidationStateService } from '../../validation/validation-state.servic
 import { SmartFolderStateService } from '../../documents/smart-folder-state.service';
 import { NotificationService } from '../../../core/notification.service';
 import { getFileTypeInfo } from '../../validation/file-type.util';
+import { httpErrorMessage } from '../../../core/http-error-message';
 
 const STATUS_LABELS: Record<FailedStatus, string> = {
   EXTRACTION_FAILED: 'Extraction',
@@ -72,7 +73,10 @@ export class FailedDocumentsPanelComponent {
       },
       error: err => {
         this.setBusy(doc.id, false);
-        this.notification.error(err.error?.message ?? `Nouvel échec pour « ${this.displayName(doc)} ».`, 'Administration');
+        this.notification.error(httpErrorMessage(err, `Nouvel échec pour « ${this.displayName(doc)} ».`, {
+          409: `« ${this.displayName(doc)} » n'est plus en échec : il a sans doute déjà été relancé.`,
+          404: `« ${this.displayName(doc)} » a été supprimé entre-temps.`
+        }), 'Administration');
         // Le document a pu changer entre-temps (déjà relancé, supprimé) : on repart de l'état du serveur
         this.state.loadFailed();
       }
@@ -98,7 +102,9 @@ export class FailedDocumentsPanelComponent {
           },
           error: err => {
             this.setBusy(doc.id, false);
-            this.notification.error(err.error?.message ?? 'Impossible de supprimer le document.', 'Administration');
+            this.notification.error(httpErrorMessage(err, 'Impossible de supprimer le document.', {
+              404: 'Ce document a déjà été supprimé.'
+            }), 'Administration');
           }
         });
       }

@@ -12,6 +12,7 @@ import { DocTag } from '../../documents/document.model';
 import { getFileTypeInfo } from '../../validation/file-type.util';
 import { SelectOption } from '../../validation/classification-select/classification-select.component';
 import { NotificationService } from '../../../core/notification.service';
+import { httpErrorMessage } from '../../../core/http-error-message';
 
 @Component({
   selector: 'app-ownerless-documents-panel',
@@ -82,7 +83,10 @@ export class OwnerlessDocumentsPanelComponent {
       },
       error: err => {
         this.isAssigning.set(false);
-        this.notification.error(err.error?.message ?? 'Impossible de rattacher les documents.', 'Administration');
+        this.notification.error(httpErrorMessage(err, 'Impossible de rattacher les documents.', {
+          409: 'Certains documents ont déjà un propriétaire : rechargez la liste.',
+          404: "L'utilisateur choisi ou un des documents n'existe plus : rechargez la liste."
+        }), 'Administration');
         // Un document a pu être rattaché entre-temps : on repart de l'état du serveur
         this.state.loadWithoutOwner();
       }
