@@ -1,5 +1,4 @@
 import { Component, signal, inject, computed, ElementRef, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
@@ -10,7 +9,6 @@ import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dro
   imports: [DropdownBackdropComponent]
 })
 export class UserMenuComponent {
-  private router = inject(Router);
   authService = inject(AuthService);
   viewState = inject(ViewStateService);
   private elementRef = inject(ElementRef);
@@ -45,12 +43,14 @@ export class UserMenuComponent {
 
   logout() {
     this.close();
+    // Rechargement complet plutôt qu'une navigation : les services gardent en mémoire la vue,
+    // les dossiers, les documents et la réponse du RAG, que le compte suivant ne doit pas retrouver
     this.authService.logout().subscribe({
-      next: () => this.router.navigate(['/login']),
+      next: () => window.location.assign('/login'),
       error: () => {
         // Même si l'appel échoue, on force quand même la redirection —
         // pas de raison de bloquer l'utilisateur sur une déconnexion ratée
-        this.router.navigate(['/login']);
+        window.location.assign('/login');
       }
     });
   }
