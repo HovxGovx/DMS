@@ -10,6 +10,7 @@ import { AuthService } from '../../../../core/auth.service';
 import { DocumentStateService } from '../../document-state.service';
 import { LifecycleDocumentService } from '../../../validation/lifecycle-document.service';
 import { NotificationService } from '../../../../core/notification.service';
+import { LayoutStateService } from '../../../../core/layout-state.service';
 
 @Component({
   selector: 'app-document-detail-panel',
@@ -28,6 +29,7 @@ export class DocumentDetailPanelComponent {
   private lifecycleService = inject(LifecycleDocumentService);
   private documentState = inject(DocumentStateService);
   private notification = inject(NotificationService);
+  protected layout = inject(LayoutStateService);
 
   document = input.required<DocumentDetail>();
   isChangingAccess = signal(false);

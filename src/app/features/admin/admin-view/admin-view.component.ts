@@ -8,7 +8,6 @@ import { UserAdminStateService } from '../user-admin-state.service';
 import { FailedDocumentsStateService } from '../failed-documents-state.service';
 import { OwnerlessDocumentsStateService } from '../ownerless-documents-state.service';
 import { ViewStateService } from '../../../core/view-state.service';
-import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 type AdminSection = 'users' | 'failed' | 'ownerless' | 'index' | 'audit';
 
@@ -30,7 +29,7 @@ const SECTIONS: AdminSectionItem[] = [
 @Component({
   selector: 'app-admin-view',
   standalone: true,
-  imports: [UserDomainsPanelComponent, FailedDocumentsPanelComponent, OwnerlessDocumentsPanelComponent, IndexRebuildPanelComponent, AuditLogPanelComponent, ConfirmDialogComponent],
+  imports: [UserDomainsPanelComponent, FailedDocumentsPanelComponent, OwnerlessDocumentsPanelComponent, IndexRebuildPanelComponent, AuditLogPanelComponent],
   templateUrl: './admin-view.component.html',
   host: {
     class: 'flex gap-3 flex-1 min-h-0 h-full'

@@ -1,5 +1,4 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 import { ConfirmationService } from 'primeng/api';
 import { TreeNodeComponent } from './tree-node/tree-node.component';
 import { HierarchyNode, NodeActionEvent } from '../../features/documents/hierarchy.model';
@@ -10,6 +9,7 @@ import { NotificationService } from '../../core/notification.service';
 import { DocumentStateService } from '../../features/documents/document-state.service';
 import { AuthService } from '../../core/auth.service';
 import { DocumentValidationService } from '../../features/validation/document-validation.service';
+import { LayoutStateService } from '../../core/layout-state.service';
 
 interface EditorState {
   mode: 'create' | 'edit';
@@ -22,13 +22,13 @@ interface EditorState {
   standalone: true,
   imports: [
     TreeNodeComponent,
-    ConfirmDialogComponent,
     FolderEditorDialogComponent],
   templateUrl: './sidebar.component.html',
   host: { class: 'flex flex-col flex-1 min-h-0 h-full' }
 })
 export class SidebarComponent implements OnInit {
   state = inject(SmartFolderStateService);
+  layout = inject(LayoutStateService);
   private api = inject(SmartFolderApiService);
   private confirmation = inject(ConfirmationService);
   private notification = inject(NotificationService);

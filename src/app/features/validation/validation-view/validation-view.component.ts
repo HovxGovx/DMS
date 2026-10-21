@@ -18,7 +18,6 @@ import { NotificationService } from '../../../core/notification.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { SmartFolderStateService } from '../../documents/smart-folder-state.service';
 import { DocumentLocationService } from '../../documents/document-location.service';
-import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-validation-view',
@@ -29,8 +28,7 @@ import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-d
     TitleFieldComponent,
     ClassificationSelectComponent,
     TagsEditorComponent,
-    ValidationFooterComponent,
-    ConfirmDialogComponent],
+    ValidationFooterComponent],
   templateUrl: './validation-view.component.html',
   host: {
     class: 'flex gap-3 flex-1 min-h-0 h-full'

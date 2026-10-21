@@ -10,14 +10,28 @@
 
     <div class="flex gap-1 flex-1 min-h-0">
 
-      <!-- Sidebar gauche -->
+      <!-- Sidebar gauche : repliée, il ne reste qu'une bande pour la rouvrir.
+           Le contenu est masqué et non retiré, pour garder l'arbre déplié et l'import en cours. -->
       <aside
-        class="w-65 shrink-0 bg-white rounded-xl border border-prussian-blue-100 flex flex-col min-h-0">
-        @if (authService.hasRole('CONTRIBUTOR')) {
-        <app-ingest-panel />
+        class="shrink-0 bg-white rounded-xl border border-prussian-blue-100 flex flex-col min-h-0"
+        [class.w-65]="!layout.leftCollapsed()"
+        [class.w-10]="layout.leftCollapsed()">
+        @if (layout.leftCollapsed()) {
+        <button
+          class="flex-1 flex flex-col items-center gap-3 py-3 rounded-xl text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+          title="Afficher l'explorateur"
+          (click)="layout.toggleLeft()">
+          <i class="pi pi-angle-double-right text-xs"></i>
+          <span class="text-xs font-semibold [writing-mode:vertical-rl] rotate-180">Explorateur</span>
+        </button>
         }
+        <div class="flex flex-col flex-1 min-h-0" [class.hidden]="layout.leftCollapsed()">
+          @if (authService.hasRole('CONTRIBUTOR')) {
+          <app-ingest-panel />
+          }
 
-        <app-sidebar />
+          <app-sidebar />
+        </div>
       </aside>
 
       <!-- Zone de contenu principale -->
@@ -27,16 +41,37 @@
 
       <!-- shell.component.html, aside droit -->
       <aside
-        class="w-70 shrink-0 bg-white rounded-xl border border-prussian-blue-100  flex flex-col min-h-0">
-
-        @if (selectedDetail(); as detail) {
-        <app-document-detail-panel [document]="detail" />
-        } @else {
-        <div
-          class="flex-1 flex items-center justify-center text-sm text-gray-400 text-center px-4">
-          Sélectionnez un document pour voir ses détails
-        </div>
+        class="shrink-0 bg-white rounded-xl border border-prussian-blue-100 flex flex-col min-h-0"
+        [class.w-70]="!layout.rightCollapsed()"
+        [class.w-10]="layout.rightCollapsed()">
+        @if (layout.rightCollapsed()) {
+        <button
+          class="flex-1 flex flex-col items-center gap-3 py-3 rounded-xl text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+          title="Afficher les détails du document"
+          (click)="layout.toggleRight()">
+          <i class="pi pi-angle-double-left text-xs"></i>
+          <span class="text-xs font-semibold [writing-mode:vertical-rl]">Détails</span>
+        </button>
         }
+        <div class="flex flex-col flex-1 min-h-0" [class.hidden]="layout.rightCollapsed()">
+          @if (selectedDetail(); as detail) {
+          <app-document-detail-panel [document]="detail" />
+          } @else {
+          <div class="w-full shrink-0 flex items-center justify-between p-2.5 border-b border-prussian-blue-100">
+            <span class="text-xs font-semibold text-gray-600 tracking-wide">DÉTAILS DU DOCUMENT</span>
+            <button
+              class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-colors"
+              title="Replier le panneau"
+              (click)="layout.toggleRight()">
+              <i class="pi pi-angle-double-right text-sm"></i>
+            </button>
+          </div>
+          <div
+            class="flex-1 flex items-center justify-center text-sm text-gray-400 text-center px-4">
+            Sélectionnez un document pour voir ses détails
+          </div>
+          }
+        </div>
       </aside>
 
     </div>
@@ -54,3 +89,6 @@
   </div>
 
 </div>
+
+<!-- Une seule boîte de confirmation pour toutes les vues : elle reste affichable même panneau replié -->
+<app-confirm-dialog />

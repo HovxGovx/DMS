@@ -27,6 +27,12 @@
       <i class="pi {{ isUnpublishing() ? 'pi-spin pi-spinner' : 'pi-eye-slash' }} text-sm"></i>
     </button>
     }
+    <button
+      class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-colors"
+      title="Replier le panneau"
+      (click)="layout.toggleRight()">
+      <i class="pi pi-angle-double-right text-sm"></i>
+    </button>
   </div>
 </div>
 

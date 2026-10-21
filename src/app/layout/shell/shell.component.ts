@@ -13,6 +13,8 @@ import { mergeWithRealMetadata } from '../../features/documents/document.mapper'
 import { ValidationStateService } from '../../features/validation/validation-state.service';
 import { AuthService } from '../../core/auth.service';
 import { SmartFolderStateService } from '../../features/documents/smart-folder-state.service';
+import { LayoutStateService } from '../../core/layout-state.service';
+import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog.component';
 
 /** Absence minimale (onglet caché) avant de recharger au retour, pour ignorer les simples allers-retours. */
 const REFRESH_AFTER_HIDDEN_MS = 15_000;
@@ -22,7 +24,8 @@ const REFRESH_AFTER_HIDDEN_MS = 15_000;
   standalone: true,
   imports: [
     RouterOutlet, TopbarComponent, IngestPanelComponent,
-    SidebarComponent, DocumentDetailPanelComponent, ValidationViewComponent, AdminViewComponent
+    SidebarComponent, DocumentDetailPanelComponent, ValidationViewComponent, AdminViewComponent,
+    ConfirmDialogComponent
   ],
   templateUrl: './shell.component.html'
 })
@@ -30,6 +33,7 @@ export class ShellComponent {
   documentState = inject(DocumentStateService);
   viewState = inject(ViewStateService);
   authService = inject(AuthService);
+  layout = inject(LayoutStateService);
   private validationState = inject(ValidationStateService);
   private folderState = inject(SmartFolderStateService);
 
