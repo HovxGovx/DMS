@@ -7,7 +7,7 @@
   </div>
 
   <div class="flex gap-1.5 flex-wrap">
-    @for (tag of tags(); track tag.label) {
+    @for (tag of tags(); track $index) {
       <p-tag [value]="tag.label" [severity]="tag.severity" styleClass="!text-xs !font-medium" />
     }
   </div>

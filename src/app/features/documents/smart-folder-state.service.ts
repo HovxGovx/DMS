@@ -46,7 +46,6 @@ export class SmartFolderStateService {
     return path;
   });
 
-  currentPath = computed<string[]>(() => this.currentPathNodes().map(node => node.name));
 
 
   tree = computed<HierarchyNode[]>(() => this.buildNodes(null, []));

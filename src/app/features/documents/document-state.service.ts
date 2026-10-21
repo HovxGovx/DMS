@@ -1,14 +1,11 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { DocumentItem } from './document.model';
-import { fromLifecycleDocument } from './document.mapper';
-import { LifecycleDocumentService } from '../validation/lifecycle-document.service';
 import { DocumentMetadataService, DocMetadata } from './document-metadata.service';
 import { fromSearchResult } from './document.mapper';
 import { SearchResult } from '../search/search-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class DocumentStateService {
-  private lifecycleService = inject(LifecycleDocumentService);
   private metadataService = inject(DocumentMetadataService);
 
   publishedDocuments = signal<DocumentItem[]>([]);
@@ -28,22 +25,6 @@ export class DocumentStateService {
     const list = this.isSearchMode() ? this.searchResults() : this.publishedDocuments();
     return list.find(d => d.id === this.selectedDocId()) ?? null;
   });
-
-  loadPublishedDocuments() {
-    this.isLoadingPublished.set(true);
-    this.publishedLoadError.set(null);
-
-    this.lifecycleService.getPublished().subscribe({
-      next: (docs) => {
-        this.publishedDocuments.set(docs.map(fromLifecycleDocument));
-        this.isLoadingPublished.set(false);
-      },
-      error: () => {
-        this.isLoadingPublished.set(false);
-        this.publishedLoadError.set("Impossible de charger les documents.");
-      }
-    });
-  }
 
   selectDocument(id: string) {
     this.selectedDocId.set(id);

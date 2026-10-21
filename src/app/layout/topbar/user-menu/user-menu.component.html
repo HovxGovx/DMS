@@ -1,14 +1,20 @@
 <div class="relative">
 
-  <div class="flex items-center gap-2 cursor-pointer select-none" [title]="userName()" (click)="toggle()">
-    <div class="w-8 h-8 rounded-full bg-prussian-blue-700 text-white flex items-center justify-center text-xs font-semibold shrink-0">
+  <button
+    type="button"
+    class="flex items-center gap-2 cursor-pointer select-none rounded-md"
+    [title]="userName()"
+    aria-haspopup="menu"
+    [attr.aria-expanded]="isOpen()"
+    (click)="toggle()">
+    <span class="w-8 h-8 rounded-full bg-prussian-blue-700 text-white flex items-center justify-center text-xs font-semibold shrink-0">
       {{ userInitials() }}
-    </div>
+    </span>
     <i
       class="pi pi-chevron-down text-xs text-prussian-blue-300 ml-1 transition-transform duration-200"
       [class.rotate-180]="isOpen()"
     ></i>
-  </div>
+  </button>
 
   <app-dropdown-backdrop [visible]="isOpen()" />
 
@@ -19,6 +25,7 @@
     [class.pointer-events-none]="!isOpen()"
     [class.opacity-100]="isOpen()"
     [class.scale-100]="isOpen()"
+    [attr.inert]="isOpen() ? null : ''"
   >
 
     <!-- Compte connecté -->

@@ -1,14 +1,22 @@
-<div class="flex items-center gap-2 text-xs">
-  @for (crumb of segments(); track crumb; let last = $last) {
-    <span
-      class="cursor-pointer hover:text-prussian-blue-700 transition-colors"
-      [class.font-semibold]="last"
-      [class.text-gray-800]="last"
-      [class.text-gray-500]="!last"
-      (click)="segmentClick.emit(crumb)"
-    >{{ crumb }}</span>
+<nav class="flex items-center gap-2 text-xs" aria-label="Fil d'Ariane">
+  @for (crumb of segments(); track $index; let last = $last) {
+    <!-- Le dernier segment est la page ouverte, un segment sans id n'est pas un dossier : pas de lien -->
+    @if (!last && crumb.id) {
+      <button
+        type="button"
+        class="text-gray-500 hover:text-prussian-blue-700 transition-colors"
+        (click)="segmentClick.emit(crumb.id)"
+      >{{ crumb.label }}</button>
+    } @else {
+      <span
+        [class.font-semibold]="last"
+        [class.text-gray-800]="last"
+        [class.text-gray-500]="!last"
+        [attr.aria-current]="last ? 'page' : null"
+      >{{ crumb.label }}</span>
+    }
     @if (!last) {
       <i class="pi pi-angle-right text-xs text-gray-300"></i>
     }
   }
-</div>
+</nav>

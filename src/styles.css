@@ -70,6 +70,15 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+
+  /* Contour de focus pour la navigation au clavier seulement (focus-visible : jamais au clic de souris) */
+  :where(button, a, [tabindex], [role="button"]):focus-visible {
+    outline: 2px solid var(--color-prussian-blue-500);
+    outline-offset: 1px;
+  }
+  tr:focus-visible {
+    outline-offset: -2px;
+  }
 }
 
 @theme {

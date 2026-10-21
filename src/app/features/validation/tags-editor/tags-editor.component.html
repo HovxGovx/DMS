@@ -20,20 +20,26 @@
         {{ tag.label }}
 
         <!-- Les deux actions restent disponibles pour pouvoir revenir sur un choix -->
-        <i
-          class="pi pi-check text-2xs cursor-pointer transition-colors hover:text-emerald-600"
+        <button
+          type="button"
+          class="flex cursor-pointer transition-colors hover:text-emerald-600"
           [class.text-emerald-600]="tag.status === 'ACCEPTED'"
           [class.text-gray-400]="tag.status !== 'ACCEPTED'"
           [title]="tag.status === 'ACCEPTED' ? 'Accepté' : 'Accepter'"
+          [attr.aria-label]="(tag.status === 'ACCEPTED' ? 'Accepté : ' : 'Accepter : ') + tag.label"
+          [attr.aria-pressed]="tag.status === 'ACCEPTED'"
           (click)="tag.status !== 'ACCEPTED' && accept(tag)"
-        ></i>
-        <i
-          class="pi pi-times text-2xs cursor-pointer transition-colors hover:text-red-500"
+        ><i class="pi pi-check text-2xs"></i></button>
+        <button
+          type="button"
+          class="flex cursor-pointer transition-colors hover:text-red-500"
           [class.text-red-500]="tag.status === 'REJECTED'"
           [class.text-gray-400]="tag.status !== 'REJECTED'"
           [title]="tag.status === 'REJECTED' ? 'Rejeté' : 'Rejeter'"
+          [attr.aria-label]="(tag.status === 'REJECTED' ? 'Rejeté : ' : 'Rejeter : ') + tag.label"
+          [attr.aria-pressed]="tag.status === 'REJECTED'"
           (click)="tag.status !== 'REJECTED' && reject(tag)"
-        ></i>
+        ><i class="pi pi-times text-2xs"></i></button>
       </div>
     }
 

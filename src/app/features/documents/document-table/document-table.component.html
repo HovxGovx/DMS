@@ -2,8 +2,6 @@
 <p-table
   [value]="documents()"
   [(selection)]="selectedDocs"
-  [scrollable]="false"
-  scrollHeight="flex"
   dataKey="id"
   [paginator]="true"
   [rows]="rows()"
@@ -31,11 +29,15 @@
 
   <ng-template pTemplate="body" let-doc>
     <!-- Hauteur fixe : chaque cellule tient sur une seule ligne (deux pour le nom en recherche) -->
+    <!-- Au clavier : Tab atteint la ligne, Entrée affiche ses détails -->
     <tr
       class="doc-row group/row h-12 transition-colors duration-150 cursor-pointer"
       [class.hover:!bg-prussian-blue-50]="doc.id !== highlightedId()"
       [class.!bg-prussian-blue-100]="doc.id === highlightedId()"
-      (click)="rowClick.emit(doc.id)">
+      tabindex="0"
+      [attr.aria-selected]="doc.id === highlightedId()"
+      (click)="rowClick.emit(doc.id)"
+      (keydown.enter)="rowClick.emit(doc.id)">
 
       <td>
         <div class="flex items-center gap-2 min-w-0">
@@ -68,11 +70,15 @@
         }
       </td>
       }
-      <td (click)="openTags(doc, $event)">
+      <!-- keydown arrêté : Entrée sur le bouton ne doit pas aussi sélectionner la ligne -->
+      <td (keydown)="$event.stopPropagation()">
         <!-- 2 tags, le reste est résumé par le badge « +N » -->
-        <div
-          class="group flex items-center gap-1.5 min-w-0 -mx-1.5 px-1.5 py-1 rounded-md cursor-pointer hover:bg-prussian-blue-100/60 transition-colors"
+        <button
+          type="button"
+          class="group w-full flex items-center gap-1.5 min-w-0 -mx-1.5 px-1.5 py-1 rounded-md cursor-pointer text-left hover:bg-prussian-blue-100/60 transition-colors"
           [class.bg-prussian-blue-100]="tagsDoc()?.id === doc.id"
+          [attr.aria-expanded]="tagsDoc()?.id === doc.id"
+          (click)="openTags(doc, $event)"
           pTooltip="Voir tous les tags" tooltipPosition="top" [showDelay]="400">
           @for (tag of visibleTags(doc); track $index) {
           <p-tag [value]="tag.label" [severity]="tag.severity"
@@ -84,12 +90,11 @@
             +{{ hiddenTagCount(doc) }}
           </span>
           }
-        </div>
+        </button>
       </td>
-      <td (click)="$event.stopPropagation()">
-        <!-- Boutons visibles au survol de la ligne, sur la ligne sélectionnée ou pendant une action en cours -->
-        <div class="flex items-center gap-1 opacity-0 group-hover/row:opacity-100 focus-within:opacity-100 transition-opacity duration-150"
-          [class.opacity-100]="doc.id === highlightedId() || cancellingId() === doc.id || unpublishService.unpublishingId() === doc.id">
+      <td (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()">
+        <!-- Toujours visibles (en gris, en couleur au survol de la ligne) : découvrables, et utilisables au toucher -->
+        <div class="flex items-center gap-1">
           @if (searchMode()) {
           <button
             class="w-7 h-7 rounded-md flex items-center justify-center text-gray-400 group-hover/row:text-prussian-blue-600 hover:bg-prussian-blue-100 hover:text-prussian-blue-700 transition-colors"
@@ -158,6 +163,7 @@
   [class.pointer-events-none]="!tagsDoc()"
   [class.opacity-100]="!!tagsDoc()"
   [class.scale-100]="!!tagsDoc()"
+  [attr.inert]="tagsDoc() ? null : ''"
   (click)="$event.stopPropagation()">
   @if (lastTagsDoc(); as doc) {
   <div class="flex items-center justify-between gap-2 px-3.5 py-1">
@@ -177,7 +183,7 @@
 
   <div class="flex flex-wrap gap-1.5 px-3.5 py-1.5 max-h-60 overflow-y-auto">
     <p-tag [value]="doc.category" [severity]="doc.categorySeverity" styleClass="!text-xs !font-medium" />
-    @for (tag of doc.tags; track tag.label) {
+    @for (tag of doc.tags; track $index) {
     <p-tag [value]="tag.label" [severity]="tag.severity" styleClass="!text-xs !font-medium" />
     }
   </div>

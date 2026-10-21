@@ -5,7 +5,7 @@
   </div>
    <div class="flex items-center gap-2">
     <button
-      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-colors"
       [class]="ragState.isOpen()
         ? 'border-prussian-blue-700 bg-prussian-blue-700 text-white'
         : 'border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50'"
@@ -15,7 +15,7 @@
     </button>
     @if (state.isSearchMode()) {
     <button
-      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors"
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors"
       (click)="onClearSearch()">
       <i class="pi pi-times text-2xs"></i>
       Annuler
@@ -34,7 +34,7 @@
 }
 
 @if (hasNoDomain()) {
-<div class="mx-3 mb-2 flex items-center gap-2 rounded-lg bg-burnt-peach-50 px-3 py-2 text-xs text-burnt-peach-800">
+<div class="mx-3 mb-2 flex items-center gap-2 rounded-md bg-burnt-peach-50 px-3 py-2 text-xs text-burnt-peach-800">
   <i class="pi pi-info-circle"></i>
   Aucun domaine ne vous est attribué : vous ne voyez que vos propres imports. Contactez un administrateur.
 </div>

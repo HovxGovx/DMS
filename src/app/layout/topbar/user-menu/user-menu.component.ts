@@ -61,6 +61,11 @@ export class UserMenuComponent {
     });
   }
 
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    this.close();
+  }
+
   // Ferme le menu si on clique n'importe où en dehors
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {

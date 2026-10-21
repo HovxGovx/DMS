@@ -1,5 +1,5 @@
 import { Component, inject, signal, computed, effect } from '@angular/core';
-import { BreadcrumbComponent } from '../../../shared/breadcrumb/breadcrumb.component';
+import { BreadcrumbComponent, BreadcrumbSegment } from '../../../shared/breadcrumb/breadcrumb.component';
 import { DocumentFiltersComponent } from '../document-filters/document-filters.component';
 import { DocumentTableComponent } from '../document-table/document-table.component';
 import { DocumentStateService } from '../document-state.service';
@@ -34,15 +34,15 @@ export class DocumentListComponent {
 
   activeTagFilters = signal<string[]>([]);
 
-  breadcrumbSegments = computed(() => {
+  breadcrumbSegments = computed<BreadcrumbSegment[]>(() => {
     if (this.state.isSearchMode()) {
       const count = this.state.searchResultCount();
       const label = this.state.searchLabel();
-      const what = label ? `Recherche « ${label} »` : '';
-      return [`${what}  ${count} résultat${count > 1 ? 's' : ''}`];
+      const results = `${count} résultat${count > 1 ? 's' : ''}`;
+      return [{ id: null, label: label ? `Recherche « ${label} » : ${results}` : results }];
     }
-    const path = this.folderState.currentPath();
-    return path.length ? path : ['Documents publiés'];
+    const path = this.folderState.currentPathNodes();
+    return path.length ? path.map(node => ({ id: node.id, label: node.name })) : [{ id: null, label: 'Documents publiés' }];
   });
 
   // Options construites à partir de ce que le tableau affiche : type du document puis tags acceptés
@@ -73,12 +73,8 @@ export class DocumentListComponent {
     });
   }
 
-  onBreadcrumbClick(name: string) {
-    if (this.state.isSearchMode()) return;
-    const node = this.folderState.currentPathNodes().find(n => n.name === name);
-    if (node) {
-      this.folderState.selectFolder(node.id);
-    }
+  onBreadcrumbClick(folderId: string) {
+    this.folderState.selectFolder(folderId);
   }
 
   onDocClick(id: string) {

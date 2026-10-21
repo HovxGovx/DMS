@@ -30,6 +30,7 @@
     [class.pointer-events-none]="!isOpen()"
     [class.opacity-100]="isOpen()"
     [class.scale-100]="isOpen()"
+    [attr.inert]="isOpen() ? null : ''"
   >
     @if (isLoading()) {
       <p class="px-4 py-3 text-sm text-gray-400 text-center">

@@ -18,7 +18,9 @@
 </div>
 
 <div
-  class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll pr-1">
+  class="flex-1 min-h-0 overflow-y-auto scroll-smooth sidebar-tree-scroll pr-1"
+  role="tree"
+  aria-label="Dossiers">
   @if (state.treeError()) {
   <p class="text-xs text-red-500 text-center py-4">{{ state.treeError() }}</p>
   } @else {

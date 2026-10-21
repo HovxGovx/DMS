@@ -1,17 +1,30 @@
+<!-- Ligne de l'arbre : Entrée ou Espace la sélectionne, flèches droite et gauche déplient et replient -->
 <div
   class="group flex items-center gap-2 py-1.5 pr-2 rounded-md cursor-pointer transition-colors duration-150"
   [style.paddingLeft.px]="depth() * 14 + 8"
   [class.bg-prussian-blue-100]="isActive"
   [class.hover:bg-prussian-blue-50]="!isActive"
+  role="treeitem"
+  tabindex="0"
+  [attr.aria-selected]="isActive"
+  [attr.aria-expanded]="hasChildren ? isExpanded : null"
   (click)="onRowClick()"
+  (keydown.enter)="onRowClick()"
+  (keydown.space)="$event.preventDefault(); onRowClick()"
+  (keydown.arrowright)="onArrowKey($event, true)"
+  (keydown.arrowleft)="onArrowKey($event, false)"
 >
-  @if (node().hasChildren ?? !!node().children?.length) {
-    <i
-      class="pi text-2xs text-gray-400 shrink-0"
-      [class.pi-chevron-down]="isExpanded"
-      [class.pi-chevron-right]="!isExpanded"
+  @if (hasChildren) {
+    <!-- Hors tabulation : au clavier, les flèches font la même chose -->
+    <button
+      type="button"
+      tabindex="-1"
+      class="flex items-center justify-center shrink-0 text-gray-400 hover:text-prussian-blue-700"
+      [attr.aria-label]="isExpanded ? 'Replier' : 'Déplier'"
       (click)="onChevronClick($event)"
-    ></i>
+    >
+      <i class="pi text-2xs" [class.pi-chevron-down]="isExpanded" [class.pi-chevron-right]="!isExpanded"></i>
+    </button>
   } @else {
     <span class="w-2.5 shrink-0"></span>
   }
@@ -29,23 +42,21 @@
     [class.text-gray-600]="!isActive"
   >{{ node().label }}</span>
   @if (actionsEnabled()) {
-    <span class="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-      <i
-        class="pi pi-plus text-2xs text-gray-400 hover:text-prussian-blue-700"
-        title="Nouveau sous-dossier"
-        (click)="onAction($event, 'create')"
-      ></i>
+    <!-- Au survol, sur le dossier ouvert, ou quand le clavier arrive sur la ligne -->
+    <span
+      class="flex items-center gap-1.5 shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
+      [class.opacity-100]="isActive"
+    >
+      <button type="button" class="flex text-gray-400 hover:text-prussian-blue-700" title="Nouveau sous-dossier" (click)="onAction($event, 'create')">
+        <i class="pi pi-plus text-2xs"></i>
+      </button>
       @if (node().editable) {
-        <i
-          class="pi pi-pencil text-2xs text-gray-400 hover:text-prussian-blue-700"
-          title="Modifier"
-          (click)="onAction($event, 'edit')"
-        ></i>
-        <i
-          class="pi pi-trash text-2xs text-gray-400 hover:text-red-500"
-          title="Supprimer"
-          (click)="onAction($event, 'delete')"
-        ></i>
+        <button type="button" class="flex text-gray-400 hover:text-prussian-blue-700" title="Modifier" (click)="onAction($event, 'edit')">
+          <i class="pi pi-pencil text-2xs"></i>
+        </button>
+        <button type="button" class="flex text-gray-400 hover:text-red-500" title="Supprimer" (click)="onAction($event, 'delete')">
+          <i class="pi pi-trash text-2xs"></i>
+        </button>
       }
     </span>
   }
@@ -60,7 +71,7 @@
 </div>
 
 @if (node().children?.length && isExpanded) {
-  <div class="ml-3 pl-2 border-l border-prussian-blue-100">
+  <div class="ml-3 pl-2 border-l border-prussian-blue-100" role="group">
     @for (child of node().children; track child.key) {
       <app-tree-node
         [node]="child"

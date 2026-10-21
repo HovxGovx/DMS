@@ -27,6 +27,11 @@ export class TreeNodeComponent {
   nodeSelect = output<HierarchyNode>();
   nodeAction = output<NodeActionEvent>();
 
+  get hasChildren(): boolean {
+    const n = this.node();
+    return n.hasChildren ?? !!n.children?.length;
+  }
+
   get isExpanded(): boolean {
     return this.isExpandedFn()(this.node().key);
   }
@@ -53,6 +58,13 @@ export class TreeNodeComponent {
 
   onChevronClick(event: MouseEvent) {
     event.stopPropagation();
+    this.toggleExpand.emit(this.node().key);
+  }
+
+  /** Flèche droite : déplie un dossier replié ; flèche gauche : replie un dossier déplié. */
+  onArrowKey(event: Event, expand: boolean) {
+    if (!this.hasChildren || this.isExpanded === expand) return;
+    event.preventDefault();
     this.toggleExpand.emit(this.node().key);
   }
 

@@ -45,7 +45,7 @@
   <div class="min-h-0 overflow-y-auto sidebar-tree-scroll flex flex-col gap-3">
 
     @if (state.isAsking()) {
-    <div class="flex items-center gap-3 rounded-lg bg-white border border-prussian-blue-100 px-3 py-3 text-xs text-gray-600">
+    <div class="flex items-center gap-3 rounded-md bg-white border border-prussian-blue-100 px-3 py-3 text-xs text-gray-600">
       <i class="pi pi-spin pi-spinner text-prussian-blue-600"></i>
       <div>
         <div class="font-medium text-gray-700">Recherche dans vos documents… {{ state.elapsedSeconds() }} s</div>
@@ -53,7 +53,7 @@
       </div>
     </div>
     } @else if (state.error()) {
-    <div class="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+    <div class="flex items-center gap-2 rounded-md bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
       <i class="pi pi-exclamation-triangle"></i>
       {{ state.error() }}
     </div>
@@ -62,12 +62,12 @@
     <div class="text-xs text-gray-500">« {{ state.askedQuestion() }} »</div>
 
     @if (state.notFound()) {
-    <div class="flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-500">
+    <div class="flex items-center gap-2 rounded-md bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-500">
       <i class="pi pi-info-circle"></i>
       {{ answer.answer }}
     </div>
     } @else {
-    <div class="rounded-lg bg-white border border-prussian-blue-100 px-3 py-2 text-sm text-gray-800 whitespace-pre-line">{{ answer.answer }}</div>
+    <div class="rounded-md bg-white border border-prussian-blue-100 px-3 py-2 text-sm text-gray-800 whitespace-pre-line">{{ answer.answer }}</div>
 
     <div class="flex flex-col gap-1.5">
       <div class="text-xs font-medium text-gray-600">Sources</div>
