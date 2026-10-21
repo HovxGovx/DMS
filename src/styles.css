@@ -2,6 +2,63 @@
 @import "primeicons/primeicons.css";
 @import "tailwindcss";
 
+/* IBM Plex (SIL Open Font License 1.1, voir public/fonts/LICENSE-IBM-Plex.txt), servie avec l'application
+   depuis public/fonts : pas d'appel à Google Fonts, l'affichage reste le même sans accès à Internet.
+   Sous-ensembles latin et latin étendu ; Plex Sans est une police variable (400 à 700). */
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-sans-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @layer tailwind-base, primeng, tailwind-utilities;
 
 @import "tailwindcss/theme.css" layer(tailwind-base);
@@ -16,9 +73,12 @@
 }
 
 @theme {
-  /* Plus petite taille de texte : badges, petits libellés, icônes de boutons */
-  --text-2xs: 0.6875rem;
+  /* Tailles de texte un cran au-dessus de Tailwind (12 et 13 px au lieu de 11 et 12) : interface dense, lisible projetée.
+     text-2xs : badges, petits libellés, icônes de boutons */
+  --text-2xs: 0.75rem;
   --text-2xs--line-height: 1rem;
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.125rem;
 
   --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
@@ -34,66 +94,6 @@
   --color-prussian-blue-900: #021931;
   --color-prussian-blue-950: #011222;
 
-  --color-regal-navy-50: #e8f2fd;
-  --color-regal-navy-100: #d0e5fb;
-  --color-regal-navy-200: #a2ccf6;
-  --color-regal-navy-300: #73b2f2;
-  --color-regal-navy-400: #4499ee;
-  --color-regal-navy-500: #167fe9;
-  --color-regal-navy-600: #1166bb;
-  --color-regal-navy-700: #0d4c8c;
-  --color-regal-navy-800: #09335d;
-  --color-regal-navy-900: #04192f;
-  --color-regal-navy-950: #031221;
-
-  --color-brilliant-azure-50: #e9f2fb;
-  --color-brilliant-azure-100: #d3e5f8;
-  --color-brilliant-azure-200: #a8ccf0;
-  --color-brilliant-azure-300: #7cb2e9;
-  --color-brilliant-azure-400: #5199e1;
-  --color-brilliant-azure-500: #257fda;
-  --color-brilliant-azure-600: #1e66ae;
-  --color-brilliant-azure-700: #164c83;
-  --color-brilliant-azure-800: #0f3357;
-  --color-brilliant-azure-900: #07192c;
-  --color-brilliant-azure-950: #05121f;
-
-  --color-cool-horizon-50: #e9f2fc;
-  --color-cool-horizon-100: #d3e5f8;
-  --color-cool-horizon-200: #a6ccf2;
-  --color-cool-horizon-300: #7ab2eb;
-  --color-cool-horizon-400: #4e99e4;
-  --color-cool-horizon-500: #217fde;
-  --color-cool-horizon-600: #1b66b1;
-  --color-cool-horizon-700: #144c85;
-  --color-cool-horizon-800: #0d3359;
-  --color-cool-horizon-900: #07192c;
-  --color-cool-horizon-950: #05121f;
-
-  --color-sky-blue-50: #e9f3fb;
-  --color-sky-blue-100: #d3e6f8;
-  --color-sky-blue-200: #a7cdf1;
-  --color-sky-blue-300: #7bb4ea;
-  --color-sky-blue-400: #509be2;
-  --color-sky-blue-500: #2483db;
-  --color-sky-blue-600: #1d68af;
-  --color-sky-blue-700: #154e84;
-  --color-sky-blue-800: #0e3458;
-  --color-sky-blue-900: #071a2c;
-  --color-sky-blue-950: #05121f;
-
-  --color-almond-silk-50: #fcede8;
-  --color-almond-silk-100: #f9dcd2;
-  --color-almond-silk-200: #f3b8a5;
-  --color-almond-silk-300: #ed9578;
-  --color-almond-silk-400: #e8724a;
-  --color-almond-silk-500: #e24e1d;
-  --color-almond-silk-600: #b53f17;
-  --color-almond-silk-700: #872f12;
-  --color-almond-silk-800: #5a1f0c;
-  --color-almond-silk-900: #2d1006;
-  --color-almond-silk-950: #200b04;
-
   --color-burnt-peach-50: #fbeee9;
   --color-burnt-peach-100: #f7ddd4;
   --color-burnt-peach-200: #f0baa8;
@@ -106,17 +106,6 @@
   --color-burnt-peach-900: #2b1108;
   --color-burnt-peach-950: #1e0c05;
 
-  --color-rusty-spice-50: #fbeeea;
-  --color-rusty-spice-100: #f7ddd4;
-  --color-rusty-spice-200: #efbba9;
-  --color-rusty-spice-300: #e7987e;
-  --color-rusty-spice-400: #de7654;
-  --color-rusty-spice-500: #d65429;
-  --color-rusty-spice-600: #ab4321;
-  --color-rusty-spice-700: #813218;
-  --color-rusty-spice-800: #562210;
-  --color-rusty-spice-900: #2b1108;
-  --color-rusty-spice-950: #1e0c06;
 }
 
 /* Scrollbar custom pour le tree du sidebar */

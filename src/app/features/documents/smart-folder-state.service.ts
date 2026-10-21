@@ -10,7 +10,6 @@ const ROOT_KEY = 'root';
 /** Dossier virtuel des contributeurs : ce qu'ils ont importé, quel que soit le statut. */
 export const MY_IMPORTS_FOLDER_ID = 'my-imports';
 const MY_IMPORTS_LABEL = 'Mes imports';
-const PAGE_SIZE = 100;
 
 @Injectable({ providedIn: 'root' })
 export class SmartFolderStateService {
@@ -192,10 +191,10 @@ export class SmartFolderStateService {
       this.documentState.publishedLoadError.set(null);
     }
 
-    this.api.getDocuments(id, 0, PAGE_SIZE).subscribe({
-      next: page => {
+    this.api.getAllDocuments(id).subscribe({
+      next: docs => {
         if (this.selectedFolderId() !== id) return;
-        this.documentState.publishedDocuments.set(page.content.map(fromFolderDocument));
+        this.documentState.publishedDocuments.set(docs.map(fromFolderDocument));
         this.documentState.isLoadingPublished.set(false);
       },
       error: () => {

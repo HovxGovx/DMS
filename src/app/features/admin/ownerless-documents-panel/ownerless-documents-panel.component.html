@@ -27,7 +27,7 @@
       (input)="state.filter.set($any($event.target).value)"
       (keydown.escape)="state.filter.set('')"
       placeholder="Filtrer par titre ou nom de fichier..."
-      class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+      class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-gray-50 focus:outline-none focus:border-prussian-blue-400" />
   </div>
 
   <div class="ml-auto flex items-center gap-2">
@@ -67,21 +67,18 @@
     <p class="text-sm text-red-500 text-center py-8">{{ state.loadError() }}</p>
   } @else if (!state.documents().length) {
     <div class="flex flex-col items-center justify-center gap-3 text-center py-12">
-      <div class="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center">
-        <i class="pi pi-check text-emerald-600 text-xl"></i>
-      </div>
       <div class="text-sm font-semibold text-gray-800">Tous les documents ont un propriétaire</div>
     </div>
   } @else if (!state.filteredDocuments().length) {
     <p class="text-sm text-gray-400 text-center py-8">Aucun document ne correspond au filtre</p>
   } @else {
     <table class="w-full text-xs">
-      <thead class="sticky top-0 z-10 bg-slate-50 text-gray-500 text-left">
+      <thead class="sticky top-0 z-10 bg-gray-50 text-gray-500 text-left">
         <tr class="border-b border-prussian-blue-100">
           <th class="px-4 py-2 w-10">
             <input
               type="checkbox"
-              class="accent-orange-500 cursor-pointer"
+              class="accent-prussian-blue-600 cursor-pointer"
               title="Tout cocher"
               [checked]="allFilteredSelected()"
               (change)="state.setAllFiltered($any($event.target).checked)" />
@@ -95,13 +92,13 @@
         @for (doc of state.filteredDocuments(); track doc.id) {
           <tr
             class="border-b border-prussian-blue-50 align-middle cursor-pointer transition-colors"
-            [class.bg-orange-50]="state.selectedIds().has(doc.id)"
+            [class.bg-prussian-blue-50]="state.selectedIds().has(doc.id)"
             [class.hover:bg-prussian-blue-50]="!state.selectedIds().has(doc.id)"
             (click)="state.toggle(doc.id)">
             <td class="px-4 py-2.5">
               <input
                 type="checkbox"
-                class="accent-orange-500 cursor-pointer"
+                class="accent-prussian-blue-600 cursor-pointer"
                 [checked]="state.selectedIds().has(doc.id)"
                 (click)="$event.stopPropagation()"
                 (change)="state.toggle(doc.id)" />

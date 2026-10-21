@@ -1,7 +1,7 @@
-<div class="relative flex-1 max-w-xl mx-8">
-  <div class="flex columns-1">
-    <p-inputgroup>
-      <p-inputgroup-addon class="!bg-slate-50 !border-slate-200">
+<div class="relative">
+  <div class="flex">
+    <p-inputgroup class="w-full">
+      <p-inputgroup-addon class="!bg-gray-50 !border-gray-200">
         <i class="pi pi-search text-gray-400"></i>
       </p-inputgroup-addon>
 
@@ -12,18 +12,19 @@
         (ngModelChange)="onInput($event)"
         (focus)="onFocus()"
         (keydown.enter)="showAllResults()"
-        placeholder="Rechercher documents, métadonnées, OCR..."
-        class="w-full !bg-slate-50 !border-slate-200"
+        placeholder="Rechercher un document"
+        title="Recherche dans le titre, le contenu, les tags et l'auteur, tolérante aux fautes de frappe"
+        class="w-full !bg-gray-50 !border-gray-200"
       />
 
-      <p-inputgroup-addon class="!p-0 !bg-slate-50 !border-slate-200">
+      <p-inputgroup-addon class="!p-0 !bg-gray-50 !border-gray-200">
         <app-advanced-search-panel [filters]="filters()" (apply)="onApplyFilters($event)" />
       </p-inputgroup-addon>
     </p-inputgroup>
   </div>
 
   <div
-    class="absolute left-0 top-full mt-2 w-full bg-white rounded-xl border border-slate-200 shadow-lg py-2 origin-top transition-all duration-150 z-50 max-h-80 overflow-y-auto"
+    class="absolute left-0 top-full mt-2 w-full bg-white rounded-xl border border-gray-200 shadow-lg py-2 origin-top transition-all duration-150 z-50 max-h-80 overflow-y-auto"
     [class.opacity-0]="!isOpen()"
     [class.scale-95]="!isOpen()"
     [class.pointer-events-none]="!isOpen()"
@@ -34,6 +35,10 @@
       <p class="px-4 py-3 text-sm text-gray-400 text-center">
         Recherche...
       </p>
+    } @else if (searchFailed()) {
+      <p class="px-4 py-3 text-sm text-red-500 text-center">
+        La recherche a échoué. Réessayez dans quelques instants.
+      </p>
     } @else if (results().length === 0 && hasSearched()) {
       <p class="px-4 py-3 text-sm text-gray-400 text-center">
         Aucun résultat
@@ -41,7 +46,7 @@
     } @else {
       @for (result of results(); track result.id) {
         <button
-          class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors"
+          class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 transition-colors"
           (click)="selectResult(result)"
         >
           <i class="{{ iconFor(result.originalFileName).icon }} {{ iconFor(result.originalFileName).iconColor }} text-sm shrink-0"></i>
@@ -63,7 +68,7 @@
       }
       @if (results().length) {
         <button
-          class="w-full px-4 pt-2 mt-1 border-t border-slate-100 text-xs text-prussian-blue-600 hover:text-prussian-blue-800 text-left"
+          class="w-full px-4 pt-2 mt-1 border-t border-gray-100 text-xs text-prussian-blue-600 hover:text-prussian-blue-800 text-left"
           (click)="showAllResults()">
           Voir tous les résultats ({{ results().length }}) — Entrée
         </button>

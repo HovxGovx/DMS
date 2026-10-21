@@ -13,7 +13,9 @@ import {
 @Component({
   selector: 'app-ingest-panel',
   standalone: true,
-  templateUrl: './ingest-panel.component.html'
+  templateUrl: './ingest-panel.component.html',
+  // Marge intérieure : la zone en pointillés ne colle pas au bord du panneau qui la contient
+  host: { class: 'block p-1.5' }
 })
 export class IngestPanelComponent {
   private documentService = inject(LifecycleDocumentService);
@@ -35,6 +37,9 @@ export class IngestPanelComponent {
 
   onDragLeave(event: DragEvent) {
     event.preventDefault();
+    // dragleave part aussi au passage sur l'icône ou le texte : seule la vraie sortie de la zone compte
+    const zone = event.currentTarget as HTMLElement;
+    if (zone.contains(event.relatedTarget as Node | null)) return;
     this.isDragOver.set(false);
   }
 

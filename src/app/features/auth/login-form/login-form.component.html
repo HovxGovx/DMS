@@ -1,20 +1,16 @@
 <div class="h-full flex flex-col justify-center px-14 max-w-md mx-auto">
 
-  <span class="text-2xs font-semibold text-gray-500 tracking-wide mb-2">
-    ACCÈS SÉCURISÉ À L'ESPACE DE TRAVAIL
-  </span>
-
   <h1 class="text-xl font-bold text-gray-800 mb-6">Connectez-vous à votre compte</h1>
 
   <form class="flex flex-col gap-5" (ngSubmit)="onSubmit()">
 
     <div>
-      <label for="login-uid" class="text-sm font-medium text-gray-800 mb-1.5 block">E-mail ou nom d'utilisateur</label>
+      <label for="login-uid" class="text-sm font-medium text-gray-800 mb-1.5 block">Nom d'utilisateur</label>
       <p-iconfield class="w-full">
         <p-inputicon class="pi pi-user" />
         <input pInputText id="login-uid" type="text" [(ngModel)]="uid" name="uid" required
                autocomplete="username" autofocus
-               placeholder="nom@entreprise.com" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100" />
+               placeholder="Identifiant de votre compte" class="w-full !bg-prussian-blue-50 !border-prussian-blue-100" />
       </p-iconfield>
     </div>
 
@@ -36,7 +32,7 @@
     }
     <button
       type="submit"
-      class="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-rusty-spice-500 text-white text-sm font-semibold hover:bg-rusty-spice-600 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+      class="flex items-center justify-center gap-2 w-full py-3 rounded-lg bg-burnt-peach-500 text-white text-sm font-semibold hover:bg-burnt-peach-600 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait"
       [disabled]="isLoading()"
     >
       @if (isLoading()) {

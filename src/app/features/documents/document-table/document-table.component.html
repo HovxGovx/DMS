@@ -17,16 +17,15 @@
   <ng-template pTemplate="header" class="!pb-1">
     <tr class="p-0">
       <th
-        class="!text-xs   !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50">Nom
-        Fichier</th>
+        class="!text-xs   !text-gray-500 !font-semibold !bg-prussian-blue-50">Document</th>
       @if (showRelevance()) {
       <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-36">Pertinence</th>
+        class="!text-xs  !text-gray-500 !font-semibold !bg-prussian-blue-50 w-36">Pertinence</th>
       }
       <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-60">Tags</th>
+        class="!text-xs  !text-gray-500 !font-semibold !bg-prussian-blue-50 w-60">Tags</th>
       <th
-        class="!text-xs  !text-gray-500 !font-semibold !tracking-wide !bg-prussian-blue-50 w-32"><span class="sr-only">Actions</span></th>
+        class="!text-xs  !text-gray-500 !font-semibold !bg-prussian-blue-50 w-32"><span class="sr-only">Actions</span></th>
     </tr>
   </ng-template>
 
@@ -49,9 +48,6 @@
             <span class="text-2xs text-gray-400 truncate">{{ doc.originalFileName }}</span>
             }
           </div>
-          @if (doc.locked) {
-          <i class="pi pi-lock text-xs text-amber-500 shrink-0"></i>
-          }
           @if (doc.confidential) {
           <i class="pi pi-lock text-xs text-amber-500 shrink-0" pTooltip="Confidentiel" tooltipPosition="top"></i>
           }

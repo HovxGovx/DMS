@@ -34,13 +34,13 @@
       (input)="state.filter.set($any($event.target).value)"
       (keydown.escape)="state.filter.set('')"
       placeholder="Filtrer par nom, identifiant ou email..."
-      class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+      class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-gray-50 focus:outline-none focus:border-prussian-blue-400" />
   </div>
 
   <label class="flex items-center gap-1.5 text-xs text-gray-600 cursor-pointer select-none">
     <input
       type="checkbox"
-      class="accent-orange-500"
+      class="accent-prussian-blue-600"
       [checked]="state.onlyWithoutDomain()"
       (change)="state.onlyWithoutDomain.set($any($event.target).checked)" />
     Sans domaine uniquement
@@ -66,7 +66,7 @@
     </p>
   } @else {
     <table class="w-full text-xs">
-      <thead class="sticky top-0 z-10 bg-slate-50 text-gray-500 text-left">
+      <thead class="sticky top-0 z-10 bg-gray-50 text-gray-500 text-left">
         <tr class="border-b border-prussian-blue-100">
           <th class="font-semibold px-4 py-2 w-1/4">Utilisateur</th>
           <th class="font-semibold px-4 py-2 w-32">Rôle</th>

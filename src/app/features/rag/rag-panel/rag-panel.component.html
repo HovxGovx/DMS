@@ -24,7 +24,7 @@
     <input
       pInputText
       type="text"
-      class="w-full !bg-white !border-slate-200 !text-sm"
+      class="w-full !bg-white !border-gray-200 !text-sm"
       placeholder="Ex. : Quel est le numéro de la facture Palette Tsara ?"
       [attr.maxlength]="maxLength"
       [disabled]="state.isAsking()"
@@ -62,7 +62,7 @@
     <div class="text-xs text-gray-500">« {{ state.askedQuestion() }} »</div>
 
     @if (state.notFound()) {
-    <div class="flex items-center gap-2 rounded-lg bg-slate-50 border border-slate-200 px-3 py-2 text-sm text-gray-500">
+    <div class="flex items-center gap-2 rounded-lg bg-gray-50 border border-gray-200 px-3 py-2 text-sm text-gray-500">
       <i class="pi pi-info-circle"></i>
       {{ answer.answer }}
     </div>

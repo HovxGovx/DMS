@@ -1,16 +1,20 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, forkJoin, map, of, shareReplay, switchMap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   CreateSmartFolderRequest,
   CriterionFieldDefinition,
+  FolderDocument,
   FolderDocumentsPage,
   SmartFolderDetail,
   SmartFolderNode,
   SmartFolderSummary,
   UpdateSmartFolderRequest
 } from './smart-folder.model';
+
+/** Taille de page maximale acceptée par le backend pour les documents d'un dossier. */
+const FOLDER_PAGE_SIZE = 100;
 
 @Injectable({ providedIn: 'root' })
 export class SmartFolderApiService {
@@ -23,9 +27,25 @@ export class SmartFolderApiService {
     return this.http.get<SmartFolderNode[]>(this.baseUrl, { params });
   }
 
-  getDocuments(folderId: string, page = 0, size = 100): Observable<FolderDocumentsPage> {
+  getDocuments(folderId: string, page = 0, size = FOLDER_PAGE_SIZE): Observable<FolderDocumentsPage> {
     const params = new HttpParams().set('page', page).set('size', size);
     return this.http.get<FolderDocumentsPage>(`${this.baseUrl}/${folderId}/documents`, { params });
+  }
+
+  /**
+   * Tous les documents du dossier : le tableau pagine et filtre par tags sur la liste complète.
+   * Le backend plafonne une page à 100 : les pages suivantes sont demandées ensemble après la première.
+   */
+  getAllDocuments(folderId: string): Observable<FolderDocument[]> {
+    return this.getDocuments(folderId).pipe(
+      switchMap(first => {
+        const size = first.size || FOLDER_PAGE_SIZE;
+        const pageCount = Math.ceil(first.total / size);
+        if (pageCount <= 1) return of(first.content);
+        const others = Array.from({ length: pageCount - 1 }, (_, i) => this.getDocuments(folderId, i + 1, size));
+        return forkJoin(others).pipe(map(pages => [first, ...pages].flatMap(page => page.content)));
+      })
+    );
   }
 
   // Le catalogue ne change pas pendant la session : on ne l'appelle qu'une fois

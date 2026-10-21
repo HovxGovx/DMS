@@ -3,8 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, switchMap } from 'rxjs/operators';
+import { EMPTY, Subject, of } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SearchService } from '../search.service';
 import { RELEVANCE_DISPLAY, SearchResult } from '../search-result.model';
@@ -17,6 +17,7 @@ import { ViewStateService } from '../../../core/view-state.service';
 import { AdvancedSearchPanelComponent } from '../advanced-search-panel/advanced-search-panel.component';
 import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
+import { NotificationService } from '../../../core/notification.service';
 
 @Component({
   selector: 'app-search-dropdown',
@@ -28,7 +29,9 @@ import { InputGroupAddon } from 'primeng/inputgroupaddon';
     AdvancedSearchPanelComponent,
     InputGroup, InputGroupAddon
   ],
-  templateUrl: './search-dropdown.component.html'
+  templateUrl: './search-dropdown.component.html',
+  // C'est l'élément hôte qui est l'enfant flex de la barre du haut : c'est lui qui doit s'élargir
+  host: { class: 'flex-1 max-w-xl mx-8' }
 })
 /** La recherche unique de l'interface : la barre (tolérante aux fautes) et ses filtres, qui l'affinent. */
 export class SearchDropdownComponent {
@@ -38,39 +41,44 @@ export class SearchDropdownComponent {
   private elementRef = inject(ElementRef);
   private destroyRef = inject(DestroyRef);
   private locationService = inject(DocumentLocationService);
+  private notification = inject(NotificationService);
 
   query = signal('');
   results = signal<SearchResult[]>([]);
   isOpen = signal(false);
   isLoading = signal(false);
   hasSearched = signal(false);
+  /** La dernière recherche de suggestions a échoué : à ne pas confondre avec « aucun résultat ». */
+  searchFailed = signal(false);
   filters = signal<SearchFilters>(NO_FILTERS);
 
   private query$ = new Subject<string>();
 
   constructor() {
+    // Chaque saisie passe ici, même trop courte : elle annule la recherche en attente ou en cours,
+    // pour ne jamais afficher les suggestions d'un texte qui n'est plus dans la barre
     this.query$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
-      filter(q => q.trim().length >= 2),
       switchMap(q => {
+        if (q.trim().length < 2) {
+          this.isLoading.set(false);
+          return EMPTY;
+        }
         this.isLoading.set(true);
-        return this.searchService.search(toSearchRequest(q, this.filters()));
+        // L'erreur est traitée ici : sortie du switchMap, elle arrêterait les suggestions jusqu'au rechargement
+        return this.searchService.search(toSearchRequest(q, this.filters())).pipe(
+          map(results => ({ results, failed: false })),
+          catchError(() => of({ results: [] as SearchResult[], failed: true }))
+        );
       }),
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe({
-      next: (results) => {
-        this.results.set(results);
-        this.isLoading.set(false);
-        this.hasSearched.set(true);
-        this.isOpen.set(true);
-      },
-      error: () => {
-        this.results.set([]);
-        this.isLoading.set(false);
-        this.hasSearched.set(true);
-        this.isOpen.set(true);
-      }
+    ).subscribe(({ results, failed }) => {
+      this.results.set(results);
+      this.searchFailed.set(failed);
+      this.isLoading.set(false);
+      this.hasSearched.set(true);
+      this.isOpen.set(true);
     });
 
     // Quitter les résultats (dossier, « effacer la recherche ») termine la recherche : la barre et les filtres repartent à vide
@@ -86,15 +94,13 @@ export class SearchDropdownComponent {
 
   onInput(value: string) {
     this.query.set(value);
+    this.query$.next(value);
 
     if (value.trim().length < 2) {
       this.results.set([]);
       this.hasSearched.set(false);
       this.isOpen.set(false);
-      return;
     }
-
-    this.query$.next(value);
   }
 
   onFocus() {
@@ -113,7 +119,8 @@ export class SearchDropdownComponent {
   showAllResults() {
     const label = this.query().trim();
     const results = this.results();
-    if (label.length < 2 || !this.hasSearched()) return;
+    // Après un échec, la liste annonce l'erreur : afficher « 0 résultat » serait trompeur
+    if (label.length < 2 || !this.hasSearched() || this.searchFailed()) return;
     this.close();
     this.viewState.setView('documents');
     this.documentState.setSearchResults(results, label);
@@ -137,7 +144,7 @@ export class SearchDropdownComponent {
         this.viewState.setView('documents');
         this.documentState.setSearchResults(results, keywords || null);
       },
-      error: (err) => console.error('Erreur recherche :', err)
+      error: () => this.notification.error('La recherche a échoué. Réessayez dans quelques instants.', 'Recherche')
     });
   }
 
@@ -148,6 +155,8 @@ export class SearchDropdownComponent {
   private reset() {
     this.isOpen.set(false);
     this.query.set('');
+    // Sinon distinctUntilChanged bloquerait la même saisie retapée ensuite
+    this.query$.next('');
     this.results.set([]);
     this.hasSearched.set(false);
   }

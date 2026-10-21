@@ -2,9 +2,7 @@
   <div class="flex items-center gap-2 min-w-0">
     <i class="pi pi-inbox text-sm text-gray-400 shrink-0"></i>
 
-    <span class="text-xs font-semibold text-gray-600 tracking-wide truncate">
-      À PUBLIER
-    </span>
+    <span class="text-sm font-semibold text-gray-800 truncate">À publier</span>
   </div>
 
   <span class="text-xs font-semibold font-mono text-prussian-blue-700 bg-prussian-blue-50 rounded-full px-2 py-0.5 shrink-0 ml-3">
@@ -22,7 +20,7 @@
         (input)="state.queueFilter.set($any($event.target).value)"
         (keydown.escape)="state.queueFilter.set('')"
         placeholder="Filtrer par titre ou nom de fichier..."
-        class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+        class="w-full pl-7 pr-2 py-1.5 text-xs rounded-md border border-prussian-blue-100 bg-gray-50 focus:outline-none focus:border-prussian-blue-400" />
     </div>
   </div>
 }
@@ -49,10 +47,8 @@
       @for (item of state.filteredImports(); track item.id) {
         <li
           [attr.data-id]="item.id"
-          class="flex items-center gap-2 px-3 py-2 cursor-pointer border-l-[3px] border-b border-b-prussian-blue-50 transition-colors duration-150"
-          [class.border-l-orange-500]="state.selectedImportId() === item.id"
-          [class.bg-orange-50]="state.selectedImportId() === item.id"
-          [class.border-l-transparent]="state.selectedImportId() !== item.id"
+          class="flex items-center gap-2 px-3 py-2 cursor-pointer border-b border-b-prussian-blue-50 transition-colors duration-150"
+          [class.bg-prussian-blue-100]="state.selectedImportId() === item.id"
           [class.hover:bg-prussian-blue-50]="state.selectedImportId() !== item.id"
           (click)="state.selectImport(item.id)">
           <i class="{{ fileIcon(item.fileName) }} {{ fileColor(item.fileName) }} shrink-0"></i>
@@ -62,7 +58,7 @@
               {{ item.title || displayName(item.fileName) }}
             </span>
             <span class="text-2xs text-gray-400 truncate" [title]="item.fileName">
-              @if (item.status === 'UNPUBLISHED') {<span class="text-orange-600">Retiré · </span>}{{ item.fileName }}@if (item.fileSize) { · {{ item.fileSize }}}
+              @if (item.status === 'UNPUBLISHED') {<span class="text-burnt-peach-600">Retiré · </span>}{{ item.fileName }}@if (item.fileSize) { · {{ item.fileSize }}}
             </span>
           </div>
 

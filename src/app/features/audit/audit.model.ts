@@ -48,31 +48,29 @@ export interface AuditFilter {
 export interface AuditActionDisplay {
   label: string;
   icon: string;
-  /** Classes de la pastille de la frise d'historique (fond + texte). */
-  color: string;
   /** Sévérité PrimeNG de l'étiquette dans le journal, comme les tags du tableau des documents. */
   severity: DocTag['severity'];
 }
 
 export const AUDIT_ACTIONS: Record<AuditAction, AuditActionDisplay> = {
-  IMPORTED: { label: 'Importé', icon: 'pi-upload', color: 'bg-slate-100 text-slate-600', severity: 'secondary' },
-  VALIDATED: { label: 'Validé et publié', icon: 'pi-check-circle', color: 'bg-emerald-50 text-emerald-700', severity: 'success' },
-  PUBLISHED: { label: 'Publié', icon: 'pi-eye', color: 'bg-emerald-50 text-emerald-700', severity: 'success' },
-  UNPUBLISHED: { label: 'Retiré de la consultation', icon: 'pi-eye-slash', color: 'bg-amber-50 text-amber-700', severity: 'warn' },
-  CONFIDENTIALITY_CHANGED: { label: 'Accès modifié', icon: 'pi-lock', color: 'bg-amber-50 text-amber-700', severity: 'warn' },
-  EDITED: { label: 'Modifié dans OnlyOffice', icon: 'pi-pencil', color: 'bg-sky-50 text-sky-700', severity: 'info' },
-  VIEWED: { label: 'Consulté', icon: 'pi-book', color: 'bg-slate-100 text-slate-600', severity: 'secondary' },
-  DELETED: { label: 'Supprimé', icon: 'pi-trash', color: 'bg-red-50 text-red-700', severity: 'danger' },
-  RETRIED: { label: 'Relancé', icon: 'pi-replay', color: 'bg-sky-50 text-sky-700', severity: 'info' },
-  OWNER_ASSIGNED: { label: 'Propriétaire rattaché', icon: 'pi-user-plus', color: 'bg-sky-50 text-sky-700', severity: 'info' },
-  USER_CREATED: { label: 'Compte créé', icon: 'pi-id-card', color: 'bg-prussian-blue-50 text-prussian-blue-700', severity: 'secondary' },
-  USER_DOMAINS_CHANGED: { label: 'Domaines modifiés', icon: 'pi-users', color: 'bg-prussian-blue-50 text-prussian-blue-700', severity: 'secondary' },
-  INDEX_REBUILT: { label: 'Index reconstruit', icon: 'pi-search', color: 'bg-prussian-blue-50 text-prussian-blue-700', severity: 'secondary' }
+  IMPORTED: { label: 'Importé', icon: 'pi-upload', severity: 'secondary' },
+  VALIDATED: { label: 'Validé et publié', icon: 'pi-check-circle', severity: 'success' },
+  PUBLISHED: { label: 'Publié', icon: 'pi-eye', severity: 'success' },
+  UNPUBLISHED: { label: 'Retiré de la consultation', icon: 'pi-eye-slash', severity: 'warn' },
+  CONFIDENTIALITY_CHANGED: { label: 'Accès modifié', icon: 'pi-lock', severity: 'warn' },
+  EDITED: { label: 'Modifié dans OnlyOffice', icon: 'pi-pencil', severity: 'info' },
+  VIEWED: { label: 'Consulté', icon: 'pi-book', severity: 'secondary' },
+  DELETED: { label: 'Supprimé', icon: 'pi-trash', severity: 'danger' },
+  RETRIED: { label: 'Relancé', icon: 'pi-replay', severity: 'info' },
+  OWNER_ASSIGNED: { label: 'Propriétaire rattaché', icon: 'pi-user-plus', severity: 'info' },
+  USER_CREATED: { label: 'Compte créé', icon: 'pi-id-card', severity: 'secondary' },
+  USER_DOMAINS_CHANGED: { label: 'Domaines modifiés', icon: 'pi-users', severity: 'secondary' },
+  INDEX_REBUILT: { label: 'Index reconstruit', icon: 'pi-search', severity: 'secondary' }
 };
 
 /** Affichage d'une action ; une action ajoutée côté backend mais inconnue ici garde son code brut. */
 export function auditActionDisplay(action: string): AuditActionDisplay {
-  return AUDIT_ACTIONS[action as AuditAction] ?? { label: action, icon: 'pi-circle', color: 'bg-slate-100 text-slate-600', severity: 'secondary' };
+  return AUDIT_ACTIONS[action as AuditAction] ?? { label: action, icon: 'pi-circle', severity: 'secondary' };
 }
 
 export function formatAuditDate(iso: string): string {

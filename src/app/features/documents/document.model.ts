@@ -23,7 +23,6 @@ export interface DocumentItem {
   categorySeverity: DocTag['severity'];
   tags: DocTag[];
   modified: string;
-  locked?: boolean;
   /** Absent pour un document de dossier ou de recherche (toujours publié). */
   status?: DocumentStatus;
   /** Visible seulement par la personne qui l'a importé et par les validateurs. */

@@ -53,7 +53,7 @@ export function detectFileType(fileName: string): FileTypeInfo {
     case 'pptx':
     case 'ppt':
     case 'odp':
-      return { format: ext.toUpperCase(), icon: 'pi pi-file', iconColor: 'text-orange-600' };
+      return { format: ext.toUpperCase(), icon: 'pi pi-file', iconColor: 'text-burnt-peach-600' };
     default:
       return { format: ext.toUpperCase() || 'FICHIER', icon: 'pi pi-file', iconColor: 'text-prussian-blue-400' };
   }

@@ -53,7 +53,7 @@
       [value]="state.filter().fromDay ?? ''"
       [max]="state.filter().toDay ?? ''"
       (change)="state.updateFilter({ fromDay: $any($event.target).value || null })"
-      class="px-2 py-1 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+      class="px-2 py-1 text-xs rounded-md border border-prussian-blue-100 bg-gray-50 focus:outline-none focus:border-prussian-blue-400" />
   </label>
   <label class="flex items-center gap-1.5 text-xs text-gray-600">
     au
@@ -62,12 +62,12 @@
       [value]="state.filter().toDay ?? ''"
       [min]="state.filter().fromDay ?? ''"
       (change)="state.updateFilter({ toDay: $any($event.target).value || null })"
-      class="px-2 py-1 text-xs rounded-md border border-prussian-blue-100 bg-slate-50 focus:outline-none focus:border-prussian-blue-400" />
+      class="px-2 py-1 text-xs rounded-md border border-prussian-blue-100 bg-gray-50 focus:outline-none focus:border-prussian-blue-400" />
   </label>
 
   @if (state.hasFilter()) {
     <button
-      class="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-gray-500 hover:bg-slate-100 transition-colors"
+      class="flex items-center gap-1 px-2 py-1 rounded-md text-xs text-gray-500 hover:bg-gray-100 transition-colors"
       (click)="state.clearFilter()">
       <i class="pi pi-times text-2xs"></i>
       Effacer les filtres
@@ -91,7 +91,7 @@
     </p>
   } @else {
     <table class="w-full text-xs" [class.opacity-60]="state.isLoading()">
-      <thead class="sticky top-0 z-10 bg-slate-50 text-gray-500 text-left">
+      <thead class="sticky top-0 z-10 bg-gray-50 text-gray-500 text-left">
         <tr class="border-b border-prussian-blue-100">
           <th class="font-semibold px-4 py-2 w-36">Date</th>
           <th class="font-semibold px-4 py-2 w-44">Utilisateur</th>

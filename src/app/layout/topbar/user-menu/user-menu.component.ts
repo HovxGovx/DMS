@@ -2,6 +2,7 @@ import { Component, signal, inject, computed, ElementRef, HostListener } from '@
 import { AuthService } from '../../../core/auth.service';
 import { ViewStateService } from '../../../core/view-state.service';
 import { DropdownBackdropComponent } from '../../../shared/dropdown-backdrop/dropdown-backdrop.component';
+import { ROLE_LABELS } from '../../../features/admin/admin-user.model';
 @Component({
   selector: 'app-user-menu',
   standalone: true,
@@ -16,7 +17,12 @@ export class UserMenuComponent {
   isOpen = signal(false);
 
   userName = computed(() => this.authService.currentUser()?.fullName ?? '...');
-  userRole = computed(() => this.authService.currentUser()?.role ?? '');
+  userUid = computed(() => this.authService.currentUser()?.uid ?? '');
+  /** Rôle en clair : utile pour savoir avec quel compte on travaille (démonstration à plusieurs comptes). */
+  userRole = computed(() => {
+    const role = this.authService.currentUser()?.role;
+    return role ? ROLE_LABELS[role] : '';
+  });
   userInitials = computed(() => {
     const name = this.authService.currentUser()?.fullName;
     if (!name) return '..';
