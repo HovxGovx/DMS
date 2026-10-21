@@ -7,11 +7,13 @@ import { SmartFolderStateService } from '../smart-folder-state.service';
 import { DocumentLocationService } from '../document-location.service';
 import { DocumentItem, TagFilterOption } from '../document.model';
 import { AuthService } from '../../../core/auth.service';
+import { RagPanelComponent } from '../../rag/rag-panel/rag-panel.component';
+import { RagStateService } from '../../rag/rag-state.service';
 
 @Component({
   selector: 'app-document-list',
   standalone: true,
-  imports: [BreadcrumbComponent, DocumentFiltersComponent, DocumentTableComponent],
+  imports: [BreadcrumbComponent, DocumentFiltersComponent, DocumentTableComponent, RagPanelComponent],
   templateUrl: './document-list.component.html',
   host: {
     class: 'flex flex-col h-full min-h-0'
@@ -20,6 +22,7 @@ import { AuthService } from '../../../core/auth.service';
 export class DocumentListComponent {
   state = inject(DocumentStateService);
   folderState = inject(SmartFolderStateService);
+  ragState = inject(RagStateService);
   private locationService = inject(DocumentLocationService);
   private authService = inject(AuthService);
 

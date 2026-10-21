@@ -9,6 +9,21 @@
     <!-- Documents importés avant la mise en place du journal -->
     <p class="text-xs text-gray-400">Aucune action enregistrée pour ce document.</p>
   } @else {
+    @if (showFilter()) {
+      <div class="flex flex-wrap gap-1 mb-2">
+        @for (option of filterOptions; track option.value) {
+          <button
+            class="px-2 py-0.5 rounded-full text-2xs font-medium border transition-colors"
+            [class]="filter() === option.value
+              ? 'border-prussian-blue-600 bg-prussian-blue-600 text-white'
+              : 'border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50'"
+            (click)="setFilter(option.value)">
+            {{ option.label }} ({{ filterCount(option.value) }})
+          </button>
+        }
+      </div>
+    }
+
     <ol class="flex flex-col">
       @for (entry of visibleEntries(); track entry.id; let last = $last) {
         <li class="flex gap-2.5">
@@ -35,12 +50,12 @@
       }
     </ol>
 
-    @if (entries().length > collapsedCount) {
+    @if (filteredEntries().length > collapsedCount) {
       <button
         class="flex items-center gap-1.5 text-xs text-prussian-blue-600 hover:text-prussian-blue-700 transition-colors"
         (click)="expanded.set(!expanded())">
         <i class="pi {{ expanded() ? 'pi-angle-up' : 'pi-angle-down' }} text-2xs"></i>
-        {{ expanded() ? 'Réduire' : 'Voir tout (' + entries().length + ')' }}
+        {{ expanded() ? 'Réduire' : 'Voir tout (' + filteredEntries().length + ')' }}
       </button>
     }
   }

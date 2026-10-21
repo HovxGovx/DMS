@@ -7,9 +7,11 @@ export type AuditAction =
   | 'UNPUBLISHED'
   | 'CONFIDENTIALITY_CHANGED'
   | 'EDITED'
+  | 'VIEWED'
   | 'DELETED'
   | 'RETRIED'
   | 'OWNER_ASSIGNED'
+  | 'USER_CREATED'
   | 'USER_DOMAINS_CHANGED'
   | 'INDEX_REBUILT';
 
@@ -59,9 +61,11 @@ export const AUDIT_ACTIONS: Record<AuditAction, AuditActionDisplay> = {
   UNPUBLISHED: { label: 'Retiré de la consultation', icon: 'pi-eye-slash', color: 'bg-amber-50 text-amber-700', severity: 'warn' },
   CONFIDENTIALITY_CHANGED: { label: 'Accès modifié', icon: 'pi-lock', color: 'bg-amber-50 text-amber-700', severity: 'warn' },
   EDITED: { label: 'Modifié dans OnlyOffice', icon: 'pi-pencil', color: 'bg-sky-50 text-sky-700', severity: 'info' },
+  VIEWED: { label: 'Consulté', icon: 'pi-book', color: 'bg-slate-100 text-slate-600', severity: 'secondary' },
   DELETED: { label: 'Supprimé', icon: 'pi-trash', color: 'bg-red-50 text-red-700', severity: 'danger' },
   RETRIED: { label: 'Relancé', icon: 'pi-replay', color: 'bg-sky-50 text-sky-700', severity: 'info' },
   OWNER_ASSIGNED: { label: 'Propriétaire rattaché', icon: 'pi-user-plus', color: 'bg-sky-50 text-sky-700', severity: 'info' },
+  USER_CREATED: { label: 'Compte créé', icon: 'pi-id-card', color: 'bg-prussian-blue-50 text-prussian-blue-700', severity: 'secondary' },
   USER_DOMAINS_CHANGED: { label: 'Domaines modifiés', icon: 'pi-users', color: 'bg-prussian-blue-50 text-prussian-blue-700', severity: 'secondary' },
   INDEX_REBUILT: { label: 'Index reconstruit', icon: 'pi-search', color: 'bg-prussian-blue-50 text-prussian-blue-700', severity: 'secondary' }
 };

@@ -47,6 +47,10 @@ export class UserAdminStateService {
     });
   }
 
+  addUser(created: AdminUser) {
+    this.users.update(users => [...users, created]);
+  }
+
   /** Remplace un utilisateur par sa version renvoyée par le backend après modification. */
   replaceUser(updated: AdminUser) {
     this.users.update(users => users.map(u => u.id === updated.id ? updated : u));

@@ -10,11 +10,12 @@ import { TaxonomyDomain } from '../../validation/validation-detail.model';
 import { SelectOption } from '../../validation/classification-select/classification-select.component';
 import { NotificationService } from '../../../core/notification.service';
 import { AuthService } from '../../../core/auth.service';
+import { CreateUserDialogComponent } from '../create-user-dialog/create-user-dialog.component';
 
 @Component({
   selector: 'app-user-domains-panel',
   standalone: true,
-  imports: [FormsModule, MultiSelect, Tag],
+  imports: [FormsModule, MultiSelect, Tag, CreateUserDialogComponent],
   templateUrl: './user-domains-panel.component.html',
   host: {
     class: 'flex flex-col flex-1 min-h-0'
@@ -34,6 +35,7 @@ export class UserDomainsPanelComponent implements OnInit {
   /** Domaines modifiés mais pas encore enregistrés, par id d'utilisateur. */
   drafts = signal<Record<string, string[]>>({});
   savingIds = signal<ReadonlySet<string>>(new Set());
+  isCreating = signal(false);
 
   domainOptions = computed<SelectOption[]>(() =>
     this.domains().map(d => ({ label: d.label, value: d.code }))
@@ -75,6 +77,12 @@ export class UserDomainsPanelComponent implements OnInit {
 
   onDomainsChange(user: AdminUser, codes: string[] | null) {
     this.drafts.update(drafts => ({ ...drafts, [user.id]: codes ?? [] }));
+  }
+
+  onUserCreated(user: AdminUser) {
+    this.isCreating.set(false);
+    this.state.addUser(user);
+    this.notification.success(`Compte ${user.uid} créé : ${user.fullName} peut se connecter.`, 'Administration');
   }
 
   onCancel(user: AdminUser) {

@@ -1,0 +1,159 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '960px': '92vw' }"
+  styleClass="!bg-white !rounded-xl !border !border-prussian-blue-100 !shadow-lg"
+  maskStyleClass="!bg-white/10 backdrop-blur-[3px]"
+  appendTo="body"
+  (onHide)="closed.emit()">
+
+  <!-- Même apparence que l'éditeur de dossier -->
+  <ng-template #headless>
+  <div class="flex items-center justify-between gap-2 px-5 pt-4 pb-1">
+    <span class="text-sm font-semibold text-gray-800">Nouvel utilisateur</span>
+    <button
+      class="w-7 h-7 shrink-0 rounded-md flex items-center justify-center text-gray-400 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+      title="Fermer"
+      (click)="cancel()">
+      <i class="pi pi-times text-xs"></i>
+    </button>
+  </div>
+
+  <hr class="my-1.5 border-prussian-blue-100" />
+
+  <form class="px-5 pt-2 pb-4 max-h-[80vh] overflow-y-auto flex flex-col gap-5" autocomplete="off" (ngSubmit)="save()">
+
+    <p class="text-xs text-gray-500">
+      Le compte est créé dans l'annuaire LDAP : l'utilisateur pourra se connecter tout de suite
+      avec cet identifiant et ce mot de passe.
+    </p>
+
+    <div class="grid grid-cols-2 gap-3">
+      <p-floatlabel variant="on">
+        <input pInputText id="new-user-first-name" name="firstName" [ngModel]="firstName()" (ngModelChange)="onFirstNameChange($event)" [fluid]="true" />
+        <label for="new-user-first-name">Prénom</label>
+      </p-floatlabel>
+      <p-floatlabel variant="on">
+        <input pInputText id="new-user-last-name" name="lastName" [ngModel]="lastName()" (ngModelChange)="onLastNameChange($event)" [fluid]="true" />
+        <label for="new-user-last-name">Nom</label>
+      </p-floatlabel>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <p-floatlabel variant="on">
+          <input pInputText id="new-user-uid" name="uid" [ngModel]="uid()" (ngModelChange)="onUidChange($event)" [fluid]="true" />
+          <label for="new-user-uid">Identifiant de connexion</label>
+        </p-floatlabel>
+        <p class="mt-1 text-2xs text-gray-400">Minuscules, chiffres, « . », « _ », « - »</p>
+      </div>
+      <p-floatlabel variant="on">
+        <input pInputText id="new-user-email" name="email" type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" [fluid]="true" />
+        <label for="new-user-email">Email</label>
+      </p-floatlabel>
+    </div>
+
+    <div>
+      <div class="flex items-center gap-2">
+        <p-floatlabel variant="on" class="flex-1">
+          <input
+            pInputText
+            id="new-user-password"
+            name="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            autocomplete="new-password"
+            [ngModel]="password()"
+            (ngModelChange)="onPasswordChange($event)"
+            [fluid]="true" />
+          <label for="new-user-password">Mot de passe initial</label>
+        </p-floatlabel>
+        <button
+          type="button"
+          class="w-8 h-8 shrink-0 rounded-md flex items-center justify-center text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors"
+          [title]="showPassword() ? 'Masquer' : 'Afficher'"
+          (click)="showPassword.set(!showPassword())">
+          <i class="pi text-xs" [class.pi-eye]="!showPassword()" [class.pi-eye-slash]="showPassword()"></i>
+        </button>
+        <button
+          type="button"
+          class="w-8 h-8 shrink-0 rounded-md flex items-center justify-center text-gray-500 hover:bg-prussian-blue-50 hover:text-prussian-blue-700 transition-colors disabled:opacity-40"
+          [title]="copied() ? 'Copié' : 'Copier'"
+          [disabled]="!password()"
+          (click)="copyPassword()">
+          <i class="pi text-xs" [class.pi-copy]="!copied()" [class.pi-check]="copied()"></i>
+        </button>
+        <button
+          type="button"
+          class="shrink-0 flex items-center gap-1.5 text-xs font-medium text-prussian-blue-600 border border-prussian-blue-300 rounded-full px-3 py-1 hover:bg-prussian-blue-50 transition-colors"
+          (click)="generatePassword()">
+          <i class="pi pi-refresh text-2xs"></i>
+          Générer
+        </button>
+      </div>
+      <p class="mt-1 text-2xs text-gray-400">8 caractères minimum. Transmettez-le à l'utilisateur : il n'est plus affiché ensuite.</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 items-start">
+      <p-floatlabel variant="on">
+        <p-select
+          inputId="new-user-role"
+          name="role"
+          [options]="roleOptions"
+          optionLabel="label"
+          optionValue="value"
+          [ngModel]="role()"
+          (ngModelChange)="role.set($event)"
+          [fluid]="true"
+          appendTo="body" />
+        <label for="new-user-role">Rôle</label>
+      </p-floatlabel>
+
+      @if (isAdminRole()) {
+        <p class="text-xs text-gray-400 italic pt-2.5">Accès à tous les domaines</p>
+      } @else {
+        <div>
+          <p-multiselect
+            name="domainCodes"
+            [options]="domainOptions()"
+            optionLabel="label"
+            optionValue="value"
+            [ngModel]="domainCodes()"
+            (ngModelChange)="domainCodes.set($event ?? [])"
+            display="chip"
+            placeholder="Domaines"
+            [showToggleAll]="true"
+            [filter]="false"
+            [fluid]="true"
+            appendTo="body"
+            panelStyleClass="!text-sm" />
+          @if (!domainCodes().length) {
+            <p class="mt-1 text-2xs text-amber-700">Sans domaine, il ne verra que ses propres imports.</p>
+          }
+        </div>
+      }
+    </div>
+
+    @if (error()) {
+      <p class="text-xs text-red-500">{{ error() }}</p>
+    }
+
+    <div class="flex items-center justify-end gap-3 pt-3 border-t border-prussian-blue-100">
+      <button
+        type="button"
+        class="text-sm text-gray-500 hover:text-prussian-blue-700 transition-colors"
+        (click)="cancel()">
+        Annuler
+      </button>
+      <p-button
+        type="submit"
+        label="Créer le compte"
+        icon="pi pi-user-plus"
+        [loading]="isSaving()"
+        [disabled]="isSaving()"
+        styleClass="!bg-prussian-blue-700 !border-prussian-blue-700 hover:!bg-prussian-blue-800" />
+    </div>
+  </form>
+  </ng-template>
+</p-dialog>

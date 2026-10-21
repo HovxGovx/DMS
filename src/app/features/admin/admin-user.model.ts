@@ -10,6 +10,17 @@ export interface AdminUser {
   domainCodes: string[];
 }
 
+/** Compte créé par l'administration : écrit dans LDAP, puis ajouté à la GED avec ses domaines. */
+export interface CreateUserRequest {
+  uid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  role: Role;
+  domainCodes: string[];
+}
+
 export const ROLE_LABELS: Record<Role, string> = {
   READER: 'Lecteur',
   CONTRIBUTOR: 'Contributeur',

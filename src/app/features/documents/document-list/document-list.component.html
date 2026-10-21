@@ -4,6 +4,15 @@
       (segmentClick)="onBreadcrumbClick($event)" />
   </div>
    <div class="flex items-center gap-2">
+    <button
+      class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors"
+      [class]="ragState.isOpen()
+        ? 'border-prussian-blue-700 bg-prussian-blue-700 text-white'
+        : 'border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50'"
+      (click)="ragState.toggle()">
+      <i class="pi pi-comments text-2xs"></i>
+      Poser une question
+    </button>
     @if (state.isSearchMode()) {
     <button
       class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-prussian-blue-200 text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors"
@@ -19,6 +28,10 @@
     }
   </div>
 </div>
+
+@if (ragState.isOpen()) {
+<app-rag-panel />
+}
 
 @if (hasNoDomain()) {
 <div class="mx-3 mb-2 flex items-center gap-2 rounded-lg bg-burnt-peach-50 px-3 py-2 text-xs text-burnt-peach-800">

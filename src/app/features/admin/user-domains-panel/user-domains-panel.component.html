@@ -4,9 +4,16 @@
     <div class="text-sm font-semibold text-gray-800">Utilisateurs et domaines</div>
     <p class="text-xs text-gray-500">
       Les domaines décident des documents publiés qu'un utilisateur peut lire.
-      Le rôle vient de LDAP et n'est pas modifiable ici.
+      Le rôle vient de LDAP : il se choisit à la création du compte et n'est plus modifiable ici.
     </p>
   </div>
+  <div class="shrink-0 flex items-center gap-2">
+  <button
+    class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium bg-prussian-blue-700 text-white hover:bg-prussian-blue-800 transition-colors"
+    (click)="isCreating.set(true)">
+    <i class="pi pi-user-plus text-2xs"></i>
+    Nouvel utilisateur
+  </button>
   <button
     class="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-prussian-blue-600 hover:bg-prussian-blue-50 transition-colors disabled:opacity-50"
     title="Recharger"
@@ -14,6 +21,7 @@
     (click)="state.loadUsers()">
     <i class="pi pi-refresh text-xs" [class.pi-spin]="state.isLoading()"></i>
   </button>
+  </div>
 </div>
 
 <!-- Filtres -->
@@ -142,8 +150,15 @@
   }
 </div>
 
-<!-- Rappel : les comptes LDAP sont créés à la première connexion -->
+<!-- Rappel : un compte ajouté directement dans LDAP n'est connu de la GED qu'à sa première connexion -->
 <div class="shrink-0 px-4 py-2 border-t border-prussian-blue-100 text-2xs text-gray-500 flex items-center gap-1.5">
   <i class="pi pi-info-circle text-2xs"></i>
-  Un compte LDAP n'apparaît dans cette liste qu'après sa première connexion.
+  Un compte ajouté directement dans LDAP n'apparaît dans cette liste qu'après sa première connexion.
 </div>
+
+@if (isCreating()) {
+  <app-create-user-dialog
+    [domainOptions]="domainOptions()"
+    (created)="onUserCreated($event)"
+    (closed)="isCreating.set(false)" />
+}
